@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 加入網頁標籤小圖示 -->
+<link rel="icon" type="image/png" href="favicon.png">
 <title>G.I. 貪婪之島 卡片交換系統</title>
 <style>
 :root {
@@ -133,6 +135,11 @@ body {
   outline: none;
 }
 
+/* SORT GROUP TOGGLE */
+.sort-group {
+  display: flex; gap: 4px; padding-right: 12px; margin-right: 4px; border-right: 1px solid var(--border);
+}
+
 /* STATS */
 .stats-bar {
   display: flex; gap: 14px; margin-bottom: 14px;
@@ -159,9 +166,11 @@ body {
 .rg-B h3  { color: #27ae60; }
 .rg-C h3  { color: #aaa; }
 .rg-D h3  { color: #888; }
+.rg-DP h3 { color: #3498db; }
 .rg-FP h3 { color: #a060e0; }
 .rg-dsh h3 { color: #666; }
 
+/* 劇情卡 filter active button */
 .filter-btn.story-active { background: rgba(201,168,76,0.18); border-color: var(--gold); color: var(--gold-light); }
 
 /* CARD GRID */
@@ -210,6 +219,7 @@ body {
 .rarity-D   { background: #2a2a2a; color: #999; }
 .rarity-dsh { background: #1a1a1a; color: #555; }
 
+/* 自由口袋 sub-type badges */
 .sub-badge {
   position: absolute; top: 24px; right: 4px;
   padding: 1px 5px; border-radius: 3px;
@@ -218,6 +228,7 @@ body {
 .sub-spell   { background: #3a0070; color: #d8b4ff; }
 .sub-village { background: #4a2a00; color: #ffc870; }
 
+/* 劇情卡 corner ribbon */
 .story-corner {
   position: absolute; top: 0; left: 0;
   width: 0; height: 0;
@@ -264,7 +275,7 @@ body {
 .want-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
 .want-btn:hover { background: rgba(231,76,60,0.18); border-color: #ff7070; color: #ff7070; }
 
-/* BOARD */
+/* BOARD & MATCH */
 .board-container { max-width: 860px; }
 .share-section {
   background: var(--bg2); border: 1px solid var(--border);
@@ -320,59 +331,6 @@ body {
 .match-perfect .match-value { color: var(--gold); }
 .match-good .match-value { color: var(--green-light); }
 
-/* MODAL */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.82);
-  z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px;
-}
-.modal {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: 12px; padding: 22px 24px;
-  max-width: 680px; width: 100%; max-height: 85vh; overflow-y: auto;
-}
-.modal-header {
-  display: flex; justify-content: space-between;
-  align-items: center; margin-bottom: 16px;
-}
-.modal-close { background: transparent; border: none; color: var(--text-dim); font-size: 18px; cursor: pointer; padding: 4px; }
-.modal-close:hover { color: var(--text); }
-
-/* FORM */
-.btn-primary {
-  width: 100%; background: linear-gradient(135deg, var(--gold), #9a6c1a);
-  border: none; border-radius: 8px; padding: 11px;
-  color: #000; font-size: 15px; font-weight: bold; cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-}
-.btn-primary:hover { opacity: 0.92; }
-.btn-primary:active { transform: scale(0.98); }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; margin-bottom: 7px; color: var(--gold); font-size: 13px; }
-.form-group input {
-  width: 100%; background: var(--bg3);
-  border: 1px solid var(--border); border-radius: 8px;
-  padding: 9px 13px; color: var(--text); font-size: 14px; outline: none;
-  transition: border-color 0.2s;
-}
-.form-group input:focus { border-color: var(--gold); }
-
-/* EMPTY */
-.empty-state { text-align: center; padding: 50px 20px; color: var(--text-dim); }
-.empty-state .icon { font-size: 44px; margin-bottom: 14px; }
-.empty-state h3 { margin-bottom: 8px; font-size: 15px; }
-.empty-state p { font-size: 13px; }
-
-/* TOAST */
-.toast {
-  position: fixed; bottom: 22px; right: 22px;
-  background: var(--bg2); border: 1px solid var(--gold);
-  border-radius: 8px; padding: 11px 16px; color: var(--text); font-size: 13px;
-  z-index: 300; box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-  animation: slideIn 0.28s ease;
-}
-@keyframes slideIn { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-/* MATCH PAGE */
 .match-card {
   background: var(--bg2); border: 1px solid var(--gold);
   border-radius: 10px; padding: 15px; margin-bottom: 12px;
@@ -402,7 +360,56 @@ body {
 .trade-box { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 15px; }
 .trade-box h4 { font-size: 12px; color: var(--gold); margin-bottom: 8px; }
 
-/* RESPONSIVE */
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.82);
+  z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 22px 24px;
+  max-width: 680px; width: 100%; max-height: 85vh; overflow-y: auto;
+}
+.modal-header {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 16px;
+}
+.modal-close { background: transparent; border: none; color: var(--text-dim); font-size: 18px; cursor: pointer; padding: 4px; }
+.modal-close:hover { color: var(--text); }
+
+/* FORM & UI */
+.btn-primary {
+  width: 100%; background: linear-gradient(135deg, var(--gold), #9a6c1a);
+  border: none; border-radius: 8px; padding: 11px;
+  color: #000; font-size: 15px; font-weight: bold; cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-primary:hover { opacity: 0.92; }
+.btn-primary:active { transform: scale(0.98); }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; margin-bottom: 7px; color: var(--gold); font-size: 13px; }
+.form-group input {
+  width: 100%; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 13px; color: var(--text); font-size: 14px; outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus { border-color: var(--gold); }
+
+.empty-state { text-align: center; padding: 50px 20px; color: var(--text-dim); }
+.empty-state .icon { font-size: 44px; margin-bottom: 14px; }
+.empty-state h3 { margin-bottom: 8px; font-size: 15px; }
+.empty-state p { font-size: 13px; }
+
+.toast {
+  position: fixed; bottom: 22px; right: 22px;
+  background: var(--bg2); border: 1px solid var(--gold);
+  border-radius: 8px; padding: 11px 16px; color: var(--text); font-size: 13px;
+  z-index: 300; box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  animation: slideIn 0.28s ease;
+}
+@keyframes slideIn { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
 @media (max-width: 600px) {
   :root { --card-w: 108px; --card-img-h: 108px; }
   .header { height: 50px; gap: 12px; }
@@ -552,18 +559,37 @@ const CARDS = [
   {id:1039, name:"同行",               nameJP:"同行",                 rarity:"F",  img:"1039同行.png"},
 ];
 
-const SPELL_IDS   = new Set([-3, 1006, 1010, 1011, 1018, 1020, 1021, 1032, 1035, 1036, 1038, 1039]);
+const SPELL_IDS  = new Set([-3, 1006, 1010, 1011, 1018, 1020, 1021, 1032, 1035, 1036, 1038, 1039]);
 const VILLAGE_IDS = new Set([163, 263]);
 const FREE_POCKET_IDS = new Set([...SPELL_IDS, ...VILLAGE_IDS]);
 const STORY_IDS = new Set([0, 2, 17, 25, 46, 53, 75, 79, 81, 83, 84, 89, 90, -3, 163, 263, 1011, 1032, 1035, 1039]);
 
-function cardGroup(c) { return FREE_POCKET_IDS.has(c.id) ? 'FP' : c.rarity; }
-
-const GROUP_ORDER  = ['SS','S','A','B','C','D','FP'];
-const GROUP_LABELS = {
-  SS:'✦ G.I. 入手難度 SS', S:'★ G.I. 入手難度 S', A:'◆ G.I. 入手難度 A', B:'◇ G.I. 入手難度 B',
-  C:'○ G.I. 入手難度 C',  D:'· G.I. 入手難度 D',  FP:'🎴 自由口袋'
+// 💡 更新：卡片等級名稱全面修改為 "G.I 入手難度X"
+const GROUP_LABELS_RARITY = {
+  SS:'✦ G.I 入手難度 SS', S:'★ G.I 入手難度 S', A:'◆ G.I 入手難度 A', B:'◇ G.I 入手難度 B',
+  C:'○ G.I 入手難度 C',  D:'· G.I 入手難度 D',  FP:'🎴 自由口袋'
 };
+// 💡 新增：依編號排列時的分區標籤
+const GROUP_LABELS_ID = {
+  DP:'📘 指定口袋 (No.000 - No.099)', FP:'🎴 自由口袋'
+};
+
+// 取得卡片分類群組 (支援切換模式)
+function cardGroup(c, mode) {
+  if (mode === 'id') {
+    // 依編號排列模式：區分指定口袋(0-99)與自由口袋
+    return (c.id >= 0 && c.id <= 99) ? 'DP' : 'FP';
+  } else {
+    // 依難度排列模式：原本的邏輯
+    return FREE_POCKET_IDS.has(c.id) ? 'FP' : c.rarity;
+  }
+}
+
+// 💡 針對 -003 排除 賦予專屬排序權重
+function getSortValue(id) {
+  if (id === -3) return 100; // 讓 -003 排在 99 和 163 之間 (自由口袋的第一張)
+  return id;
+}
 
 const MOCK_USERS = [
   {id:'m1', nickname:'Gon_Fan',     contact:'Discord: gon_hxh#1234', have:[3,7,11,22,35,51,65,77,84,94,20,23,32], want:[0,17,81,1035,1036]},
@@ -573,18 +599,19 @@ const MOCK_USERS = [
   {id:'m5', nickname:'HxH_Trade',   contact:'Twitter: @hxhtrade',    have:[84,1011,1020,163,1032,1038,34,60,64], want:[1035,1036,1018,1021,87]},
 ];
 
+// ==================== STATE ====================
 let S = {
   nickname:  localStorage.getItem('gi_nick') || '',
   contact:   localStorage.getItem('gi_contact') || '',
   have:      new Set(JSON.parse(localStorage.getItem('gi_have') || '[]')),
   want:      new Set(JSON.parse(localStorage.getItem('gi_want') || '[]')),
   view:      'cards',
-  filter:    { search:'', status:'all', rarity:'all', story:false },
-  sortMode:  'rarity',
+  // 💡 更新：新增 sortMode 狀態，預設為 'id' (按編號排列)
+  filter:    { search:'', status:'all', rarity:'all', story:false, sortMode: localStorage.getItem('gi_sort') || 'id' },
   collapsed: {},
   imported:  JSON.parse(localStorage.getItem('gi_imported') || '[]'),
   chats:     JSON.parse(localStorage.getItem('gi_chats') || '{}'),
-  activeChatUser: null
+  activeChatUser: null 
 };
 
 function persist() {
@@ -593,9 +620,11 @@ function persist() {
   localStorage.setItem('gi_have',     JSON.stringify([...S.have]));
   localStorage.setItem('gi_want',     JSON.stringify([...S.want]));
   localStorage.setItem('gi_imported', JSON.stringify(S.imported));
-  localStorage.setItem('gi_chats',    JSON.stringify(S.chats));
+  localStorage.setItem('gi_chats',    JSON.stringify(S.chats)); 
+  localStorage.setItem('gi_sort',     S.filter.sortMode); // 記住使用者的排序偏好
 }
 
+// ==================== CARD HELPERS ====================
 function fmtId(id) {
   if (id < 0)     return `#${id}`;
   if (id >= 1000) return `#${id}`;
@@ -620,10 +649,11 @@ function cardHTML(card) {
                    VILLAGE_IDS.has(card.id) ? '<div class="sub-badge sub-village">村民</div>' : '';
   const storyCorner = STORY_IDS.has(card.id) ? '<div class="story-corner"></div>' : '';
   const rarityLabel = card.rarity === '-' ? '─' : card.rarity;
+  
   return `<div class="${cls}" data-id="${card.id}">
     <div class="card-img-wrap">
       <img src="cards/${card.img}" alt="${card.name}" loading="lazy"
-           onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="card-no-img">🃏</div>
       <div class="card-rarity-badge ${rarityClass(card.rarity)}">${rarityLabel}</div>
       ${subBadge}
@@ -644,12 +674,14 @@ function cardHTML(card) {
   </div>`;
 }
 
+// ==================== VIEWS ====================
 function filteredCards() {
   const q = S.filter.search.toLowerCase();
-  const sorted = [...CARDS].sort((a,b) => a.id - b.id);
+  // 💡 更新：排序時套用專屬的 getSortValue 規則
+  const sorted = [...CARDS].sort((a,b) => getSortValue(a.id) - getSortValue(b.id));
   return sorted.filter(c => {
     if (q && !c.name.toLowerCase().includes(q) && !c.nameJP.toLowerCase().includes(q) && !String(c.id).includes(q)) return false;
-    if (S.filter.rarity !== 'all' && cardGroup(c) !== S.filter.rarity) return false;
+    if (S.filter.rarity !== 'all' && cardGroup(c, 'rarity') !== S.filter.rarity) return false;
     if (S.filter.status === 'have'    && !S.have.has(c.id)) return false;
     if (S.filter.status === 'want'    && !S.want.has(c.id)) return false;
     if (S.filter.status === 'neither' && (S.have.has(c.id) || S.want.has(c.id))) return false;
@@ -658,42 +690,28 @@ function filteredCards() {
   });
 }
 
-// Sort key for id-mode: regular cards by id, FP cards after 99 (with -003 first among FP)
-function idSortKey(c) {
-  if (!FREE_POCKET_IDS.has(c.id)) return c.id; // 0~99 as normal
-  if (c.id === -3) return 99.5; // -003 排除 → 緊接在 99 之後
-  return 100 + c.id; // 其他自由口袋 (163, 263, 1006…) 排在後面
-}
-
 function renderCards() {
   const list = filteredCards();
-
-  // ── 按編號排列 ──────────────────────────────────────────
-  if (S.sortMode === 'id') {
-    const sorted = [...list].sort((a,b) => idSortKey(a) - idSortKey(b));
-    const gridHtml = sorted.length === 0
-      ? '<div class="empty-state"><div class="icon">🃏</div><h3>沒有符合條件的卡片</h3><p>試試放寬篩選條件</p></div>'
-      : `<div class="card-grid">${sorted.map(cardHTML).join('')}</div>`;
-    return `
-      ${filterBarHTML(list.length)}
-      ${statsBarHTML(list.length)}
-      ${gridHtml}`;
-  }
-
-  // ── 按入手難度排列（原本邏輯）───────────────────────────
   const groups = {};
   list.forEach(c => {
-    const g = cardGroup(c);
+    const g = cardGroup(c, S.filter.sortMode);
     if (!groups[g]) groups[g] = [];
     groups[g].push(c);
   });
+
+  // 💡 根據目前選擇的排列模式切換標籤與順序
+  const currentOrder = S.filter.sortMode === 'id' ? ['DP', 'FP'] : ['SS','S','A','B','C','D','FP'];
+  const currentLabels = S.filter.sortMode === 'id' ? GROUP_LABELS_ID : GROUP_LABELS_RARITY;
+
   let html = '';
-  GROUP_ORDER.forEach(g => {
-    if (!groups[g]) return;
+  currentOrder.forEach(g => {
+    if (!groups[g] || groups[g].length === 0) return;
     const col = S.collapsed[g];
-    const label = GROUP_LABELS[g] || g;
+    const label = currentLabels[g] || g;
     const rgCls = `rg-${g}`;
     let gridHtml = '';
+    
+    // 處理自由口袋內的子分類
     if (g === 'FP' && !col) {
       const spells  = groups[g].filter(c => SPELL_IDS.has(c.id));
       const village = groups[g].filter(c => VILLAGE_IDS.has(c.id));
@@ -710,6 +728,7 @@ function renderCards() {
     } else if (!col) {
       gridHtml = `<div class="card-grid">${groups[g].map(cardHTML).join('')}</div>`;
     }
+    
     html += `<div class="section-group ${rgCls}">
       <div class="section-group-header" onclick="toggleGroup('${g}')">
         <h3>${label} <span class="cnt">(${groups[g].length})</span></h3>
@@ -720,14 +739,13 @@ function renderCards() {
   });
 
   return `
-    ${filterBarHTML(list.length)}
-    ${statsBarHTML(list.length)}
-    ${list.length===0 ? '<div class="empty-state"><div class="icon">🃏</div><h3>沒有符合條件的卡片</h3><p>試試放寬篩選條件</p></div>' : html}`;
-}
-
-function filterBarHTML(count) {
-  return `
     <div class="filter-bar">
+      <!-- 💡 新增：排列模式切換按鈕區 -->
+      <div class="sort-group">
+        <button class="filter-btn ${S.filter.sortMode==='id'?'active':''}" onclick="setFilter('sortMode','id')">🔢 按編號排列</button>
+        <button class="filter-btn ${S.filter.sortMode==='rarity'?'active':''}" onclick="setFilter('sortMode','rarity')">⭐ 按入手難度排列</button>
+      </div>
+      
       <input type="text" placeholder="🔍 搜尋卡片名稱或編號…" value="${S.filter.search}" oninput="setFilter('search',this.value)">
       <button class="filter-btn ${S.filter.status==='all'?'active':''}" onclick="setFilter('status','all')">全部</button>
       <button class="filter-btn ${S.filter.status==='have'?'have-active':''}" onclick="setFilter('status','have')">✓ 我有的</button>
@@ -736,25 +754,18 @@ function filterBarHTML(count) {
       <button class="filter-btn ${S.filter.story?'story-active':''}" onclick="toggleStory()" title="只顯示劇情卡">📖 劇情卡</button>
       <select class="filter-select" onchange="setFilter('rarity',this.value)">
         <option value="all" ${S.filter.rarity==='all'?'selected':''}>全部分類</option>
-        ${GROUP_ORDER.map(g=>`<option value="${g}" ${S.filter.rarity===g?'selected':''}>${GROUP_LABELS[g]||g}</option>`).join('')}
+        ${['SS','S','A','B','C','D','FP'].map(g=>`<option value="${g}" ${S.filter.rarity===g?'selected':''}>${GROUP_LABELS_RARITY[g]||g}</option>`).join('')}
       </select>
-      <div style="display:flex;gap:4px;margin-left:8px">
-        <button class="filter-btn ${S.sortMode==='rarity'?'active':''}" onclick="setSortMode('rarity')" title="按入手難度分組顯示">🏷 按難度</button>
-        <button class="filter-btn ${S.sortMode==='id'?'active':''}" onclick="setSortMode('id')" title="按卡片編號順序顯示">🔢 按編號</button>
-      </div>
       <button class="btn-secondary" style="margin-left:auto; background:var(--gold); color:#000; font-weight:bold" onclick="manualSave()">💾 儲存設定</button>
-    </div>`;
-}
-
-function statsBarHTML(count) {
-  return `
+    </div>
     <div class="stats-bar">
       <div class="stat-item"><div class="stat-dot" style="background:#555"></div>共 ${CARDS.length} 張</div>
       <div class="stat-item"><div class="stat-dot" style="background:var(--green)"></div>我有 <strong style="color:var(--green-light);margin-left:3px">${S.have.size}</strong> 張</div>
       <div class="stat-item"><div class="stat-dot" style="background:var(--red)"></div>我要 <strong style="color:#ff7070;margin-left:3px">${S.want.size}</strong> 張</div>
       ${S.filter.story ? `<div class="stat-item"><div class="stat-dot" style="background:var(--gold)"></div><span style="color:var(--gold)">劇情卡模式</span></div>` : ''}
-      <div class="stat-item" style="margin-left:auto;color:var(--text-dim)">顯示 ${count} 張</div>
-    </div>`;
+      <div class="stat-item" style="margin-left:auto;color:var(--text-dim)">顯示 ${list.length} 張</div>
+    </div>
+    ${list.length===0 ? '<div class="empty-state"><div class="icon">🃏</div><h3>沒有符合條件的卡片</h3><p>試試放寬篩選條件</p></div>' : html}`;
 }
 
 function renderBoard() {
@@ -771,10 +782,10 @@ function renderBoard() {
     const mCls = (u.theyHaveIWant>0 && u.iHaveTheyWant>0) ? 'match-perfect' :
                  (u.score>0) ? 'match-good' : '';
     const mLabel = mCls==='match-perfect' ? '🔥 雙向' : mCls==='match-good' ? '✨ 單向' : '—';
-    return `<div class="user-card ${mCls}" onclick='showUser(${JSON.stringify(u)})'>
+    return `<div class="user-card ${mCls}" onclick='showUser(${JSON.stringify(u).replace(/'/g,"\\'")})'>
       <div class="user-avatar-lg">${u.nickname[0]||'?'}</div>
       <div class="user-details">
-        <div class="user-name">${u.nickname}</div>
+        <div class="user-name">${escH(u.nickname)}</div>
         <div class="user-stats">
           <span>✓ 有 <strong style="color:var(--green-light)">${u.have.length}</strong></span>
           <span>♥ 要 <strong style="color:#ff7070">${u.want.length}</strong></span>
@@ -834,14 +845,14 @@ function renderMatch() {
 
   const cards = perfect.map(u => {
     const uH = new Set(u.have), uW = new Set(u.want);
-    const theyHave = [...S.want].filter(id=>uH.has(id)).sort((a,b)=>a-b);
-    const iHave    = [...uW].filter(id=>S.have.has(id)).sort((a,b)=>a-b);
+    const theyHave = [...S.want].filter(id=>uH.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+    const iHave    = [...uW].filter(id=>S.have.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
     return `<div class="match-card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div class="user-avatar-lg">${u.nickname[0]}</div>
         <div>
-          <div style="font-weight:bold;font-size:15px">${u.nickname}</div>
-          <div style="font-size:12px;color:var(--text-dim)">${u.contact||'（未提供聯絡方式）'}</div>
+          <div style="font-weight:bold;font-size:15px">${escH(u.nickname)}</div>
+          <div style="font-size:12px;color:var(--text-dim)">${escH(u.contact)||'（未提供聯絡方式）'}</div>
         </div>
         <div style="margin-left:auto;text-align:center">
           <div style="font-size:10px;color:var(--text-dim)">配對強度</div>
@@ -872,6 +883,72 @@ function renderMatch() {
   </div>`;
 }
 
+// 渲染對話畫面
+function renderChat() {
+  if (!S.activeChatUser) return `<div class="empty-state">請先從交換看板選擇玩家。</div>`;
+  const u = S.activeChatUser;
+  
+  const uH = new Set(u.have), uW = new Set(u.want);
+  const iGiveThem = [...uW].filter(id=>S.have.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+  const theyGiveMe = [...S.want].filter(id=>uH.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+
+  const iGiveHtml = iGiveThem.length > 0 
+    ? iGiveThem.map(id=>`<span class="tag-chip tag-have">${cardLabel(id)}</span>`).join('')
+    : '<span style="color:var(--text-dim);font-size:11px">無相符卡片</span>';
+    
+  const theyGiveHtml = theyGiveMe.length > 0
+    ? theyGiveMe.map(id=>`<span class="tag-chip tag-want">${cardLabel(id)}</span>`).join('')
+    : '<span style="color:var(--text-dim);font-size:11px">無相符卡片</span>';
+
+  const msgs = S.chats[u.id] || [];
+  const msgHtml = msgs.length === 0 
+    ? '<div style="text-align:center;color:var(--text-dim);margin-top:20px;font-size:13px">還沒有任何訊息，試著當第一個發言的人吧！</div>'
+    : msgs.map(m => `<div class="chat-msg ${m.sender==='me'?'mine':'theirs'}">${escH(m.text)}</div>`).join('');
+
+  return `
+    <div class="chat-container">
+      <div class="chat-sidebar">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+          <div class="user-avatar-lg" style="width:36px;height:36px;font-size:14px">${u.nickname[0]||'?'}</div>
+          <div>
+            <div style="font-weight:bold;font-size:15px">${escH(u.nickname)}</div>
+            <div style="font-size:11px;color:var(--green-light)">● 線上</div>
+          </div>
+        </div>
+        
+        <h3 style="font-size:13px;color:var(--text);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:5px">雙方交換清單</h3>
+        
+        <div class="trade-box">
+          <h4>📤 我方提供 (他需要的)</h4>
+          <div style="line-height:1.6">${iGiveHtml}</div>
+        </div>
+        
+        <div class="trade-box">
+          <h4>📥 對方提供 (我需要的)</h4>
+          <div style="line-height:1.6">${theyGiveHtml}</div>
+        </div>
+        
+        <button class="btn-secondary" style="margin-top:auto" onclick="switchView('board')">← 返回看板</button>
+      </div>
+      
+      <div class="chat-main">
+        <div class="chat-header">
+          <div style="font-weight:bold;color:var(--gold)">與 ${escH(u.nickname)} 的交換視窗</div>
+          <div style="font-size:12px;color:var(--text-dim)">ID: ${u.id}</div>
+        </div>
+        <div class="chat-messages" id="chatHistory">
+          ${msgHtml}
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="chatInputMsg" placeholder="輸入訊息..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+          <button onclick="sendChatMessage()">送出</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ==================== ACTIONS ====================
 function toggleHave(id, e) {
   e.stopPropagation();
   S.have.has(id) ? S.have.delete(id) : S.have.add(id);
@@ -895,8 +972,11 @@ function updateStats() {
   if (items[1]) items[1].innerHTML = `<div class="stat-dot" style="background:var(--green)"></div>我有 <strong style="color:var(--green-light);margin-left:3px">${S.have.size}</strong> 張`;
   if (items[2]) items[2].innerHTML = `<div class="stat-dot" style="background:var(--red)"></div>我要 <strong style="color:#ff7070;margin-left:3px">${S.want.size}</strong> 張`;
 }
-function setFilter(k, v) { S.filter[k]=v; render(); }
-function setSortMode(m) { S.sortMode = m; render(); }
+function setFilter(k, v) { 
+  S.filter[k] = v; 
+  if(k === 'sortMode') persist(); // 若切換排列模式則馬上存檔記憶
+  render(); 
+}
 function toggleStory() { S.filter.story = !S.filter.story; render(); }
 function toggleGroup(r) { S.collapsed[r]=!S.collapsed[r]; render(); }
 function switchView(v) {
@@ -904,7 +984,7 @@ function switchView(v) {
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   const btn = document.getElementById(`nav-${v}`); if (btn) btn.classList.add('active');
   render();
-  if (v === 'chat') setTimeout(scrollToBottom, 50);
+  if (v === 'chat') setTimeout(scrollToBottom, 50); 
 }
 function render() {
   const el = document.getElementById('mainContent');
@@ -919,6 +999,7 @@ function manualSave() {
   toast('✅ 你的卡片進度已成功儲存！');
 }
 
+// ==================== CHAT ACTIONS ====================
 function startChat(uid) {
   const all = [...MOCK_USERS, ...S.imported];
   S.activeChatUser = all.find(u => u.id === uid);
@@ -927,69 +1008,17 @@ function startChat(uid) {
   switchView('chat');
 }
 
-function renderChat() {
-  if (!S.activeChatUser) return `<div class="empty-state">請先從交換看板選擇玩家。</div>`;
-  const u = S.activeChatUser;
-  const uH = new Set(u.have), uW = new Set(u.want);
-  const iGiveThem = [...uW].filter(id=>S.have.has(id)).sort((a,b)=>a-b);
-  const theyGiveMe = [...S.want].filter(id=>uH.has(id)).sort((a,b)=>a-b);
-
-  const iGiveHtml = iGiveThem.length > 0
-    ? iGiveThem.map(id=>`<span class="tag-chip tag-have">${cardLabel(id)}</span>`).join('')
-    : '<span style="color:var(--text-dim);font-size:11px">無相符卡片</span>';
-  const theyGiveHtml = theyGiveMe.length > 0
-    ? theyGiveMe.map(id=>`<span class="tag-chip tag-want">${cardLabel(id)}</span>`).join('')
-    : '<span style="color:var(--text-dim);font-size:11px">無相符卡片</span>';
-
-  const msgs = S.chats[u.id] || [];
-  const msgHtml = msgs.length === 0
-    ? '<div style="text-align:center;color:var(--text-dim);margin-top:20px;font-size:13px">還沒有任何訊息，試著當第一個發言的人吧！</div>'
-    : msgs.map(m => `<div class="chat-msg ${m.sender==='me'?'mine':'theirs'}">${escH(m.text)}</div>`).join('');
-
-  return `
-    <div class="chat-container">
-      <div class="chat-sidebar">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-          <div class="user-avatar-lg" style="width:36px;height:36px;font-size:14px">${u.nickname[0]||'?'}</div>
-          <div>
-            <div style="font-weight:bold;font-size:15px">${escH(u.nickname)}</div>
-            <div style="font-size:11px;color:var(--green-light)">● 線上</div>
-          </div>
-        </div>
-        <h3 style="font-size:13px;color:var(--text);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:5px">雙方交換清單</h3>
-        <div class="trade-box">
-          <h4>📤 我方提供 (他需要的)</h4>
-          <div style="line-height:1.6">${iGiveHtml}</div>
-        </div>
-        <div class="trade-box">
-          <h4>📥 對方提供 (我需要的)</h4>
-          <div style="line-height:1.6">${theyGiveHtml}</div>
-        </div>
-        <button class="btn-secondary" style="margin-top:auto" onclick="switchView('board')">← 返回看板</button>
-      </div>
-      <div class="chat-main">
-        <div class="chat-header">
-          <div style="font-weight:bold;color:var(--gold)">與 ${escH(u.nickname)} 的交換視窗</div>
-          <div style="font-size:12px;color:var(--text-dim)">ID: ${u.id}</div>
-        </div>
-        <div class="chat-messages" id="chatHistory">${msgHtml}</div>
-        <div class="chat-input-area">
-          <input type="text" id="chatInputMsg" placeholder="輸入訊息..." onkeypress="if(event.key==='Enter') sendChatMessage()">
-          <button onclick="sendChatMessage()">送出</button>
-        </div>
-      </div>
-    </div>`;
-}
-
 function sendChatMessage() {
   const input = document.getElementById('chatInputMsg');
   const text = input.value.trim();
   if (!text || !S.activeChatUser) return;
+  
   const uid = S.activeChatUser.id;
   S.chats[uid].push({ sender: 'me', text: text });
   input.value = '';
   persist();
   updateChatHistory();
+  
   setTimeout(() => {
     if (S.activeChatUser && S.activeChatUser.id === uid) {
       S.chats[uid].push({ sender: 'them', text: "收到！我晚點確認一下我的卡夾，等等回覆你喔！" });
@@ -1005,7 +1034,10 @@ function updateChatHistory() {
   const msgs = S.chats[uid] || [];
   const html = msgs.map(m => `<div class="chat-msg ${m.sender==='me'?'mine':'theirs'}">${escH(m.text)}</div>`).join('');
   const container = document.getElementById('chatHistory');
-  if (container) { container.innerHTML = html; scrollToBottom(); }
+  if (container) {
+    container.innerHTML = html;
+    scrollToBottom();
+  }
 }
 
 function scrollToBottom() {
@@ -1013,6 +1045,7 @@ function scrollToBottom() {
   if (el) el.scrollTop = el.scrollHeight;
 }
 
+// ==================== PROFILE ====================
 function openProfileModal() {
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-header">
@@ -1044,6 +1077,7 @@ function updateHeader() {
   if (nm) nm.textContent = S.nickname || '設定暱稱';
 }
 
+// ==================== SHARE CODE ====================
 function mkCode() {
   return btoa(unescape(encodeURIComponent(JSON.stringify({
     n: S.nickname, c: S.contact, h:[...S.have], w:[...S.want]
@@ -1074,12 +1108,13 @@ function doImport() {
   } catch { toast('代碼無效，請確認後再試'); }
 }
 
+// ==================== USER MODAL ====================
 function showUser(u) {
   const uH = new Set(u.have), uW = new Set(u.want);
-  const theyHaveIWant = [...S.want].filter(id=>uH.has(id)).sort((a,b)=>a-b);
-  const iHaveTheyWant = [...uW].filter(id=>S.have.has(id)).sort((a,b)=>a-b);
-  const sortedHave = [...u.have].sort((a,b)=>a-b);
-  const sortedWant = [...u.want].sort((a,b)=>a-b);
+  const theyHaveIWant = [...S.want].filter(id=>uH.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+  const iHaveTheyWant = [...uW].filter(id=>S.have.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+  const sortedHave = [...u.have].sort((a,b)=>getSortValue(a)-getSortValue(b));
+  const sortedWant = [...u.want].sort((a,b)=>getSortValue(a)-getSortValue(b));
 
   const haveList = sortedHave.map(id => {
     const hi = S.want.has(id);
@@ -1116,6 +1151,7 @@ function showUser(u) {
   document.getElementById('modalOverlay').style.display = 'flex';
 }
 
+// ==================== UTILS ====================
 function closeModal() { document.getElementById('modalOverlay').style.display='none'; }
 function onOverlayClick(e) { if (e.target===document.getElementById('modalOverlay')) closeModal(); }
 function toast(msg) {
@@ -1125,6 +1161,7 @@ function toast(msg) {
 }
 function escH(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// ==================== INIT ====================
 updateHeader();
 render();
 if (!S.nickname) setTimeout(openProfileModal, 600);
