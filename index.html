@@ -15,142 +15,219 @@
   --border: #2a2a4a; --card-w: 128px; --card-img-h: 128px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body {
-  background: var(--bg); color: var(--text);
-  font-family: 'Microsoft JhengHei', 'Noto Sans TC', 'PingFang TC', sans-serif;
-  min-height: 100vh;
+body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei','Noto Sans TC','PingFang TC',sans-serif; min-height:100vh; }
+
+/* HEADER */
+.header { background:linear-gradient(135deg,#0a0a18 0%,#1a1a2e 100%); border-bottom:2px solid var(--gold); padding:0 20px; display:flex; align-items:center; gap:16px; height:58px; position:sticky; top:0; z-index:100; box-shadow:0 2px 24px rgba(201,168,76,0.25); }
+.logo { font-size:18px; font-weight:bold; color:var(--gold); text-shadow:0 0 12px rgba(201,168,76,0.6); white-space:nowrap; letter-spacing:1px; }
+.nav { display:flex; gap:4px; flex:1; }
+.nav-btn { background:transparent; border:1px solid transparent; color:var(--text-dim); padding:6px 14px; border-radius:6px; cursor:pointer; font-size:13px; transition:all 0.2s; white-space:nowrap; position:relative; }
+.nav-btn:hover { color:var(--text); border-color:var(--border); }
+.nav-btn.active { background:rgba(201,168,76,0.12); border-color:var(--gold); color:var(--gold); }
+/* 未讀紅點 */
+.nav-unread { position:absolute; top:4px; right:6px; width:8px; height:8px; border-radius:50%; background:var(--red); display:none; }
+.nav-unread.show { display:block; }
+.user-chip { display:flex; align-items:center; gap:8px; cursor:pointer; padding:4px 10px 4px 4px; border-radius:20px; border:1px solid var(--border); background:var(--bg2); transition:border-color 0.2s; }
+.user-chip:hover { border-color:var(--gold); }
+.user-avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--orange)); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:13px; color:#000; flex-shrink:0; }
+.user-name-chip { font-size:13px; color:var(--text-dim); }
+
+/* 未儲存橫幅 */
+.unsaved-banner { background:rgba(231,76,60,0.12); border-bottom:1px solid rgba(231,76,60,0.4); padding:6px 20px; font-size:12px; color:#ff9090; display:flex; align-items:center; gap:10px; }
+.unsaved-banner button { background:var(--red); border:none; border-radius:4px; padding:3px 10px; color:#fff; font-size:11px; cursor:pointer; font-weight:bold; }
+
+.main { padding:18px 20px; }
+
+/* FILTER BAR */
+.filter-bar { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin-bottom:14px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.filter-bar input[type="text"] { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:7px 12px; color:var(--text); font-size:13px; outline:none; width:190px; transition:border-color 0.2s; }
+.filter-bar input[type="text"]:focus { border-color:var(--gold); }
+.filter-btn { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:6px 11px; color:var(--text-dim); font-size:12px; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+.filter-btn:hover { color:var(--text); border-color:#444466; }
+.filter-btn.active { background:rgba(201,168,76,0.12); border-color:var(--gold); color:var(--gold); }
+.filter-btn.have-active { background:rgba(39,174,96,0.12); border-color:var(--green); color:var(--green-light); }
+.filter-btn.want-active { background:rgba(231,76,60,0.12); border-color:var(--red); color:#ff7070; }
+.filter-select { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:6px 10px; color:var(--text); font-size:12px; cursor:pointer; outline:none; }
+.sort-group { display:flex; gap:4px; padding-right:12px; margin-right:4px; border-right:1px solid var(--border); }
+.stats-bar { display:flex; gap:14px; margin-bottom:14px; font-size:12px; color:var(--text-dim); align-items:center; flex-wrap:wrap; }
+.stat-item { display:flex; align-items:center; gap:5px; }
+.stat-dot { width:7px; height:7px; border-radius:50%; }
+
+/* SECTION GROUP */
+.section-group { margin-bottom:18px; }
+.section-group-header { display:flex; align-items:center; gap:8px; margin-bottom:10px; cursor:pointer; user-select:none; padding:6px 4px; border-bottom:1px solid var(--border); }
+.section-group-header h3 { font-size:13px; font-weight:600; }
+.section-group-header .cnt { font-size:11px; color:var(--text-dim); opacity:0.8; }
+.section-group-header .tog { margin-left:auto; color:var(--text-dim); font-size:11px; }
+.rg-SS h3{color:#d4a017} .rg-S h3{color:#9b59b6} .rg-A h3{color:#3498db} .rg-B h3{color:#27ae60}
+.rg-C h3{color:#aaa} .rg-D h3{color:#888} .rg-DP h3{color:#3498db} .rg-FP h3{color:#a060e0}
+
+/* CARD */
+.card-grid { display:flex; flex-wrap:wrap; gap:10px; }
+.card-item { width:var(--card-w); background:var(--bg2); border:2px solid var(--border); border-radius:8px; overflow:hidden; transition:border-color 0.18s,box-shadow 0.18s,transform 0.15s; cursor:default; position:relative; flex-shrink:0; }
+.card-item:hover { border-color:#3a3a5a; transform:translateY(-3px); box-shadow:0 6px 18px rgba(0,0,0,0.5); }
+.card-item.have { border-color:var(--green); box-shadow:0 0 12px rgba(39,174,96,0.3); }
+.card-item.want { border-color:var(--red); box-shadow:0 0 12px rgba(231,76,60,0.3); }
+.card-item.have.want { border-color:var(--gold); box-shadow:0 0 12px rgba(201,168,76,0.35); }
+.card-img-wrap { width:100%; height:var(--card-img-h); position:relative; overflow:hidden; background:#060610; }
+.card-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+.card-no-img { width:100%; height:100%; display:none; align-items:center; justify-content:center; font-size:32px; color:var(--text-dim); }
+.card-rarity-badge { position:absolute; top:4px; right:4px; padding:2px 6px; border-radius:3px; font-size:10px; font-weight:bold; letter-spacing:0.5px; }
+.rarity-SS{background:#8b6914;color:#ffd970} .rarity-S{background:#5a0c8c;color:#e0b8ff} .rarity-A{background:#1a4a7a;color:#90ccff} .rarity-B{background:#1a4a1a;color:#90e090} .rarity-C{background:#3a3a3a;color:#ccc} .rarity-D{background:#2a2a2a;color:#999} .rarity-dsh{background:#1a1a1a;color:#555}
+.sub-badge { position:absolute; top:24px; right:4px; padding:1px 5px; border-radius:3px; font-size:9px; font-weight:bold; }
+.sub-spell{background:#3a0070;color:#d8b4ff} .sub-village{background:#4a2a00;color:#ffc870}
+.story-corner { position:absolute; top:0; left:0; width:0; height:0; border-top:22px solid rgba(201,168,76,0.85); border-right:22px solid transparent; }
+.story-corner::after { content:'📖'; position:absolute; top:-20px; left:0; font-size:10px; line-height:1; }
+.card-status-badges { position:absolute; top:4px; left:4px; display:flex; flex-direction:column; gap:2px; }
+.status-badge { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:bold; }
+.have-badge{background:var(--green);color:#fff} .want-badge{background:var(--red);color:#fff}
+.card-info { padding:5px 7px 7px; }
+.card-num { font-size:10px; color:var(--text-dim); margin-bottom:2px; }
+.card-name { font-size:11px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.3; margin-bottom:5px; }
+.card-actions { display:flex; gap:4px; }
+.action-btn { flex:1; padding:4px 0; border-radius:4px; border:1px solid; font-size:10px; cursor:pointer; transition:all 0.15s; font-weight:500; text-align:center; }
+.have-btn{background:transparent;border-color:#294229;color:#4a7a4a}
+.have-btn.active{background:var(--green);border-color:var(--green);color:#fff}
+.have-btn:hover{background:rgba(39,174,96,0.18);border-color:var(--green-light);color:var(--green-light)}
+.want-btn{background:transparent;border-color:#52202a;color:#8a4a4a}
+.want-btn.active{background:var(--red);border-color:var(--red);color:#fff}
+.want-btn:hover{background:rgba(231,76,60,0.18);border-color:#ff7070;color:#ff7070}
+
+/* BOARD */
+.board-container { max-width:860px; }
+.btn-secondary { background:var(--bg2); border:1px solid var(--gold); border-radius:8px; padding:8px 14px; color:var(--gold); font-size:13px; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+.btn-secondary:hover { background:rgba(201,168,76,0.12); }
+.user-list { display:flex; flex-direction:column; gap:10px; }
+.user-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:13px 15px; display:flex; align-items:center; gap:13px; cursor:pointer; transition:all 0.2s; }
+.user-card:hover { border-color:#3a3a5a; box-shadow:0 3px 12px rgba(0,0,0,0.35); }
+.user-card.match-perfect { border-color:var(--gold); background:rgba(201,168,76,0.05); }
+.user-card.match-good { border-color:var(--green); background:rgba(39,174,96,0.04); }
+.user-avatar-lg { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--orange)); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:17px; color:#000; flex-shrink:0; }
+.user-details { flex:1; }
+.user-name { font-size:14px; font-weight:bold; margin-bottom:4px; display:flex; align-items:center; }
+.user-name-tags { margin-left:8px; font-size:12px; font-weight:normal; color:var(--text-dim); display:flex; align-items:center; gap:4px; }
+.user-stats { display:flex; gap:12px; font-size:12px; color:var(--text-dim); flex-wrap:wrap; }
+.match-score { text-align:right; flex-shrink:0; }
+.match-label { font-size:10px; color:var(--text-dim); margin-bottom:2px; }
+.match-value { font-size:18px; font-weight:bold; color:var(--text-dim); }
+.match-perfect .match-value{color:var(--gold)} .match-good .match-value{color:var(--green-light)}
+
+.match-card { background:var(--bg2); border:1px solid var(--gold); border-radius:10px; padding:15px; margin-bottom:12px; }
+.tag-chip { display:inline-block; font-size:11px; padding:3px 7px; border-radius:4px; margin:2px; }
+.tag-have{background:rgba(39,174,96,0.15);border:1px solid rgba(39,174,96,0.4);color:var(--green-light)}
+.tag-want{background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.4);color:#ff7a7a}
+.tag-normal{background:var(--bg3);border:1px solid var(--border);color:var(--text)}
+
+/* ===== CHAT VIEW (重新設計) ===== */
+.chat-layout { display:flex; gap:0; height:calc(100vh - 96px); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+
+/* 左側：對話列表 */
+.chat-list-panel { width:280px; flex-shrink:0; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; }
+.chat-list-header { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.chat-list-header h3 { font-size:14px; color:var(--gold); font-weight:bold; }
+.chat-list-scroll { flex:1; overflow-y:auto; }
+.chat-thread-item { padding:12px 16px; border-bottom:1px solid rgba(42,42,74,0.6); cursor:pointer; transition:background 0.15s; display:flex; align-items:center; gap:10px; }
+.chat-thread-item:hover { background:rgba(255,255,255,0.03); }
+.chat-thread-item.active { background:rgba(201,168,76,0.08); border-left:3px solid var(--gold); }
+.chat-thread-item.unread { background:rgba(231,76,60,0.06); }
+.thread-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--orange)); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; color:#000; flex-shrink:0; position:relative; }
+.thread-unread-dot { position:absolute; top:-2px; right:-2px; width:10px; height:10px; border-radius:50%; background:var(--red); border:2px solid var(--bg2); }
+.thread-info { flex:1; min-width:0; }
+.thread-name { font-size:13px; font-weight:600; margin-bottom:2px; display:flex; align-items:center; justify-content:space-between; }
+.thread-name-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.thread-time { font-size:10px; color:var(--text-dim); flex-shrink:0; }
+.thread-preview { font-size:11px; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.chat-list-empty { padding:40px 20px; text-align:center; color:var(--text-dim); font-size:13px; }
+
+/* 右側：聊天視窗 */
+.chat-panel { flex:1; display:flex; flex-direction:column; min-width:0; background:var(--bg); }
+.chat-panel-header { padding:12px 16px; border-bottom:1px solid var(--border); background:var(--bg2); display:flex; align-items:center; gap:12px; }
+.chat-panel-info { flex:1; }
+.chat-panel-name { font-size:14px; font-weight:bold; color:var(--gold); }
+.chat-panel-sub { font-size:11px; color:var(--text-dim); margin-top:2px; }
+.chat-panel-actions { display:flex; gap:8px; }
+.chat-messages { flex:1; padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+.chat-msg-wrap { display:flex; align-items:flex-end; gap:8px; }
+.chat-msg-wrap.mine { flex-direction:row-reverse; }
+.chat-msg-avatar { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--orange)); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:11px; color:#000; flex-shrink:0; }
+.chat-msg { max-width:68%; padding:9px 13px; border-radius:16px; font-size:13px; line-height:1.5; word-wrap:break-word; }
+.chat-msg-wrap.mine .chat-msg { background:var(--gold); color:#000; border-bottom-right-radius:4px; }
+.chat-msg-wrap:not(.mine) .chat-msg { background:var(--bg2); border:1px solid var(--border); color:var(--text); border-bottom-left-radius:4px; }
+.chat-msg-time { font-size:10px; color:var(--text-dim); padding-bottom:2px; }
+.chat-date-divider { text-align:center; font-size:11px; color:var(--text-dim); margin:8px 0; display:flex; align-items:center; gap:10px; }
+.chat-date-divider::before,.chat-date-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.chat-input-area { padding:12px 16px; border-top:1px solid var(--border); background:var(--bg2); display:flex; gap:10px; align-items:flex-end; }
+.chat-input-area textarea { flex:1; background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:9px 14px; color:var(--text); outline:none; resize:none; font-family:inherit; font-size:13px; line-height:1.4; max-height:100px; overflow-y:auto; }
+.chat-input-area textarea:focus { border-color:var(--gold); }
+.chat-send-btn { background:var(--gold); color:#000; border:none; border-radius:12px; padding:9px 18px; font-weight:bold; cursor:pointer; transition:opacity 0.2s; font-size:13px; flex-shrink:0; }
+.chat-send-btn:hover { opacity:0.85; }
+.chat-no-select { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; color:var(--text-dim); }
+
+/* 側邊欄：交換摘要 */
+.chat-sidebar-panel { width:240px; flex-shrink:0; background:var(--bg2); border-left:1px solid var(--border); padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; }
+.trade-box { background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:8px; padding:10px; }
+.trade-box h4 { font-size:11px; color:var(--gold); margin-bottom:8px; }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(3px); }
+.modal { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:22px 24px; max-width:450px; width:100%; max-height:85vh; overflow-y:auto; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.8); }
+.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.modal-close { background:transparent; border:none; color:var(--text-dim); font-size:18px; cursor:pointer; padding:4px; }
+.modal-close:hover { color:var(--text); }
+
+/* FORM */
+.btn-primary { width:100%; background:linear-gradient(135deg,var(--gold),#9a6c1a); border:none; border-radius:8px; padding:11px; color:#000; font-size:15px; font-weight:bold; cursor:pointer; transition:opacity 0.2s,transform 0.1s; margin-top:10px; }
+.btn-primary:hover{opacity:0.92} .btn-primary:active{transform:scale(0.98)}
+.form-group { margin-bottom:16px; }
+.form-group label { display:block; margin-bottom:7px; color:var(--gold); font-size:13px; font-weight:bold; }
+.form-group input { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:11px 13px; color:var(--text); font-size:14px; outline:none; transition:border-color 0.2s; }
+.form-group input:focus { border-color:var(--gold); }
+.form-group select { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:11px 13px; color:var(--text); font-size:14px; outline:none; transition:border-color 0.2s; appearance:none; cursor:pointer; }
+.form-group select:focus { border-color:var(--gold); }
+
+.empty-state { text-align:center; padding:50px 20px; color:var(--text-dim); }
+.empty-state .icon { font-size:44px; margin-bottom:14px; }
+.empty-state h3 { margin-bottom:8px; font-size:15px; }
+
+.toast { position:fixed; bottom:22px; right:22px; background:var(--bg2); border:1px solid var(--gold); border-radius:8px; padding:11px 16px; color:var(--text); font-size:13px; z-index:300; box-shadow:0 4px 16px rgba(0,0,0,0.5); animation:slideIn 0.28s ease; }
+@keyframes slideIn { from{transform:translateX(80px);opacity:0} to{transform:translateX(0);opacity:1} }
+
+.auth-tabs { display:flex; margin-bottom:20px; border-bottom:1px solid var(--border); }
+.auth-tab { flex:1; text-align:center; padding:10px; cursor:pointer; color:var(--text-dim); font-size:14px; font-weight:bold; transition:0.2s; }
+.auth-tab.active { color:var(--gold); border-bottom:2px solid var(--gold); }
+
+/* ADMIN 後台 */
+.admin-layout { display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:1100px; }
+.admin-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.admin-card-header { padding:12px 16px; border-bottom:1px solid var(--border); background:rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:space-between; }
+.admin-card-header h3 { font-size:13px; color:var(--gold); font-weight:bold; }
+.admin-table { width:100%; border-collapse:collapse; font-size:12px; }
+.admin-table th { padding:8px 12px; text-align:left; color:var(--text-dim); border-bottom:1px solid var(--border); font-weight:600; font-size:11px; }
+.admin-table td { padding:8px 12px; border-bottom:1px solid rgba(42,42,74,0.5); vertical-align:top; }
+.admin-table tr:last-child td { border-bottom:none; }
+.admin-table tr:hover td { background:rgba(255,255,255,0.02); }
+.admin-full { grid-column:1/-1; }
+.stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px; }
+.stat-box { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; text-align:center; }
+.stat-box .num { font-size:28px; font-weight:bold; color:var(--gold); }
+.stat-box .lbl { font-size:11px; color:var(--text-dim); margin-top:4px; }
+.badge { display:inline-block; padding:2px 6px; border-radius:3px; font-size:10px; font-weight:bold; }
+.badge-green{background:rgba(39,174,96,0.2);color:var(--green-light)} .badge-red{background:rgba(231,76,60,0.2);color:#ff7070} .badge-gold{background:rgba(201,168,76,0.2);color:var(--gold-light)}
+
+@media(max-width:900px) {
+  .chat-sidebar-panel { display:none; }
+  .chat-list-panel { width:220px; }
+  .admin-layout { grid-template-columns:1fr; }
+  .stat-grid { grid-template-columns:repeat(2,1fr); }
 }
-.header {
-  background: linear-gradient(135deg, #0a0a18 0%, #1a1a2e 100%);
-  border-bottom: 2px solid var(--gold); padding: 0 20px;
-  display: flex; align-items: center; gap: 20px; height: 58px;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 24px rgba(201,168,76,0.25);
-}
-.logo { font-size: 18px; font-weight: bold; color: var(--gold); text-shadow: 0 0 12px rgba(201,168,76,0.6); white-space: nowrap; letter-spacing: 1px; }
-.nav { display: flex; gap: 4px; flex: 1; }
-.nav-btn { background: transparent; border: 1px solid transparent; color: var(--text-dim); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s; white-space: nowrap; }
-.nav-btn:hover { color: var(--text); border-color: var(--border); }
-.nav-btn.active { background: rgba(201,168,76,0.12); border-color: var(--gold); color: var(--gold); }
-.user-chip { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 4px 10px 4px 4px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg2); transition: border-color 0.2s; }
-.user-chip:hover { border-color: var(--gold); }
-.user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--orange)); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; color: #000; flex-shrink: 0; }
-.user-name-chip { font-size: 13px; color: var(--text-dim); }
-/* FIX #11: 未儲存提示橫幅 */
-.unsaved-banner { background: rgba(231,76,60,0.12); border-bottom: 1px solid rgba(231,76,60,0.4); padding: 6px 20px; font-size: 12px; color: #ff9090; display: flex; align-items: center; gap: 10px; }
-.unsaved-banner button { background: var(--red); border: none; border-radius: 4px; padding: 3px 10px; color: #fff; font-size: 11px; cursor: pointer; font-weight: bold; }
-.main { padding: 18px 20px; }
-.filter-bar { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.filter-bar input[type="text"] { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 7px 12px; color: var(--text); font-size: 13px; outline: none; width: 190px; transition: border-color 0.2s; }
-.filter-bar input[type="text"]:focus { border-color: var(--gold); }
-.filter-btn { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 6px 11px; color: var(--text-dim); font-size: 12px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-.filter-btn:hover { color: var(--text); border-color: #444466; }
-.filter-btn.active { background: rgba(201,168,76,0.12); border-color: var(--gold); color: var(--gold); }
-.filter-btn.have-active { background: rgba(39,174,96,0.12); border-color: var(--green); color: var(--green-light); }
-.filter-btn.want-active { background: rgba(231,76,60,0.12); border-color: var(--red); color: #ff7070; }
-.filter-select { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; color: var(--text); font-size: 12px; cursor: pointer; outline: none; }
-.sort-group { display: flex; gap: 4px; padding-right: 12px; margin-right: 4px; border-right: 1px solid var(--border); }
-.stats-bar { display: flex; gap: 14px; margin-bottom: 14px; font-size: 12px; color: var(--text-dim); align-items: center; flex-wrap: wrap; }
-.stat-item { display: flex; align-items: center; gap: 5px; }
-.stat-dot { width: 7px; height: 7px; border-radius: 50%; }
-.section-group { margin-bottom: 18px; }
-.section-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer; user-select: none; padding: 6px 4px; border-bottom: 1px solid var(--border); }
-.section-group-header h3 { font-size: 13px; font-weight: 600; }
-.section-group-header .cnt { font-size: 11px; color: var(--text-dim); opacity: 0.8; }
-.section-group-header .tog { margin-left: auto; color: var(--text-dim); font-size: 11px; }
-.rg-SS h3 { color: #d4a017; } .rg-S h3 { color: #9b59b6; } .rg-A h3 { color: #3498db; } .rg-B h3 { color: #27ae60; }
-.rg-C h3 { color: #aaa; } .rg-D h3 { color: #888; } .rg-DP h3 { color: #3498db; } .rg-FP h3 { color: #a060e0; }
-.filter-btn.story-active { background: rgba(201,168,76,0.18); border-color: var(--gold); color: var(--gold-light); }
-.card-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-.card-item { width: var(--card-w); background: var(--bg2); border: 2px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.18s, box-shadow 0.18s, transform 0.15s; cursor: default; position: relative; flex-shrink: 0; }
-.card-item:hover { border-color: #3a3a5a; transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
-.card-item.have { border-color: var(--green); box-shadow: 0 0 12px rgba(39,174,96,0.3); }
-.card-item.want { border-color: var(--red); box-shadow: 0 0 12px rgba(231,76,60,0.3); }
-.card-item.have.want { border-color: var(--gold); box-shadow: 0 0 12px rgba(201,168,76,0.35); }
-.card-img-wrap { width: 100%; height: var(--card-img-h); position: relative; overflow: hidden; background: #060610; }
-.card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.card-no-img { width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 32px; color: var(--text-dim); }
-.card-rarity-badge { position: absolute; top: 4px; right: 4px; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: bold; letter-spacing: 0.5px; }
-.rarity-SS { background: #8b6914; color: #ffd970; } .rarity-S { background: #5a0c8c; color: #e0b8ff; } .rarity-A { background: #1a4a7a; color: #90ccff; } .rarity-B { background: #1a4a1a; color: #90e090; } .rarity-C { background: #3a3a3a; color: #ccc; } .rarity-D { background: #2a2a2a; color: #999; } .rarity-dsh { background: #1a1a1a; color: #555; }
-.sub-badge { position: absolute; top: 24px; right: 4px; padding: 1px 5px; border-radius: 3px; font-size: 9px; font-weight: bold; letter-spacing: 0.3px; }
-.sub-spell { background: #3a0070; color: #d8b4ff; } .sub-village { background: #4a2a00; color: #ffc870; }
-.story-corner { position: absolute; top: 0; left: 0; width: 0; height: 0; border-top: 22px solid rgba(201,168,76,0.85); border-right: 22px solid transparent; }
-.story-corner::after { content: '📖'; position: absolute; top: -20px; left: 0; font-size: 10px; line-height: 1; }
-.card-status-badges { position: absolute; top: 4px; left: 4px; display: flex; flex-direction: column; gap: 2px; }
-.status-badge { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; }
-.have-badge { background: var(--green); color: #fff; } .want-badge { background: var(--red); color: #fff; }
-.card-info { padding: 5px 7px 7px; } .card-num { font-size: 10px; color: var(--text-dim); margin-bottom: 2px; }
-.card-name { font-size: 11px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.3; margin-bottom: 5px; }
-.card-actions { display: flex; gap: 4px; }
-.action-btn { flex: 1; padding: 4px 0; border-radius: 4px; border: 1px solid; font-size: 10px; cursor: pointer; transition: all 0.15s; font-weight: 500; text-align: center; }
-.have-btn { background: transparent; border-color: #294229; color: #4a7a4a; }
-.have-btn.active { background: var(--green); border-color: var(--green); color: #fff; }
-.have-btn:hover { background: rgba(39,174,96,0.18); border-color: var(--green-light); color: var(--green-light); }
-.want-btn { background: transparent; border-color: #52202a; color: #8a4a4a; }
-.want-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
-.want-btn:hover { background: rgba(231,76,60,0.18); border-color: #ff7070; color: #ff7070; }
-.board-container { max-width: 860px; }
-.btn-secondary { background: var(--bg2); border: 1px solid var(--gold); border-radius: 8px; padding: 8px 14px; color: var(--gold); font-size: 13px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-.btn-secondary:hover { background: rgba(201,168,76,0.12); }
-.user-list { display: flex; flex-direction: column; gap: 10px; }
-.user-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; display: flex; align-items: center; gap: 13px; cursor: pointer; transition: all 0.2s; }
-.user-card:hover { border-color: #3a3a5a; box-shadow: 0 3px 12px rgba(0,0,0,0.35); }
-.user-card.match-perfect { border-color: var(--gold); background: rgba(201,168,76,0.05); }
-.user-card.match-good { border-color: var(--green); background: rgba(39,174,96,0.04); }
-.user-avatar-lg { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--orange)); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 17px; color: #000; flex-shrink: 0; }
-.user-details { flex: 1; }
-.user-name { font-size: 14px; font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; }
-.user-name-tags { margin-left: 8px; font-size: 12px; font-weight: normal; color: var(--text-dim); display: flex; align-items: center; gap: 4px; }
-.user-stats { display: flex; gap: 12px; font-size: 12px; color: var(--text-dim); flex-wrap: wrap; }
-.match-score { text-align: right; flex-shrink: 0; }
-.match-label { font-size: 10px; color: var(--text-dim); margin-bottom: 2px; }
-.match-value { font-size: 18px; font-weight: bold; color: var(--text-dim); }
-.match-perfect .match-value { color: var(--gold); } .match-good .match-value { color: var(--green-light); }
-.match-card { background: var(--bg2); border: 1px solid var(--gold); border-radius: 10px; padding: 15px; margin-bottom: 12px; }
-.tag-chip { display: inline-block; font-size: 11px; padding: 3px 7px; border-radius: 4px; margin: 2px; }
-.tag-have { background: rgba(39,174,96,0.15); border: 1px solid rgba(39,174,96,0.4); color: var(--green-light); }
-.tag-want { background: rgba(231,76,60,0.15); border: 1px solid rgba(231,76,60,0.4); color: #ff7a7a; }
-.tag-normal { background: var(--bg3); border: 1px solid var(--border); color: var(--text); }
-.chat-container { display: flex; gap: 20px; max-width: 1000px; height: calc(100vh - 120px); margin: 0 auto; flex-wrap: wrap; }
-.chat-sidebar { width: 300px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 15px; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
-.chat-main { flex: 1; min-width: 300px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
-.chat-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); }
-.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-.chat-msg { max-width: 75%; padding: 10px 14px; border-radius: 15px; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
-.chat-msg.mine { align-self: flex-end; background: var(--gold); color: #000; border-bottom-right-radius: 4px; }
-.chat-msg.theirs { align-self: flex-start; background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; }
-.chat-input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: rgba(0,0,0,0.2); }
-.chat-input-area input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 10px 15px; color: var(--text); outline: none; }
-.chat-input-area input:focus { border-color: var(--gold); }
-.chat-input-area button { background: var(--gold); color: #000; border: none; border-radius: 20px; padding: 0 20px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
-.trade-box { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 15px; }
-.trade-box h4 { font-size: 12px; color: var(--gold); margin-bottom: 8px; }
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(3px); }
-.modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; max-width: 450px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-.modal.large { max-width: 680px; }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.modal-close { background: transparent; border: none; color: var(--text-dim); font-size: 18px; cursor: pointer; padding: 4px; }
-.modal-close:hover { color: var(--text); }
-.btn-primary { width: 100%; background: linear-gradient(135deg, var(--gold), #9a6c1a); border: none; border-radius: 8px; padding: 11px; color: #000; font-size: 15px; font-weight: bold; cursor: pointer; transition: opacity 0.2s, transform 0.1s; margin-top: 10px;}
-.btn-primary:hover { opacity: 0.92; } .btn-primary:active { transform: scale(0.98); }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; margin-bottom: 7px; color: var(--gold); font-size: 13px; font-weight: bold;}
-.form-group input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 11px 13px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; }
-.form-group input:focus { border-color: var(--gold); }
-.form-group select { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 11px 13px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; appearance: none; cursor: pointer; }
-.form-group select:focus { border-color: var(--gold); }
-.empty-state { text-align: center; padding: 50px 20px; color: var(--text-dim); }
-.empty-state .icon { font-size: 44px; margin-bottom: 14px; }
-.empty-state h3 { margin-bottom: 8px; font-size: 15px; }
-.toast { position: fixed; bottom: 22px; right: 22px; background: var(--bg2); border: 1px solid var(--gold); border-radius: 8px; padding: 11px 16px; color: var(--text); font-size: 13px; z-index: 300; box-shadow: 0 4px 16px rgba(0,0,0,0.5); animation: slideIn 0.28s ease; }
-@keyframes slideIn { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-.auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-.auth-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: var(--text-dim); font-size: 14px; font-weight: bold; transition: 0.2s; }
-.auth-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
-@media (max-width: 600px) {
-  :root { --card-w: 108px; --card-img-h: 108px; }
-  .header { height: 50px; gap: 12px; } .logo { font-size: 15px; }
-  .filter-bar input[type="text"] { width: 140px; } .main { padding: 12px; }
+@media(max-width:600px) {
+  :root{--card-w:108px;--card-img-h:108px}
+  .header{height:50px;gap:12px} .logo{font-size:15px}
+  .filter-bar input[type="text"]{width:140px} .main{padding:12px}
+  .chat-list-panel{width:100%}
+  .chat-panel{display:none}
+  .chat-layout.panel-open .chat-list-panel{display:none}
+  .chat-layout.panel-open .chat-panel{display:flex}
 }
 </style>
 </head>
@@ -159,11 +236,12 @@ body {
 <div class="header">
   <div class="logo">⚔️ G.I. 卡片交換</div>
   <nav class="nav">
-    <button class="nav-btn active" id="nav-cards" onclick="window.switchView('cards')">🃏 卡片設定</button>
-    <button class="nav-btn" id="nav-board" onclick="window.switchView('board')">📋 交換看板</button>
-    <button class="nav-btn" id="nav-match" onclick="window.switchView('match')">🔥 配對搜尋</button>
-    <!-- FIX #2: 補上 nav-chat，切換到 chat view 時才顯示並 active -->
-    <button class="nav-btn" id="nav-chat" style="display:none" onclick="window.switchView('chat')">💬 交換私訊</button>
+    <button class="nav-btn active" id="nav-cards"  onclick="window.switchView('cards')">🃏 卡片設定</button>
+    <button class="nav-btn"        id="nav-board"  onclick="window.switchView('board')">📋 交換看板</button>
+    <button class="nav-btn"        id="nav-match"  onclick="window.switchView('match')">🔥 配對搜尋</button>
+    <button class="nav-btn"        id="nav-inbox"  onclick="window.switchView('inbox')">💬 訊息匣
+      <span class="nav-unread" id="navUnreadDot"></span>
+    </button>
   </nav>
   <div class="user-chip" onclick="window.openAuthModal()">
     <div class="user-avatar" id="headerAvatar">?</div>
@@ -171,7 +249,6 @@ body {
   </div>
 </div>
 
-<!-- FIX #11: 未儲存提示橫幅 -->
 <div class="unsaved-banner" id="unsavedBanner" style="display:none">
   ⚠️ 你有未儲存的卡片變更　<button onclick="window.manualSave()">立即儲存至雲端</button>
 </div>
@@ -185,266 +262,347 @@ body {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, orderBy, onSnapshot, where, updateDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const myFirebaseConfig = {
-  apiKey: "AIzaSyCwjnrwemRPzKBlDnNYxFJ-vHj4ApWRriw",
-  authDomain: "greedisland-a9fb4.firebaseapp.com",
-  projectId: "greedisland-a9fb4",
-  storageBucket: "greedisland-a9fb4.firebasestorage.app",
-  messagingSenderId: "330709881194",
-  appId: "1:330709881194:web:3112d46d00685506281513",
-  measurementId: "G-5SXSSKD2W1"
+  apiKey:"AIzaSyCwjnrwemRPzKBlDnNYxFJ-vHj4ApWRriw",
+  authDomain:"greedisland-a9fb4.firebaseapp.com",
+  projectId:"greedisland-a9fb4",
+  storageBucket:"greedisland-a9fb4.firebasestorage.app",
+  messagingSenderId:"330709881194",
+  appId:"1:330709881194:web:3112d46d00685506281513"
 };
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : myFirebaseConfig;
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'gi-cards-site';
-const app = initializeApp(firebaseConfig);
+const firebaseConfig = typeof __firebase_config!=='undefined' ? JSON.parse(__firebase_config) : myFirebaseConfig;
+const appId = typeof __app_id!=='undefined' ? __app_id : 'gi-cards-site';
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
-if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-  signInWithCustomToken(auth, __initial_auth_token).catch(console.error);
-}
+const db   = getFirestore(app);
+if (typeof __initial_auth_token!=='undefined' && __initial_auth_token)
+  signInWithCustomToken(auth,__initial_auth_token).catch(console.error);
 
 const TAIWAN_CITIES = ['基隆市','台北市','新北市','桃園市','新竹縣','新竹市','苗栗縣','台中市','彰化縣','南投縣','雲林縣','嘉義縣','嘉義市','台南市','高雄市','屏東縣','宜蘭縣','花蓮縣','台東縣','澎湖縣','金門縣','連江縣','海外/其他'];
+// ==================== 管理員 UID（登入後從 console 取得填入） ====================
+const ADMIN_UIDS = new Set(['REPLACE_WITH_YOUR_UID']);
 
+// ==================== CARD DATA ====================
 const CARDS = [
-  {id:-3,   name:"排除",               nameJP:"排除 (エリミネイト)", rarity:"-",  img:"-003排除.png"},
-  {id:0,    name:"支配者的祝福",       nameJP:"支配者の祝福",         rarity:"SS", img:"000支配者的祝福.jpg"},
-  {id:1,    name:"一坪的密林",         nameJP:"一坪の密林",           rarity:"SS", img:"001一坪的密林.jpg"},
-  {id:2,    name:"一坪的海岸線",       nameJP:"一坪の海岸線",         rarity:"SS", img:"002一坪的海岸線.jpg"},
-  {id:3,    name:"湧水之壺",           nameJP:"湧き水の壺",           rarity:"A",  img:"003湧水之壺.jpg"},
-  {id:4,    name:"美肌溫泉",           nameJP:"美肌温泉",             rarity:"A",  img:"004美肌溫泉.jpg"},
-  {id:5,    name:"神隱洞穴",           nameJP:"神隠しの洞",           rarity:"S",  img:"005神隱洞穴.jpg"},
-  {id:6,    name:"產酒之泉",           nameJP:"酒生みの泉",           rarity:"A",  img:"006產酒之泉.jpg"},
-  {id:7,    name:"懷孕之石",           nameJP:"身重の石",             rarity:"S",  img:"007懷孕之石.jpg"},
-  {id:8,    name:"不思議之池",         nameJP:"不思議ヶ池",           rarity:"S",  img:"008不思議之池.jpg"},
-  {id:9,    name:"豐收之樹",           nameJP:"豊作の樹",             rarity:"S",  img:"009豐收之樹.jpg"},
-  {id:10,   name:"黃金旅遊指南",       nameJP:"黄金ぶるる",           rarity:"A",  img:"010黃金rurubu.jpg"},
-  {id:11,   name:"黃金天秤",           nameJP:"黄金天秤",             rarity:"B",  img:"011黃金天秤.jpg"},
-  {id:12,   name:"黃金辭典",           nameJP:"黄金辞典",             rarity:"S",  img:"012黃金辭典.jpg"},
-  {id:13,   name:"幸福存摺",           nameJP:"幸福通帳",             rarity:"A",  img:"013幸福存摺.jpg"},
-  {id:14,   name:"斷緣之剪",           nameJP:"縁切り鋏",             rarity:"B",  img:"014斷緣之剪.jpg"},
-  {id:15,   name:"反覆無常的魔人",     nameJP:"きまぐれ魔人",         rarity:"S",  img:"015反復無常的魔人.jpg"},
-  {id:16,   name:"妖精王的忠告",       nameJP:"妖精王の忠告",         rarity:"S",  img:"016妖精王的忠告.jpg"},
-  {id:17,   name:"大天使的氣息",       nameJP:"大天使の息吹",         rarity:"SS", img:"017大天使的氣息.jpg"},
-  {id:18,   name:"小惡魔的眼色",       nameJP:"小悪魔のウインク",     rarity:"A",  img:"018小惡魔的眼色.jpg"},
-  {id:19,   name:"遊魂枕",             nameJP:"遊魂枕",               rarity:"A",  img:"019遊魂枕.jpg"},
-  {id:20,   name:"心度計",             nameJP:"心度計",               rarity:"B",  img:"020心度計.jpg"},
-  {id:21,   name:"骷髏眼鏡",           nameJP:"スケルトンメガネ",     rarity:"B",  img:"021骷髏眼鏡.jpg"},
-  {id:22,   name:"脫拉A夢",             nameJP:"トラエモン",           rarity:"A",  img:"022脫拉A夢.jpg"},
-  {id:23,   name:"即興書",             nameJP:"アドリブブック",       rarity:"B",  img:"023即興書.jpg"},
-  {id:24,   name:"假如電視",           nameJP:"もしもテレビ",         rarity:"A",  img:"024假如電視.jpg"},
-  {id:25,   name:"風險骰子",           nameJP:"リスキーダイス",       rarity:"B",  img:"025風險骰子.jpg"},
-  {id:26,   name:"七個工作小矮人",     nameJP:"７人の働く小人",       rarity:"A",  img:"026七個工作小矮人.jpg"},
-  {id:27,   name:"免費通行回數券",     nameJP:"顔パス回数券",         rarity:"B",  img:"027免費通行回數卷.jpg"},
-  {id:28,   name:"見異思遷遙控器",     nameJP:"移り気リモコン",       rarity:"B",  img:"028見異思遷遙控.jpg"},
-  {id:29,   name:"強制預約券",         nameJP:"強制予約券",           rarity:"A",  img:"029強製預約券.jpg"},
-  {id:30,   name:"願望軟墊",           nameJP:"コネクッション",       rarity:"B",  img:"030願望軟墊.jpg"},
-  {id:31,   name:"給死者的往返明信片", nameJP:"死者への往復葉書",     rarity:"S",  img:"031給死者的往返明信片.jpg"},
-  {id:32,   name:"黃鶯糖",             nameJP:"ウグイスキャンディー", rarity:"B",  img:"032黃鶯糖.jpg"},
-  {id:33,   name:"荷爾蒙餅乾",         nameJP:"ホルモンクッキー",     rarity:"S",  img:"033荷爾蒙巧克力.jpg"},
-  {id:34,   name:"萬能問卷",           nameJP:"なんでもアンケート",   rarity:"B",  img:"034不管什麼問卷.jpg"},
-  {id:35,   name:"變色龍貓",           nameJP:"カメレオンキャット",   rarity:"S",  img:"035變色龍貓.jpg"},
-  {id:36,   name:"循環回收房",         nameJP:"リサイクルルーム",     rarity:"S",  img:"036循環回收房.jpg"},
-  {id:37,   name:"超一流運動員之蛋",   nameJP:"超一流スポーツ選手の卵", rarity:"B", img:"037超一流運動選手之蛋.jpg"},
-  {id:38,   name:"超一流藝術家之蛋",   nameJP:"超一流アーティストの卵", rarity:"B", img:"038超一流藝術家之蛋.jpg"},
-  {id:39,   name:"大政治家之蛋",       nameJP:"大物政治家の卵",       rarity:"B",  img:"039大政治家之蛋.jpg"},
-  {id:40,   name:"超一流音樂家之蛋",   nameJP:"超一流ミュージシャンの卵", rarity:"B", img:"040超一流音樂家之蛋.jpg"},
-  {id:41,   name:"超一流飛行員之蛋",   nameJP:"超一流パイロットの卵", rarity:"B",  img:"041超一流飛行員之蛋.jpg"},
-  {id:42,   name:"超一流作家之蛋",     nameJP:"超一流作家の卵",       rarity:"B",  img:"042超一流作家之蛋.jpg"},
-  {id:43,   name:"大賭徒之蛋",         nameJP:"大ギャンブラーの卵",   rarity:"B",  img:"043大賭徒之蛋.jpg"},
-  {id:44,   name:"大演員之蛋",         nameJP:"大俳優の卵",           rarity:"B",  img:"044大演員之蛋.jpg"},
-  {id:45,   name:"大社長之蛋",         nameJP:"大社長の卵",           rarity:"B",  img:"045大社長之蛋.jpg"},
-  {id:46,   name:"金粉少女",           nameJP:"金粉少女",             rarity:"A",  img:"046金粉少女.jpg"},
-  {id:47,   name:"睡眠少女",           nameJP:"睡眠少女",             rarity:"A",  img:"047睡眠少女.jpg"},
-  {id:48,   name:"芬芳少女",           nameJP:"発香少女",             rarity:"A",  img:"048芬芳少女.jpg"},
-  {id:49,   name:"掌上人魚",           nameJP:"手乗り人魚",           rarity:"A",  img:"049掌上人魚.jpg"},
-  {id:50,   name:"掌上恐龍",           nameJP:"手乗りザウルス",       rarity:"A",  img:"050掌上恐龍.jpg"},
-  {id:51,   name:"掌上龍",             nameJP:"手乗りドラゴン",       rarity:"S",  img:"051掌上龍.jpg"},
-  {id:52,   name:"珍珠蝗蟲",           nameJP:"真珠蝗",               rarity:"B",  img:"052珍珠蝗蟲.jpg"},
-  {id:53,   name:"白色帝王鍬形蟲",     nameJP:"キングホワイトオオクワガタ", rarity:"A", img:"053白色帝王鍬形蟲.jpg"},
-  {id:54,   name:"千年鳳蝶",           nameJP:"千年アゲハ",           rarity:"A",  img:"054千年鳳蝶.jpg"},
-  {id:55,   name:"復仇商店",           nameJP:"仕返し商店",           rarity:"A",  img:"055復仇商店.jpg"},
-  {id:56,   name:"回憶攝影館",         nameJP:"思い出写真館",         rarity:"B",  img:"056回憶攝影館.jpg"},
-  {id:57,   name:"隱居地產",           nameJP:"隠れ家不動産",         rarity:"A",  img:"057隱居地產.jpg"},
-  {id:58,   name:"出租秘密影視店",     nameJP:"レンタル秘密ビデオ店", rarity:"A",  img:"058出租秘密影視店.jpg"},
-  {id:59,   name:"即席外語學校",       nameJP:"即席外語スクール",     rarity:"A",  img:"059即席外語學校.jpg"},
-  {id:60,   name:"失物快遞",           nameJP:"失し物宅配便",         rarity:"B",  img:"060失物快遞.jpg"},
-  {id:61,   name:"投幣檢查",           nameJP:"コインドック",         rarity:"A",  img:"061投幣檢查.jpg"},
-  {id:62,   name:"會所大王",           nameJP:"クラブ王様",           rarity:"B",  img:"062會所大王.jpg"},
-  {id:63,   name:"虛擬餐廳",           nameJP:"バーチャルレストラン", rarity:"B",  img:"063虛擬餐廳.jpg"},
-  {id:64,   name:"魔女的媚藥",         nameJP:"魔女の媚薬",           rarity:"B",  img:"064魔女的媚藥.jpg"},
-  {id:65,   name:"魔女的返老還童藥",   nameJP:"魔女の若返り薬",       rarity:"S",  img:"065魔女的返老還童藥.jpg"},
-  {id:66,   name:"魔女的瘦身藥",       nameJP:"魔女の痩せ薬",         rarity:"B",  img:"066魔女的瘦身藥.jpg"},
-  {id:67,   name:"長老的增高藥",       nameJP:"長老の背伸び薬",       rarity:"B",  img:"067長老的增高藥.jpg"},
-  {id:68,   name:"長老的精力增強劑",   nameJP:"長老の精力増強剤",     rarity:"A",  img:"068長老的精力增強藥.jpg"},
-  {id:69,   name:"長老的生毛藥",       nameJP:"長老の毛生え薬",       rarity:"B",  img:"069長老的生毛藥.jpg"},
-  {id:70,   name:"瘋狂博士的肌肉增強劑",nameJP:"マッド博士の筋肉増強剤",rarity:"A",img:"070瘋狂博士的肌肉增強劑.jpg"},
-  {id:71,   name:"瘋狂博士的費洛蒙劑", nameJP:"マッド博士のフェロモン剤",rarity:"A",img:"071瘋狂博士的費洛蒙劑.jpg"},
-  {id:72,   name:"瘋狂博士的整型機器", nameJP:"マッド博士の整形マシーン",rarity:"A",img:"072瘋狂博士的整容機器.jpg"},
-  {id:73,   name:"黑暗的翡翠",         nameJP:"闇のヒスイ",           rarity:"A",  img:"073黑暗的翡翠.jpg"},
-  {id:74,   name:"賢者的海藍寶石",     nameJP:"賢者のアクアマリン",   rarity:"A",  img:"074賢者的海藍寶石.jpg"},
-  {id:75,   name:"奇運亞歷山大變色石", nameJP:"奇運アレキサンドライト",rarity:"A", img:"075奇運亞歷山大變色石.jpg"},
-  {id:76,   name:"流浪紅寶石",         nameJP:"さまようルビー",       rarity:"B",  img:"076流浪紅寶石.jpg"},
-  {id:77,   name:"呼喚美麗的祖母綠",   nameJP:"美を呼ぶエメラルド",   rarity:"S",  img:"077呼喚美麗的綠柱石.jpg"},
-  {id:78,   name:"孤獨的藍寶石",       nameJP:"孤独なサファイヤ",     rarity:"B",  img:"078孤獨的藍寶石.jpg"},
-  {id:79,   name:"彩虹鑽石",           nameJP:"レインボーダイヤ",     rarity:"A",  img:"079彩虹鑽石.jpg"},
-  {id:80,   name:"浮游石",             nameJP:"浮遊石",               rarity:"S",  img:"080浮游石.jpg"},
-  {id:81,   name:"藍色行星",           nameJP:"ブループラネット",     rarity:"SS", img:"081藍色行星.jpg"},
-  {id:82,   name:"天懲之杖",           nameJP:"天罰の杖",             rarity:"A",  img:"082天懲之杖.jpg"},
-  {id:83,   name:"真實之劍",           nameJP:"真実の剣",             rarity:"B",  img:"083真實之劍.jpg"},
-  {id:84,   name:"聖騎士的首飾",       nameJP:"聖騎士の首飾り",       rarity:"D",  img:"084聖騎士的首飾.jpg"},
-  {id:85,   name:"替身之鎧",           nameJP:"身代わりの鎧",         rarity:"S",  img:"085替身之鎧.jpg"},
-  {id:86,   name:"挫折之弓",           nameJP:"挫折の弓",             rarity:"A",  img:"086挫折之弓.jpg"},
-  {id:87,   name:"信念之盾",           nameJP:"信念の盾",             rarity:"S",  img:"087信念之盾.jpg"},
-  {id:88,   name:"不死的大金槌",       nameJP:"不死の大金槌",         rarity:"A",  img:"088不死的大金錘.jpg"},
-  {id:89,   name:"稅務長的護手",       nameJP:"税務長の籠手",         rarity:"A",  img:"089稅務長的護手.jpg"},
-  {id:90,   name:"記憶的頭盔",         nameJP:"記憶の兜",             rarity:"A",  img:"090記憶頭盔.jpg"},
-  {id:91,   name:"塑膠大王",           nameJP:"プラキング",           rarity:"A",  img:"091塑膠大王.jpg"},
-  {id:92,   name:"替身車票",           nameJP:"影武者切符",           rarity:"S",  img:"092替身票.jpg"},
-  {id:93,   name:"人生圖鑑",           nameJP:"人生図鑑",             rarity:"B",  img:"093人生圖鑑.jpg"},
-  {id:94,   name:"盜賊之劍",           nameJP:"盗賊の剣",             rarity:"S",  img:"094盜賊之劍.jpg"},
-  {id:95,   name:"秘密斗篷",           nameJP:"秘密のマント",         rarity:"A",  img:"095秘密斗蓬.jpg"},
-  {id:96,   name:"千里眼之蛇",         nameJP:"千里眼の蛇",           rarity:"A",  img:"096千里眼之蛇.jpg"},
-  {id:97,   name:"3D相機",             nameJP:"3Dカメラ",             rarity:"A",  img:"097立體相機.jpg"},
-  {id:98,   name:"銀犬",               nameJP:"シルバードッグ",       rarity:"S",  img:"098銀犬.jpg"},
-  {id:99,   name:"傭人熊貓",           nameJP:"メイドパンダ",         rarity:"S",  img:"099傭人熊貓.jpg"},
-  {id:163,  name:"生病的村民",         nameJP:"病気の村人",           rarity:"F",  img:"163生病的村民.png"},
-  {id:263,  name:"健康的村民",         nameJP:"元気な村人",           rarity:"C",  img:"263健康的村民.png"},
-  {id:1006, name:"掏摸",               nameJP:"掏摸",                 rarity:"F",  img:"1006掏摸.png"},
-  {id:1010, name:"擬態",               nameJP:"擬態",                 rarity:"A",  img:"1010擬態.png"},
-  {id:1011, name:"複製",               nameJP:"複製",                 rarity:"D",  img:"1011複製.png"},
-  {id:1018, name:"徵收",               nameJP:"徴収",                 rarity:"B",  img:"1018徵收.png"},
-  {id:1020, name:"贗品",               nameJP:"贋作",                 rarity:"C",  img:"1020贗品.png"},
-  {id:1021, name:"強奪",               nameJP:"強奪",                 rarity:"B",  img:"1021強奪.png"},
-  {id:1032, name:"寶籤",               nameJP:"宝籤",                 rarity:"G",  img:"1032寶籤.png"},
-  {id:1035, name:"堅牢",               nameJP:"堅牢",                 rarity:"S",  img:"1035堅牢.png"},
-  {id:1036, name:"神眼",               nameJP:"神眼",                 rarity:"S",  img:"1036神眼.png"},
-  {id:1038, name:"名簿",               nameJP:"名簿",                 rarity:"G",  img:"1038名簿.png"},
-  {id:1039, name:"同行",               nameJP:"同行",                 rarity:"F",  img:"1039同行.png"},
+  {id:-3,name:"排除",nameJP:"排除 (エリミネイト)",rarity:"-",img:"-003排除.png"},
+  {id:0,name:"支配者的祝福",nameJP:"支配者の祝福",rarity:"SS",img:"000支配者的祝福.jpg"},
+  {id:1,name:"一坪的密林",nameJP:"一坪の密林",rarity:"SS",img:"001一坪的密林.jpg"},
+  {id:2,name:"一坪的海岸線",nameJP:"一坪の海岸線",rarity:"SS",img:"002一坪的海岸線.jpg"},
+  {id:3,name:"湧水之壺",nameJP:"湧き水の壺",rarity:"A",img:"003湧水之壺.jpg"},
+  {id:4,name:"美肌溫泉",nameJP:"美肌温泉",rarity:"A",img:"004美肌溫泉.jpg"},
+  {id:5,name:"神隱洞穴",nameJP:"神隠しの洞",rarity:"S",img:"005神隱洞穴.jpg"},
+  {id:6,name:"產酒之泉",nameJP:"酒生みの泉",rarity:"A",img:"006產酒之泉.jpg"},
+  {id:7,name:"懷孕之石",nameJP:"身重の石",rarity:"S",img:"007懷孕之石.jpg"},
+  {id:8,name:"不思議之池",nameJP:"不思議ヶ池",rarity:"S",img:"008不思議之池.jpg"},
+  {id:9,name:"豐收之樹",nameJP:"豊作の樹",rarity:"S",img:"009豐收之樹.jpg"},
+  {id:10,name:"黃金旅遊指南",nameJP:"黄金ぶるる",rarity:"A",img:"010黃金rurubu.jpg"},
+  {id:11,name:"黃金天秤",nameJP:"黄金天秤",rarity:"B",img:"011黃金天秤.jpg"},
+  {id:12,name:"黃金辭典",nameJP:"黄金辞典",rarity:"S",img:"012黃金辭典.jpg"},
+  {id:13,name:"幸福存摺",nameJP:"幸福通帳",rarity:"A",img:"013幸福存摺.jpg"},
+  {id:14,name:"斷緣之剪",nameJP:"縁切り鋏",rarity:"B",img:"014斷緣之剪.jpg"},
+  {id:15,name:"反覆無常的魔人",nameJP:"きまぐれ魔人",rarity:"S",img:"015反復無常的魔人.jpg"},
+  {id:16,name:"妖精王的忠告",nameJP:"妖精王の忠告",rarity:"S",img:"016妖精王的忠告.jpg"},
+  {id:17,name:"大天使的氣息",nameJP:"大天使の息吹",rarity:"SS",img:"017大天使的氣息.jpg"},
+  {id:18,name:"小惡魔的眼色",nameJP:"小悪魔のウインク",rarity:"A",img:"018小惡魔的眼色.jpg"},
+  {id:19,name:"遊魂枕",nameJP:"遊魂枕",rarity:"A",img:"019遊魂枕.jpg"},
+  {id:20,name:"心度計",nameJP:"心度計",rarity:"B",img:"020心度計.jpg"},
+  {id:21,name:"骷髏眼鏡",nameJP:"スケルトンメガネ",rarity:"B",img:"021骷髏眼鏡.jpg"},
+  {id:22,name:"脫拉A夢",nameJP:"トラエモン",rarity:"A",img:"022脫拉A夢.jpg"},
+  {id:23,name:"即興書",nameJP:"アドリブブック",rarity:"B",img:"023即興書.jpg"},
+  {id:24,name:"假如電視",nameJP:"もしもテレビ",rarity:"A",img:"024假如電視.jpg"},
+  {id:25,name:"風險骰子",nameJP:"リスキーダイス",rarity:"B",img:"025風險骰子.jpg"},
+  {id:26,name:"七個工作小矮人",nameJP:"７人の働く小人",rarity:"A",img:"026七個工作小矮人.jpg"},
+  {id:27,name:"免費通行回數券",nameJP:"顔パス回数券",rarity:"B",img:"027免費通行回數卷.jpg"},
+  {id:28,name:"見異思遷遙控器",nameJP:"移り気リモコン",rarity:"B",img:"028見異思遷遙控.jpg"},
+  {id:29,name:"強制預約券",nameJP:"強制予約券",rarity:"A",img:"029強製預約券.jpg"},
+  {id:30,name:"願望軟墊",nameJP:"コネクッション",rarity:"B",img:"030願望軟墊.jpg"},
+  {id:31,name:"給死者的往返明信片",nameJP:"死者への往復葉書",rarity:"S",img:"031給死者的往返明信片.jpg"},
+  {id:32,name:"黃鶯糖",nameJP:"ウグイスキャンディー",rarity:"B",img:"032黃鶯糖.jpg"},
+  {id:33,name:"荷爾蒙餅乾",nameJP:"ホルモンクッキー",rarity:"S",img:"033荷爾蒙巧克力.jpg"},
+  {id:34,name:"萬能問卷",nameJP:"なんでもアンケート",rarity:"B",img:"034不管什麼問卷.jpg"},
+  {id:35,name:"變色龍貓",nameJP:"カメレオンキャット",rarity:"S",img:"035變色龍貓.jpg"},
+  {id:36,name:"循環回收房",nameJP:"リサイクルルーム",rarity:"S",img:"036循環回收房.jpg"},
+  {id:37,name:"超一流運動員之蛋",nameJP:"超一流スポーツ選手の卵",rarity:"B",img:"037超一流運動選手之蛋.jpg"},
+  {id:38,name:"超一流藝術家之蛋",nameJP:"超一流アーティストの卵",rarity:"B",img:"038超一流藝術家之蛋.jpg"},
+  {id:39,name:"大政治家之蛋",nameJP:"大物政治家の卵",rarity:"B",img:"039大政治家之蛋.jpg"},
+  {id:40,name:"超一流音樂家之蛋",nameJP:"超一流ミュージシャンの卵",rarity:"B",img:"040超一流音樂家之蛋.jpg"},
+  {id:41,name:"超一流飛行員之蛋",nameJP:"超一流パイロットの卵",rarity:"B",img:"041超一流飛行員之蛋.jpg"},
+  {id:42,name:"超一流作家之蛋",nameJP:"超一流作家の卵",rarity:"B",img:"042超一流作家之蛋.jpg"},
+  {id:43,name:"大賭徒之蛋",nameJP:"大ギャンブラーの卵",rarity:"B",img:"043大賭徒之蛋.jpg"},
+  {id:44,name:"大演員之蛋",nameJP:"大俳優の卵",rarity:"B",img:"044大演員之蛋.jpg"},
+  {id:45,name:"大社長之蛋",nameJP:"大社長の卵",rarity:"B",img:"045大社長之蛋.jpg"},
+  {id:46,name:"金粉少女",nameJP:"金粉少女",rarity:"A",img:"046金粉少女.jpg"},
+  {id:47,name:"睡眠少女",nameJP:"睡眠少女",rarity:"A",img:"047睡眠少女.jpg"},
+  {id:48,name:"芬芳少女",nameJP:"発香少女",rarity:"A",img:"048芬芳少女.jpg"},
+  {id:49,name:"掌上人魚",nameJP:"手乗り人魚",rarity:"A",img:"049掌上人魚.jpg"},
+  {id:50,name:"掌上恐龍",nameJP:"手乗りザウルス",rarity:"A",img:"050掌上恐龍.jpg"},
+  {id:51,name:"掌上龍",nameJP:"手乗りドラゴン",rarity:"S",img:"051掌上龍.jpg"},
+  {id:52,name:"珍珠蝗蟲",nameJP:"真珠蝗",rarity:"B",img:"052珍珠蝗蟲.jpg"},
+  {id:53,name:"白色帝王鍬形蟲",nameJP:"キングホワイトオオクワガタ",rarity:"A",img:"053白色帝王鍬形蟲.jpg"},
+  {id:54,name:"千年鳳蝶",nameJP:"千年アゲハ",rarity:"A",img:"054千年鳳蝶.jpg"},
+  {id:55,name:"復仇商店",nameJP:"仕返し商店",rarity:"A",img:"055復仇商店.jpg"},
+  {id:56,name:"回憶攝影館",nameJP:"思い出写真館",rarity:"B",img:"056回憶攝影館.jpg"},
+  {id:57,name:"隱居地產",nameJP:"隠れ家不動産",rarity:"A",img:"057隱居地產.jpg"},
+  {id:58,name:"出租秘密影視店",nameJP:"レンタル秘密ビデオ店",rarity:"A",img:"058出租秘密影視店.jpg"},
+  {id:59,name:"即席外語學校",nameJP:"即席外語スクール",rarity:"A",img:"059即席外語學校.jpg"},
+  {id:60,name:"失物快遞",nameJP:"失し物宅配便",rarity:"B",img:"060失物快遞.jpg"},
+  {id:61,name:"投幣檢查",nameJP:"コインドック",rarity:"A",img:"061投幣檢查.jpg"},
+  {id:62,name:"會所大王",nameJP:"クラブ王様",rarity:"B",img:"062會所大王.jpg"},
+  {id:63,name:"虛擬餐廳",nameJP:"バーチャルレストラン",rarity:"B",img:"063虛擬餐廳.jpg"},
+  {id:64,name:"魔女的媚藥",nameJP:"魔女の媚薬",rarity:"B",img:"064魔女的媚藥.jpg"},
+  {id:65,name:"魔女的返老還童藥",nameJP:"魔女の若返り薬",rarity:"S",img:"065魔女的返老還童藥.jpg"},
+  {id:66,name:"魔女的瘦身藥",nameJP:"魔女の痩せ薬",rarity:"B",img:"066魔女的瘦身藥.jpg"},
+  {id:67,name:"長老的增高藥",nameJP:"長老の背伸び薬",rarity:"B",img:"067長老的增高藥.jpg"},
+  {id:68,name:"長老的精力增強劑",nameJP:"長老の精力増強剤",rarity:"A",img:"068長老的精力增強藥.jpg"},
+  {id:69,name:"長老的生毛藥",nameJP:"長老の毛生え薬",rarity:"B",img:"069長老的生毛藥.jpg"},
+  {id:70,name:"瘋狂博士的肌肉增強劑",nameJP:"マッド博士の筋肉増強剤",rarity:"A",img:"070瘋狂博士的肌肉增強劑.jpg"},
+  {id:71,name:"瘋狂博士的費洛蒙劑",nameJP:"マッド博士のフェロモン剤",rarity:"A",img:"071瘋狂博士的費洛蒙劑.jpg"},
+  {id:72,name:"瘋狂博士的整型機器",nameJP:"マッド博士の整形マシーン",rarity:"A",img:"072瘋狂博士的整容機器.jpg"},
+  {id:73,name:"黑暗的翡翠",nameJP:"闇のヒスイ",rarity:"A",img:"073黑暗的翡翠.jpg"},
+  {id:74,name:"賢者的海藍寶石",nameJP:"賢者のアクアマリン",rarity:"A",img:"074賢者的海藍寶石.jpg"},
+  {id:75,name:"奇運亞歷山大變色石",nameJP:"奇運アレキサンドライト",rarity:"A",img:"075奇運亞歷山大變色石.jpg"},
+  {id:76,name:"流浪紅寶石",nameJP:"さまようルビー",rarity:"B",img:"076流浪紅寶石.jpg"},
+  {id:77,name:"呼喚美麗的祖母綠",nameJP:"美を呼ぶエメラルド",rarity:"S",img:"077呼喚美麗的綠柱石.jpg"},
+  {id:78,name:"孤獨的藍寶石",nameJP:"孤独なサファイヤ",rarity:"B",img:"078孤獨的藍寶石.jpg"},
+  {id:79,name:"彩虹鑽石",nameJP:"レインボーダイヤ",rarity:"A",img:"079彩虹鑽石.jpg"},
+  {id:80,name:"浮游石",nameJP:"浮遊石",rarity:"S",img:"080浮游石.jpg"},
+  {id:81,name:"藍色行星",nameJP:"ブループラネット",rarity:"SS",img:"081藍色行星.jpg"},
+  {id:82,name:"天懲之杖",nameJP:"天罰の杖",rarity:"A",img:"082天懲之杖.jpg"},
+  {id:83,name:"真實之劍",nameJP:"真実の剣",rarity:"B",img:"083真實之劍.jpg"},
+  {id:84,name:"聖騎士的首飾",nameJP:"聖騎士の首飾り",rarity:"D",img:"084聖騎士的首飾.jpg"},
+  {id:85,name:"替身之鎧",nameJP:"身代わりの鎧",rarity:"S",img:"085替身之鎧.jpg"},
+  {id:86,name:"挫折之弓",nameJP:"挫折の弓",rarity:"A",img:"086挫折之弓.jpg"},
+  {id:87,name:"信念之盾",nameJP:"信念の盾",rarity:"S",img:"087信念之盾.jpg"},
+  {id:88,name:"不死的大金槌",nameJP:"不死の大金槌",rarity:"A",img:"088不死的大金錘.jpg"},
+  {id:89,name:"稅務長的護手",nameJP:"税務長の籠手",rarity:"A",img:"089稅務長的護手.jpg"},
+  {id:90,name:"記憶的頭盔",nameJP:"記憶の兜",rarity:"A",img:"090記憶頭盔.jpg"},
+  {id:91,name:"塑膠大王",nameJP:"プラキング",rarity:"A",img:"091塑膠大王.jpg"},
+  {id:92,name:"替身車票",nameJP:"影武者切符",rarity:"S",img:"092替身票.jpg"},
+  {id:93,name:"人生圖鑑",nameJP:"人生図鑑",rarity:"B",img:"093人生圖鑑.jpg"},
+  {id:94,name:"盜賊之劍",nameJP:"盗賊の剣",rarity:"S",img:"094盜賊之劍.jpg"},
+  {id:95,name:"秘密斗篷",nameJP:"秘密のマント",rarity:"A",img:"095秘密斗蓬.jpg"},
+  {id:96,name:"千里眼之蛇",nameJP:"千里眼の蛇",rarity:"A",img:"096千里眼之蛇.jpg"},
+  {id:97,name:"3D相機",nameJP:"3Dカメラ",rarity:"A",img:"097立體相機.jpg"},
+  {id:98,name:"銀犬",nameJP:"シルバードッグ",rarity:"S",img:"098銀犬.jpg"},
+  {id:99,name:"傭人熊貓",nameJP:"メイドパンダ",rarity:"S",img:"099傭人熊貓.jpg"},
+  {id:163,name:"生病的村民",nameJP:"病気の村人",rarity:"F",img:"163生病的村民.png"},
+  {id:263,name:"健康的村民",nameJP:"元気な村人",rarity:"C",img:"263健康的村民.png"},
+  {id:1006,name:"掏摸",nameJP:"掏摸",rarity:"F",img:"1006掏摸.png"},
+  {id:1010,name:"擬態",nameJP:"擬態",rarity:"A",img:"1010擬態.png"},
+  {id:1011,name:"複製",nameJP:"複製",rarity:"D",img:"1011複製.png"},
+  {id:1018,name:"徵收",nameJP:"徴収",rarity:"B",img:"1018徵收.png"},
+  {id:1020,name:"贗品",nameJP:"贋作",rarity:"C",img:"1020贗品.png"},
+  {id:1021,name:"強奪",nameJP:"強奪",rarity:"B",img:"1021強奪.png"},
+  {id:1032,name:"寶籤",nameJP:"宝籤",rarity:"G",img:"1032寶籤.png"},
+  {id:1035,name:"堅牢",nameJP:"堅牢",rarity:"S",img:"1035堅牢.png"},
+  {id:1036,name:"神眼",nameJP:"神眼",rarity:"S",img:"1036神眼.png"},
+  {id:1038,name:"名簿",nameJP:"名簿",rarity:"G",img:"1038名簿.png"},
+  {id:1039,name:"同行",nameJP:"同行",rarity:"F",img:"1039同行.png"},
 ];
 
 const SPELL_IDS   = new Set([-3,1006,1010,1011,1018,1020,1021,1032,1035,1036,1038,1039]);
 const VILLAGE_IDS = new Set([163,263]);
 const FREE_POCKET_IDS = new Set([...SPELL_IDS,...VILLAGE_IDS]);
 const STORY_IDS   = new Set([0,2,17,25,46,53,75,79,81,83,84,89,90,-3,163,263,1011,1032,1035,1039]);
-
-// FIX #8: 預先排序靜態資料，避免每次 render 重複 sort
-function getSortValue(id) { return id === -3 ? 100 : id; }
-const CARDS_SORTED = [...CARDS].sort((a,b) => getSortValue(a.id) - getSortValue(b.id));
-
-const GROUP_LABELS_RARITY = {
-  SS:'✦ G.I 入手難度 SS', S:'★ G.I 入手難度 S', A:'◆ G.I 入手難度 A', B:'◇ G.I 入手難度 B',
-  C:'○ G.I 入手難度 C', D:'· G.I 入手難度 D', FP:'🎴 自由口袋'
-};
-const GROUP_LABELS_ID = { DP:'📘 指定口袋 (No.000 - No.099)', FP:'🎴 自由口袋' };
-
-function cardGroup(c, mode) { return mode==='id' ? ((c.id>=0&&c.id<=99)?'DP':'FP') : (FREE_POCKET_IDS.has(c.id)?'FP':c.rarity); }
-
-// FIX #3: escH 定義為獨立函式，所有地方統一呼叫，不在 onclick 屬性內序列化物件
-function escH(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-window.escH = escH;
+function getSortValue(id){return id===-3?100:id;}
+const CARDS_SORTED=[...CARDS].sort((a,b)=>getSortValue(a.id)-getSortValue(b.id));
+const GROUP_LABELS_RARITY={SS:'✦ SS',S:'★ S',A:'◆ A',B:'◇ B',C:'○ C',D:'· D',FP:'🎴 自由口袋'};
+const GROUP_LABELS_ID={DP:'📘 指定口袋 (No.000~099)',FP:'🎴 自由口袋'};
+function cardGroup(c,mode){return mode==='id'?((c.id>=0&&c.id<=99)?'DP':'FP'):(FREE_POCKET_IDS.has(c.id)?'FP':c.rarity);}
+function escH(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+window.escH=escH;
 
 // ==================== STATE ====================
 let S = {
-  user: null, nickname:'', contact:'', location:'未設定', canShip:false, canMeet:false,
-  have: new Set(), want: new Set(),
-  view: 'cards',
-  filter: { search:'', status:'all', rarity:'all', story:false, sortMode: localStorage.getItem('gi_sort')||'id' },
-  collapsed: {},
-  boardUsers: [],
-  chats: JSON.parse(localStorage.getItem('gi_chats')||'{}'),
-  activeChatUser: null,
-  unsaved: false   // FIX #11
+  user:null, nickname:'', contact:'', location:'未設定', canShip:false, canMeet:false,
+  have:new Set(), want:new Set(),
+  view:'cards',
+  filter:{search:'',status:'all',rarity:'all',story:false,sortMode:localStorage.getItem('gi_sort')||'id'},
+  collapsed:{},
+  boardUsers:[],
+  // 聊天相關
+  activeThread:null,      // 目前開啟的對話 thread id
+  threads:[],             // 所有對話列表（含最後訊息）
+  threadMessages:[],      // 目前開啟對話的訊息
+  unreadTotal:0,
+  unsaved:false
 };
 
-// FIX #11: 未儲存旗標控制
-function setUnsaved(val) {
-  S.unsaved = val;
-  const b = document.getElementById('unsavedBanner');
-  if (b) b.style.display = val ? 'flex' : 'none';
+function setUnsaved(v){S.unsaved=v;const b=document.getElementById('unsavedBanner');if(b)b.style.display=v?'flex':'none';}
+function userTagsHTML(u){let h='';if(u.location&&u.location!=='未設定')h+=`<span class="user-name-tags">${escH(u.location)}</span>`;if(u.canShip)h+=`<span class="user-name-tags" title="可寄送">📦</span>`;if(u.canMeet)h+=`<span class="user-name-tags" title="可面交">👋</span>`;return h;}
+function fmtTime(ts){if(!ts)return'';const d=ts.toDate?ts.toDate():new Date(ts);const now=new Date();const diff=now-d;if(diff<60000)return'剛剛';if(diff<3600000)return Math.floor(diff/60000)+'分前';if(diff<86400000)return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');return(d.getMonth()+1)+'/'+(d.getDate());}
+function fmtFull(ts){if(!ts)return'';const d=ts.toDate?ts.toDate():new Date(ts);return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;}
+function dateDivider(ts){if(!ts)return'';const d=ts.toDate?ts.toDate():new Date(ts);const now=new Date();if(now.toDateString()===d.toDateString())return'今天';if(new Date(now-86400000).toDateString()===d.toDateString())return'昨天';return `${d.getMonth()+1}月${d.getDate()}日`;}
+
+// ==================== FIREBASE 訂閱管理 ====================
+let boardUnsub=null, threadListUnsub=null, messageUnsub=null;
+function clearAllSubs(){
+  if(boardUnsub){boardUnsub();boardUnsub=null;}
+  if(threadListUnsub){threadListUnsub();threadListUnsub=null;}
+  if(messageUnsub){messageUnsub();messageUnsub=null;}
 }
 
-function userTagsHTML(u) {
-  let h = '';
-  if (u.location && u.location!=='未設定') h += `<span class="user-name-tags">${escH(u.location)}</span>`;
-  if (u.canShip) h += `<span class="user-name-tags" title="可寄送">📦</span>`;
-  if (u.canMeet) h += `<span class="user-name-tags" title="可面交">👋</span>`;
-  return h;
-}
-
-onAuthStateChanged(auth, (user) => {
-  S.user = user;
-  if (user) {
-    const userRef = doc(db,'artifacts',appId,'public','data','board',user.uid);
-    getDoc(userRef).then(snap => {
-      if (snap.exists()) {
-        const d = snap.data();
-        S.nickname = d.nickname||''; S.contact = d.contact||''; S.location = d.location||'未設定';
-        S.canShip = d.canShip||false; S.canMeet = d.canMeet||false;
-        S.have = new Set(d.have||[]); S.want = new Set(d.want||[]);
-      }
-      updateHeader();
-      setUnsaved(false);
-      render();
+onAuthStateChanged(auth,user=>{
+  S.user=user;
+  if(user){
+    console.log('你的 UID（管理員設定用）：', user.uid);
+    const ref=doc(db,'artifacts',appId,'public','data','board',user.uid);
+    getDoc(ref).then(snap=>{
+      if(snap.exists()){const d=snap.data();S.nickname=d.nickname||'';S.contact=d.contact||'';S.location=d.location||'未設定';S.canShip=d.canShip||false;S.canMeet=d.canMeet||false;S.have=new Set(d.have||[]);S.want=new Set(d.want||[]);}
+      updateHeader();setUnsaved(false);render();
     });
     listenToBoard();
+    listenToThreads();
   } else {
-    S.nickname=''; S.location='未設定'; S.canShip=false; S.canMeet=false;
-    S.have=new Set(); S.want=new Set();
-    updateHeader(); render();
-    setTimeout(window.openAuthModal, 500);
+    clearAllSubs();
+    S.nickname='';S.location='未設定';S.canShip=false;S.canMeet=false;S.have=new Set();S.want=new Set();
+    S.threads=[];S.activeThread=null;S.unreadTotal=0;
+    updateHeader();render();
+    setTimeout(window.openAuthModal,500);
   }
 });
 
-// FIX #5: 登出時重置訂閱，重新登入後可重新建立監聽
-let boardUnsubscribe = null;
-function listenToBoard() {
-  if (boardUnsubscribe) { boardUnsubscribe(); boardUnsubscribe = null; }
-  const boardRef = collection(db,'artifacts',appId,'public','data','board');
-  boardUnsubscribe = onSnapshot(boardRef, snap => {
-    S.boardUsers = [];
-    snap.forEach(d => { if (d.id !== S.user?.uid) S.boardUsers.push(d.data()); });
-    if (S.view==='board' || S.view==='match') render();
-  }, err => console.error("看板同步失敗", err));
+function listenToBoard(){
+  if(boardUnsub){boardUnsub();boardUnsub=null;}
+  const ref=collection(db,'artifacts',appId,'public','data','board');
+  boardUnsub=onSnapshot(ref,snap=>{
+    S.boardUsers=[];
+    snap.forEach(d=>{if(d.id!==S.user?.uid)S.boardUsers.push(d.data());});
+    if(S.view==='board'||S.view==='match')render();
+  },err=>console.error('看板同步失敗',err));
 }
 
-async function saveToCloud() {
-  if (!S.user) { window.toast('請先登入！'); window.openAuthModal(); return; }
-  const userRef = doc(db,'artifacts',appId,'public','data','board',S.user.uid);
-  try {
-    await setDoc(userRef, {
-      uid:S.user.uid, nickname:S.nickname, contact:S.contact,
-      location:S.location||'未設定', canShip:!!S.canShip, canMeet:!!S.canMeet,
-      have:Array.from(S.have), want:Array.from(S.want), updatedAt:Date.now()
-    }, {merge:true});
-    setUnsaved(false);
-    window.toast('✅ 你的卡片進度已成功儲存至雲端！');
-  } catch(e) { window.toast('儲存失敗，請重試。'); console.error(e); }
+// ==================== 即時訊息：Thread 列表監聽 ====================
+// Firestore 路徑設計：
+//   /artifacts/{appId}/public/data/threads/{threadId}
+//     - participants: [uid1, uid2]
+//     - lastMsg: string
+//     - lastAt: Timestamp
+//     - unread_{uid}: number（各方未讀計數）
+//
+//   /artifacts/{appId}/public/data/threads/{threadId}/messages/{msgId}
+//     - senderUid: string
+//     - senderName: string
+//     - text: string
+//     - at: Timestamp
+
+function getThreadId(uid1,uid2){return [uid1,uid2].sort().join('_');}
+
+function listenToThreads(){
+  if(threadListUnsub){threadListUnsub();threadListUnsub=null;}
+  if(!S.user)return;
+  const threadsRef=collection(db,'artifacts',appId,'public','data','threads');
+  const q=query(threadsRef,where('participants','array-contains',S.user.uid),orderBy('lastAt','desc'));
+  threadListUnsub=onSnapshot(q,snap=>{
+    S.threads=[];
+    let unread=0;
+    snap.forEach(d=>{
+      const t={id:d.id,...d.data()};
+      const myUnread=t[`unread_${S.user.uid}`]||0;
+      t.myUnread=myUnread;
+      unread+=myUnread;
+      S.threads.push(t);
+    });
+    S.unreadTotal=unread;
+    updateUnreadDot();
+    if(S.view==='inbox')render();
+  },err=>console.error('Thread 同步失敗',err));
+}
+
+function listenToMessages(threadId){
+  if(messageUnsub){messageUnsub();messageUnsub=null;}
+  if(!threadId)return;
+  const msgsRef=collection(db,'artifacts',appId,'public','data','threads',threadId,'messages');
+  const q=query(msgsRef,orderBy('at','asc'));
+  messageUnsub=onSnapshot(q,snap=>{
+    S.threadMessages=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(S.view==='inbox') renderChatPanel();
+    else scrollChatToBottom();
+  },err=>console.error('訊息同步失敗',err));
+}
+
+function updateUnreadDot(){
+  const dot=document.getElementById('navUnreadDot');
+  if(dot)dot.classList.toggle('show',S.unreadTotal>0);
+}
+
+// ==================== 訊息操作 ====================
+async function sendMessage(text){
+  if(!S.user||!S.activeThread||!text.trim())return;
+  const threadId=S.activeThread;
+  const threadRef=doc(db,'artifacts',appId,'public','data','threads',threadId);
+  const threadSnap=await getDoc(threadRef);
+  const thread=threadSnap.data();
+  const otherUid=thread.participants.find(u=>u!==S.user.uid);
+
+  // 寫入訊息
+  await addDoc(collection(db,'artifacts',appId,'public','data','threads',threadId,'messages'),{
+    senderUid:S.user.uid, senderName:S.nickname||'玩家',
+    text:text.trim(), at:serverTimestamp()
+  });
+  // 更新 thread 摘要 + 對方未讀 +1
+  await updateDoc(threadRef,{
+    lastMsg:text.trim().slice(0,60),
+    lastAt:serverTimestamp(),
+    [`unread_${otherUid}`]:(thread[`unread_${otherUid}`]||0)+1,
+    [`unread_${S.user.uid}`]:0
+  });
+}
+
+async function markThreadRead(threadId){
+  if(!S.user||!threadId)return;
+  const threadRef=doc(db,'artifacts',appId,'public','data','threads',threadId);
+  try{await updateDoc(threadRef,{[`unread_${S.user.uid}`]:0});}catch(e){}
+}
+
+async function getOrCreateThread(otherUid){
+  const threadId=getThreadId(S.user.uid,otherUid);
+  const threadRef=doc(db,'artifacts',appId,'public','data','threads',threadId);
+  const snap=await getDoc(threadRef);
+  if(!snap.exists()){
+    // 找對方暱稱
+    const otherRef=doc(db,'artifacts',appId,'public','data','board',otherUid);
+    const otherSnap=await getDoc(otherRef);
+    const otherName=otherSnap.exists()?otherSnap.data().nickname||'玩家':'玩家';
+    await setDoc(threadRef,{
+      participants:[S.user.uid,otherUid],
+      names:{[S.user.uid]:S.nickname||'玩家',[otherUid]:otherName},
+      lastMsg:'',lastAt:serverTimestamp(),
+      [`unread_${S.user.uid}`]:0,[`unread_${otherUid}`]:0
+    });
+  }
+  return threadId;
+}
+
+// ==================== CLOUD SAVE ====================
+async function saveToCloud(){
+  if(!S.user){window.toast('請先登入！');window.openAuthModal();return;}
+  const ref=doc(db,'artifacts',appId,'public','data','board',S.user.uid);
+  try{
+    await setDoc(ref,{uid:S.user.uid,nickname:S.nickname,contact:S.contact,location:S.location||'未設定',canShip:!!S.canShip,canMeet:!!S.canMeet,have:Array.from(S.have),want:Array.from(S.want),updatedAt:Date.now()},{merge:true});
+    setUnsaved(false);window.toast('✅ 卡片進度已儲存至雲端！');
+  }catch(e){window.toast('儲存失敗，請重試。');console.error(e);}
 }
 
 // ==================== CARD HELPERS ====================
-function fmtId(id) { return id<0||id>=1000 ? `#${id}` : `#${String(id).padStart(3,'0')}`; }
-function cardLabel(id) { const c=CARDS.find(c=>c.id===id); return c?`${fmtId(id)} ${c.name}`:`#${id}`; }
-function rarityClass(r) { return r==='F'||r==='G'||r==='-'?'rarity-dsh':`rarity-${r}`; }
+function fmtId(id){return id<0||id>=1000?`#${id}`:`#${String(id).padStart(3,'0')}`;}
+function cardLabel(id){const c=CARDS.find(c=>c.id===id);return c?`${fmtId(id)} ${c.name}`:`#${id}`;}
+function rarityClass(r){return r==='F'||r==='G'||r==='-'?'rarity-dsh':`rarity-${r}`;}
 
-function cardHTML(card) {
-  const h=S.have.has(card.id), w=S.want.has(card.id);
-  let cls='card-item'; if(h) cls+=' have'; if(w) cls+=' want';
-  const subBadge = SPELL_IDS.has(card.id) ? '<div class="sub-badge sub-spell">咒語</div>'
-                 : VILLAGE_IDS.has(card.id) ? '<div class="sub-badge sub-village">村民</div>' : '';
-  const storyCorner = STORY_IDS.has(card.id) ? '<div class="story-corner"></div>' : '';
-  const rarityLabel = card.rarity==='-'?'─':card.rarity;
+function cardHTML(card){
+  const h=S.have.has(card.id),w=S.want.has(card.id);
+  let cls='card-item';if(h)cls+=' have';if(w)cls+=' want';
+  const sub=SPELL_IDS.has(card.id)?'<div class="sub-badge sub-spell">咒語</div>':VILLAGE_IDS.has(card.id)?'<div class="sub-badge sub-village">村民</div>':'';
+  const sc=STORY_IDS.has(card.id)?'<div class="story-corner"></div>':'';
   return `<div class="${cls}" data-id="${card.id}">
     <div class="card-img-wrap">
       <img src="cards/${card.img}" alt="${card.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="card-no-img">🃏</div>
-      <div class="card-rarity-badge ${rarityClass(card.rarity)}">${rarityLabel}</div>
-      ${subBadge}${storyCorner}
-      <div class="card-status-badges">
-        ${h?'<div class="status-badge have-badge">有</div>':''}
-        ${w?'<div class="status-badge want-badge">要</div>':''}
-      </div>
+      <div class="card-rarity-badge ${rarityClass(card.rarity)}">${card.rarity==='-'?'─':card.rarity}</div>
+      ${sub}${sc}
+      <div class="card-status-badges">${h?'<div class="status-badge have-badge">有</div>':''}${w?'<div class="status-badge want-badge">要</div>':''}</div>
     </div>
     <div class="card-info">
       <div class="card-num">${fmtId(card.id)}</div>
@@ -457,320 +615,468 @@ function cardHTML(card) {
   </div>`;
 }
 
-// ==================== VIEWS ====================
-// FIX #8: 使用預排序的 CARDS_SORTED，不再每次重新 sort
-function filteredCards() {
-  const q = S.filter.search.toLowerCase();
-  return CARDS_SORTED.filter(c => {
-    if (q && !c.name.toLowerCase().includes(q) && !c.nameJP.toLowerCase().includes(q) && !String(c.id).includes(q)) return false;
-    if (S.filter.rarity!=='all' && cardGroup(c,'rarity')!==S.filter.rarity) return false;
-    if (S.filter.status==='have'    && !S.have.has(c.id)) return false;
-    if (S.filter.status==='want'    && !S.want.has(c.id)) return false;
-    if (S.filter.status==='neither' && (S.have.has(c.id)||S.want.has(c.id))) return false;
-    if (S.filter.story && !STORY_IDS.has(c.id)) return false;
+// ==================== VIEW: CARDS ====================
+function filteredCards(){
+  const q=S.filter.search.toLowerCase();
+  return CARDS_SORTED.filter(c=>{
+    if(q&&!c.name.toLowerCase().includes(q)&&!c.nameJP.toLowerCase().includes(q)&&!String(c.id).includes(q))return false;
+    if(S.filter.rarity!=='all'&&cardGroup(c,'rarity')!==S.filter.rarity)return false;
+    if(S.filter.status==='have'&&!S.have.has(c.id))return false;
+    if(S.filter.status==='want'&&!S.want.has(c.id))return false;
+    if(S.filter.status==='neither'&&(S.have.has(c.id)||S.want.has(c.id)))return false;
+    if(S.filter.story&&!STORY_IDS.has(c.id))return false;
     return true;
   });
 }
 
-function renderCards() {
-  if (!S.user) return `<div class="empty-state"><div class="icon">🔒</div><h3>請先登入</h3><p>登入後即可開始建立你的交換清單</p><button class="btn-primary" style="width:200px;margin-top:20px" onclick="window.openAuthModal()">立即登入</button></div>`;
-  const list = filteredCards();
-  const groups = {};
-  list.forEach(c => { const g=cardGroup(c,S.filter.sortMode); if(!groups[g]) groups[g]=[]; groups[g].push(c); });
-  const currentOrder  = S.filter.sortMode==='id' ? ['DP','FP'] : ['SS','S','A','B','C','D','FP'];
-  const currentLabels = S.filter.sortMode==='id' ? GROUP_LABELS_ID : GROUP_LABELS_RARITY;
-  let html = '';
-  currentOrder.forEach(g => {
-    if (!groups[g]||!groups[g].length) return;
-    const col = S.collapsed[g];
-    let gridHtml = '';
-    if (g==='FP' && !col) {
-      const spells=groups[g].filter(c=>SPELL_IDS.has(c.id)), village=groups[g].filter(c=>VILLAGE_IDS.has(c.id)), other=groups[g].filter(c=>!SPELL_IDS.has(c.id)&&!VILLAGE_IDS.has(c.id));
-      if (spells.length)  gridHtml+=`<div style="font-size:11px;color:#a060e0;margin-bottom:6px;margin-top:4px;font-weight:600">⚡ 咒語（${spells.length}）</div><div class="card-grid" style="margin-bottom:14px">${spells.map(cardHTML).join('')}</div>`;
-      if (village.length) gridHtml+=`<div style="font-size:11px;color:#ffc870;margin-bottom:6px;font-weight:600">🏘 村民（${village.length}）</div><div class="card-grid" style="margin-bottom:14px">${village.map(cardHTML).join('')}</div>`;
-      if (other.length)   gridHtml+=`<div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;font-weight:600">其他（${other.length}）</div><div class="card-grid">${other.map(cardHTML).join('')}</div>`;
-    } else if (!col) { gridHtml=`<div class="card-grid">${groups[g].map(cardHTML).join('')}</div>`; }
-    html+=`<div class="section-group rg-${g}"><div class="section-group-header" onclick="window.toggleGroup('${g}')"><h3>${currentLabels[g]||g} <span class="cnt">(${groups[g].length})</span></h3><span class="tog">${col?'▶':'▼'}</span></div>${gridHtml}</div>`;
+function renderCards(){
+  if(!S.user)return`<div class="empty-state"><div class="icon">🔒</div><h3>請先登入</h3><p>登入後即可開始建立交換清單</p><button class="btn-primary" style="width:200px;margin-top:20px" onclick="window.openAuthModal()">立即登入</button></div>`;
+  const list=filteredCards();
+  const groups={};
+  list.forEach(c=>{const g=cardGroup(c,S.filter.sortMode);if(!groups[g])groups[g]=[];groups[g].push(c);});
+  const ord=S.filter.sortMode==='id'?['DP','FP']:['SS','S','A','B','C','D','FP'];
+  const lbls=S.filter.sortMode==='id'?GROUP_LABELS_ID:GROUP_LABELS_RARITY;
+  let html='';
+  ord.forEach(g=>{
+    if(!groups[g]?.length)return;
+    const col=S.collapsed[g];
+    let grid='';
+    if(g==='FP'&&!col){
+      const sp=groups[g].filter(c=>SPELL_IDS.has(c.id)),vi=groups[g].filter(c=>VILLAGE_IDS.has(c.id)),ot=groups[g].filter(c=>!SPELL_IDS.has(c.id)&&!VILLAGE_IDS.has(c.id));
+      if(sp.length)grid+=`<div style="font-size:11px;color:#a060e0;margin-bottom:6px;font-weight:600">⚡ 咒語（${sp.length}）</div><div class="card-grid" style="margin-bottom:14px">${sp.map(cardHTML).join('')}</div>`;
+      if(vi.length)grid+=`<div style="font-size:11px;color:#ffc870;margin-bottom:6px;font-weight:600">🏘 村民（${vi.length}）</div><div class="card-grid" style="margin-bottom:14px">${vi.map(cardHTML).join('')}</div>`;
+      if(ot.length)grid+=`<div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;font-weight:600">其他（${ot.length}）</div><div class="card-grid">${ot.map(cardHTML).join('')}</div>`;
+    }else if(!col){grid=`<div class="card-grid">${groups[g].map(cardHTML).join('')}</div>`;}
+    html+=`<div class="section-group rg-${g}"><div class="section-group-header" onclick="window.toggleGroup('${g}')"><h3>${lbls[g]||g} <span class="cnt">(${groups[g].length})</span></h3><span class="tog">${col?'▶':'▼'}</span></div>${grid}</div>`;
   });
-  return `
-    <div class="filter-bar">
-      <div class="sort-group">
-        <button class="filter-btn ${S.filter.sortMode==='id'?'active':''}" onclick="window.setFilter('sortMode','id')">🔢 按編號排列</button>
-        <button class="filter-btn ${S.filter.sortMode==='rarity'?'active':''}" onclick="window.setFilter('sortMode','rarity')">⭐ 按入手難度排列</button>
-      </div>
-      <input type="text" placeholder="🔍 搜尋卡片名稱或編號…" value="${S.filter.search}" oninput="window.setFilter('search',this.value)">
-      <button class="filter-btn ${S.filter.status==='all'?'active':''}" onclick="window.setFilter('status','all')">全部</button>
-      <button class="filter-btn ${S.filter.status==='have'?'have-active':''}" onclick="window.setFilter('status','have')">✓ 我有的</button>
-      <button class="filter-btn ${S.filter.status==='want'?'want-active':''}" onclick="window.setFilter('status','want')">♥ 我要的</button>
-      <select class="filter-select" onchange="window.setFilter('rarity',this.value)"><option value="all">全部分類</option>${['SS','S','A','B','C','D','FP'].map(g=>`<option value="${g}" ${S.filter.rarity===g?'selected':''}>${GROUP_LABELS_RARITY[g]||g}</option>`).join('')}</select>
-      <button class="btn-secondary" style="margin-left:auto;background:var(--gold);color:#000;font-weight:bold" onclick="window.manualSave()">☁️ 儲存至雲端</button>
+  return`<div class="filter-bar">
+    <div class="sort-group">
+      <button class="filter-btn ${S.filter.sortMode==='id'?'active':''}" onclick="window.setFilter('sortMode','id')">🔢 按編號</button>
+      <button class="filter-btn ${S.filter.sortMode==='rarity'?'active':''}" onclick="window.setFilter('sortMode','rarity')">⭐ 按稀有度</button>
     </div>
-    <div class="stats-bar">
-      <div class="stat-item"><div class="stat-dot" style="background:#555"></div>共 ${CARDS.length} 張</div>
-      <div class="stat-item"><div class="stat-dot" style="background:var(--green)"></div>我有 <strong style="color:var(--green-light);margin-left:3px">${S.have.size}</strong> 張</div>
-      <div class="stat-item"><div class="stat-dot" style="background:var(--red)"></div>我要 <strong style="color:#ff7070;margin-left:3px">${S.want.size}</strong> 張</div>
-      <div class="stat-item" style="margin-left:auto;color:var(--text-dim)">顯示 ${list.length} 張</div>
-    </div>
-    ${list.length===0?'<div class="empty-state"><div class="icon">🃏</div><h3>沒有符合條件的卡片</h3></div>':html}`;
+    <input type="text" placeholder="🔍 搜尋名稱或編號…" value="${S.filter.search}" oninput="window.setFilter('search',this.value)">
+    <button class="filter-btn ${S.filter.status==='all'?'active':''}" onclick="window.setFilter('status','all')">全部</button>
+    <button class="filter-btn ${S.filter.status==='have'?'have-active':''}" onclick="window.setFilter('status','have')">✓ 我有的</button>
+    <button class="filter-btn ${S.filter.status==='want'?'want-active':''}" onclick="window.setFilter('status','want')">♥ 我要的</button>
+    <select class="filter-select" onchange="window.setFilter('rarity',this.value)"><option value="all">全部分類</option>${['SS','S','A','B','C','D','FP'].map(g=>`<option value="${g}" ${S.filter.rarity===g?'selected':''}>${GROUP_LABELS_RARITY[g]||g}</option>`).join('')}</select>
+    <button class="btn-secondary" style="margin-left:auto;background:var(--gold);color:#000;font-weight:bold" onclick="window.manualSave()">☁️ 儲存</button>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-dot" style="background:#555"></div>共 ${CARDS.length} 張</div>
+    <div class="stat-item"><div class="stat-dot" style="background:var(--green)"></div>我有 <strong style="color:var(--green-light);margin-left:3px">${S.have.size}</strong></div>
+    <div class="stat-item"><div class="stat-dot" style="background:var(--red)"></div>我要 <strong style="color:#ff7070;margin-left:3px">${S.want.size}</strong></div>
+    <div class="stat-item" style="margin-left:auto">顯示 ${list.length} 張</div>
+  </div>
+  ${list.length===0?'<div class="empty-state"><div class="icon">🃏</div><h3>沒有符合條件的卡片</h3></div>':html}`;
 }
 
-function renderBoard() {
-  if (!S.user) return `<div class="empty-state"><div class="icon">🔒</div><h3>請先登入</h3><p>登入後才能查看線上交換看板</p></div>`;
-  const scored = S.boardUsers.map(u => {
-    const uH=new Set(u.have||[]), uW=new Set(u.want||[]);
-    const theyHaveIWant=[...S.want].filter(id=>uH.has(id)).length;
-    const iHaveTheyWant=[...uW].filter(id=>S.have.has(id)).length;
-    return {...u, theyHaveIWant, iHaveTheyWant, score:theyHaveIWant+iHaveTheyWant};
+// ==================== VIEW: BOARD ====================
+function renderBoard(){
+  if(!S.user)return`<div class="empty-state"><div class="icon">🔒</div><h3>請先登入</h3></div>`;
+  const scored=S.boardUsers.map(u=>{
+    const uH=new Set(u.have||[]),uW=new Set(u.want||[]);
+    const a=[...S.want].filter(id=>uH.has(id)).length,b=[...uW].filter(id=>S.have.has(id)).length;
+    return{...u,theyHaveIWant:a,iHaveTheyWant:b,score:a+b};
   }).sort((a,b)=>b.score-a.score);
-
-  // FIX #3: 改用 data-uid 屬性，避免 JSON 序列化注入
-  const userRows = scored.map(u => {
-    const mCls=(u.theyHaveIWant>0&&u.iHaveTheyWant>0)?'match-perfect':(u.score>0)?'match-good':'';
-    const mLabel=mCls==='match-perfect'?'🔥 雙向':mCls==='match-good'?'✨ 單向':'—';
-    return `<div class="user-card ${mCls}" data-uid="${escH(u.uid)}" onclick="window.showUserByUid(this.dataset.uid)">
+  const rows=scored.map(u=>{
+    const mc=(u.theyHaveIWant>0&&u.iHaveTheyWant>0)?'match-perfect':(u.score>0)?'match-good':'';
+    const ml=mc==='match-perfect'?'🔥 雙向':mc==='match-good'?'✨ 單向':'—';
+    return`<div class="user-card ${mc}" data-uid="${escH(u.uid)}" onclick="window.showUserByUid(this.dataset.uid)">
       <div class="user-avatar-lg">${escH((u.nickname||'?')[0])}</div>
       <div class="user-details">
         <div class="user-name">${escH(u.nickname)}${userTagsHTML(u)}</div>
-        <div class="user-stats">
-          <span>✓ 有 <strong style="color:var(--green-light)">${u.have?.length||0}</strong></span>
-          <span>♥ 要 <strong style="color:#ff7070">${u.want?.length||0}</strong></span>
-          ${u.contact?`<span>📬 ${escH(u.contact)}</span>`:''}
-        </div>
+        <div class="user-stats"><span>✓ 有 <strong style="color:var(--green-light)">${u.have?.length||0}</strong></span><span>♥ 要 <strong style="color:#ff7070">${u.want?.length||0}</strong></span>${u.contact?`<span>📬 ${escH(u.contact)}</span>`:''}</div>
       </div>
-      <div class="match-score"><div class="match-label">${mLabel}</div><div class="match-value">${u.score>0?u.score+' 項':'-'}</div></div>
+      <div class="match-score"><div class="match-label">${ml}</div><div class="match-value">${u.score>0?u.score+' 項':'-'}</div></div>
     </div>`;
   }).join('');
-
-  return `<div class="board-container">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <div><h3>📡 即時線上看板</h3><p style="font-size:12px;color:var(--text-dim);">此看板會自動顯示目前所有註冊玩家的卡片需求。</p></div>
-      <!-- FIX #1: 修正呼叫名稱為 openProfileEditModal -->
-      <button class="btn-secondary" onclick="window.openProfileEditModal()">✏️ 編輯我的資料</button>
+  return`<div class="board-container">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div><h3>📡 即時線上看板</h3><p style="font-size:12px;color:var(--text-dim)">自動顯示所有已登記玩家的交換需求</p></div>
+      <button class="btn-secondary" onclick="window.openProfileEditModal()">✏️ 我的資料</button>
     </div>
-    <div class="user-list">${scored.length===0?'<div class="empty-state"><div class="icon">👥</div><h3>看板目前沒有其他玩家</h3></div>':userRows}</div>
+    <div class="user-list">${scored.length===0?'<div class="empty-state"><div class="icon">👥</div><h3>目前沒有其他玩家</h3></div>':rows}</div>
   </div>`;
 }
 
-function renderMatch() {
-  if (!S.user) return `<div class="empty-state"><div class="icon">🔒</div><h3>請先登入</h3></div>`;
-  const perfect = S.boardUsers.filter(u => {
-    const uH=new Set(u.have||[]), uW=new Set(u.want||[]);
-    return [...S.want].some(id=>uH.has(id)) && [...uW].some(id=>S.have.has(id));
+// ==================== VIEW: MATCH ====================
+function renderMatch(){
+  if(!S.user)return`<div class="empty-state"><div class="icon">🔒</div><h3>請先登入</h3></div>`;
+  const perfect=S.boardUsers.filter(u=>{
+    const uH=new Set(u.have||[]),uW=new Set(u.want||[]);
+    return[...S.want].some(id=>uH.has(id))&&[...uW].some(id=>S.have.has(id));
   });
-  if (!S.have.size&&!S.want.size) return `<div class="empty-state"><div class="icon">📋</div><h3>尚未設定卡片清單</h3></div>`;
-  if (!perfect.length) return `<div class="empty-state"><div class="icon">🔍</div><h3>目前沒有雙向配對的玩家</h3></div>`;
-  const cards = perfect.map(u => {
-    const uH=new Set(u.have||[]), uW=new Set(u.want||[]);
-    const theyHave=[...S.want].filter(id=>uH.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
-    const iHave=[...uW].filter(id=>S.have.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
-    return `<div class="match-card">
+  if(!S.have.size&&!S.want.size)return`<div class="empty-state"><div class="icon">📋</div><h3>尚未設定卡片清單</h3></div>`;
+  if(!perfect.length)return`<div class="empty-state"><div class="icon">🔍</div><h3>目前沒有雙向配對的玩家</h3></div>`;
+  const cards=perfect.map(u=>{
+    const uH=new Set(u.have||[]),uW=new Set(u.want||[]);
+    const th=[...S.want].filter(id=>uH.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+    const ih=[...uW].filter(id=>S.have.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+    return`<div class="match-card">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div class="user-avatar-lg">${escH((u.nickname||'?')[0])}</div>
-        <div>
-          <div style="font-weight:bold;font-size:15px;display:flex;align-items:center">${escH(u.nickname)}${userTagsHTML(u)}</div>
-          <div style="font-size:12px;color:var(--text-dim)">${escH(u.contact)||'（未提供聯絡方式）'}</div>
-        </div>
-        <div style="margin-left:auto;text-align:center">
-          <div style="font-size:10px;color:var(--text-dim)">配對強度</div><div style="font-size:22px;color:var(--gold);font-weight:bold">🔥${theyHave.length+iHave.length}</div>
-        </div>
+        <div><div style="font-weight:bold;font-size:15px;display:flex;align-items:center">${escH(u.nickname)}${userTagsHTML(u)}</div>
+          <div style="font-size:12px;color:var(--text-dim)">${escH(u.contact)||'（未提供聯絡方式）'}</div></div>
+        <div style="margin-left:auto;text-align:center"><div style="font-size:10px;color:var(--text-dim)">配對強度</div><div style="font-size:22px;color:var(--gold);font-weight:bold">🔥${th.length+ih.length}</div></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div><div style="font-size:11px;color:var(--green-light);margin-bottom:6px;font-weight:600">✓ 他有・我想要（${theyHave.length}張）</div>${theyHave.map(id=>`<span class="tag-chip tag-have">${cardLabel(id)}</span>`).join('')}</div>
-        <div><div style="font-size:11px;color:#ff7070;margin-bottom:6px;font-weight:600">♥ 我有・他想要（${iHave.length}張）</div>${iHave.map(id=>`<span class="tag-chip tag-want">${cardLabel(id)}</span>`).join('')}</div>
+        <div><div style="font-size:11px;color:var(--green-light);margin-bottom:6px;font-weight:600">✓ 他有・我要（${th.length}張）</div>${th.map(id=>`<span class="tag-chip tag-have">${cardLabel(id)}</span>`).join('')}</div>
+        <div><div style="font-size:11px;color:#ff7070;margin-bottom:6px;font-weight:600">♥ 我有・他要（${ih.length}張）</div>${ih.map(id=>`<span class="tag-chip tag-want">${cardLabel(id)}</span>`).join('')}</div>
       </div>
-      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:flex-end">
-        <!-- FIX #3: data-uid 屬性取代 JSON 字串插入 -->
-        <button class="btn-primary" style="width:auto;padding:8px 20px;font-size:13px;" data-uid="${escH(u.uid)}" onclick="window.startChat(this.dataset.uid)">💬 發起交換私訊</button>
+      <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:flex-end">
+        <button class="btn-primary" style="width:auto;padding:8px 20px;font-size:13px" data-uid="${escH(u.uid)}" onclick="window.startChatWith(this.dataset.uid)">💬 發起交換私訊</button>
       </div>
     </div>`;
   }).join('');
-  return `<div style="max-width:800px"><div style="margin-bottom:14px;font-size:13px;color:var(--text-dim)">找到 <strong style="color:var(--gold)">${perfect.length}</strong> 個雙向配對</div>${cards}</div>`;
+  return`<div style="max-width:800px"><div style="margin-bottom:14px;font-size:13px;color:var(--text-dim)">找到 <strong style="color:var(--gold)">${perfect.length}</strong> 個雙向配對</div>${cards}</div>`;
 }
 
-function renderChat() {
-  if (!S.activeChatUser) return `<div class="empty-state">請先從交換看板選擇玩家。</div>`;
-  const u=S.activeChatUser;
-  const uH=new Set(u.have||[]), uW=new Set(u.want||[]);
-  const iGiveThem=[...uW].filter(id=>S.have.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
-  const theyGiveMe=[...S.want].filter(id=>uH.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
-  const iGiveHtml=iGiveThem.length?iGiveThem.map(id=>`<span class="tag-chip tag-have">${cardLabel(id)}</span>`).join(''):'<span style="color:var(--text-dim);font-size:11px">無相符卡片</span>';
-  const theyGiveHtml=theyGiveMe.length?theyGiveMe.map(id=>`<span class="tag-chip tag-want">${cardLabel(id)}</span>`).join(''):'<span style="color:var(--text-dim);font-size:11px">無相符卡片</span>';
-  const msgs=S.chats[u.uid]||[];
-  const msgHtml=msgs.length===0?'<div style="text-align:center;color:var(--text-dim);margin-top:20px;font-size:13px">還沒有任何訊息，試著當第一個發言的人吧！</div>':msgs.map(m=>`<div class="chat-msg ${m.sender==='me'?'mine':'theirs'}">${escH(m.text)}</div>`).join('');
-  return `
-    <div class="chat-container">
-      <div class="chat-sidebar">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
-          <div class="user-avatar-lg" style="width:36px;height:36px;font-size:14px">${escH((u.nickname||'?')[0])}</div>
-          <div><div style="font-weight:bold;font-size:15px">${escH(u.nickname)}</div><div style="font-size:11px;color:var(--green-light)">● 線上</div></div>
+// ==================== VIEW: INBOX (即時聊天) ====================
+function renderInbox(){
+  if(!S.user)return`<div class="empty-state"><div class="icon">🔒</div><h3>請先登入</h3></div>`;
+
+  const threadListHTML=S.threads.length===0
+    ?`<div class="chat-list-empty">📭<br>尚無對話紀錄<br><span style="font-size:11px">前往配對搜尋發起交換</span></div>`
+    :S.threads.map(t=>{
+      const otherUid=t.participants.find(u=>u!==S.user.uid);
+      const otherName=t.names?.[otherUid]||'玩家';
+      const isActive=S.activeThread===t.id;
+      const hasUnread=t.myUnread>0;
+      return`<div class="chat-thread-item ${isActive?'active':''} ${hasUnread?'unread':''}" data-tid="${escH(t.id)}" onclick="window.openThread(this.dataset.tid)">
+        <div class="thread-avatar">${escH(otherName[0]||'?')}${hasUnread?'<div class="thread-unread-dot"></div>':''}</div>
+        <div class="thread-info">
+          <div class="thread-name"><span class="thread-name-text">${escH(otherName)}</span><span class="thread-time">${fmtTime(t.lastAt)}</span></div>
+          <div class="thread-preview">${hasUnread?`<strong style="color:var(--text)">${escH(t.lastMsg||'（新訊息）')}</strong>`:escH(t.lastMsg||'開始對話…')}</div>
         </div>
-        <h3 style="font-size:13px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:5px">雙方交換清單</h3>
-        <div class="trade-box"><h4>📤 我方提供 (他需要的)</h4><div style="line-height:1.6">${iGiveHtml}</div></div>
-        <div class="trade-box"><h4>📥 對方提供 (我需要的)</h4><div style="line-height:1.6">${theyGiveHtml}</div></div>
-        <button class="btn-secondary" style="margin-top:auto" onclick="window.switchView('board')">← 返回看板</button>
+      </div>`;
+    }).join('');
+
+  const panelHTML=S.activeThread ? buildChatPanelHTML() : `<div class="chat-no-select"><div style="font-size:40px">💬</div><div>選擇一個對話開始聊天</div></div>`;
+  const sidebarHTML=S.activeThread ? buildTradeSidebarHTML() : '';
+
+  return`<div class="chat-layout" id="chatLayout">
+    <div class="chat-list-panel">
+      <div class="chat-list-header"><h3>💬 訊息匣 ${S.unreadTotal>0?`<span style="font-size:11px;background:var(--red);color:#fff;padding:1px 6px;border-radius:10px">${S.unreadTotal}</span>`:''}</h3></div>
+      <div class="chat-list-scroll">${threadListHTML}</div>
+    </div>
+    <div class="chat-panel" id="chatMainPanel">${panelHTML}</div>
+    ${S.activeThread?`<div class="chat-sidebar-panel">${sidebarHTML}</div>`:''}
+  </div>`;
+}
+
+function buildChatPanelHTML(){
+  const t=S.threads.find(t=>t.id===S.activeThread);
+  if(!t)return'';
+  const otherUid=t.participants.find(u=>u!==S.user.uid);
+  const otherName=t.names?.[otherUid]||'玩家';
+  const otherUser=S.boardUsers.find(u=>u.uid===otherUid)||{nickname:otherName};
+  const msgsHTML=buildMessagesHTML();
+  return`
+    <div class="chat-panel-header">
+      <div class="user-avatar-lg" style="width:36px;height:36px;font-size:14px">${escH(otherName[0]||'?')}</div>
+      <div class="chat-panel-info">
+        <div class="chat-panel-name">${escH(otherName)} ${userTagsHTML(otherUser)}</div>
+        <div class="chat-panel-sub">${escH(otherUser.contact||'未提供聯絡方式')}</div>
       </div>
-      <div class="chat-main">
-        <div class="chat-header">
-          <div style="font-weight:bold;color:var(--gold);display:flex;align-items:center;">與 ${escH(u.nickname)} 的交換視窗 ${userTagsHTML(u)}</div>
-          <div style="font-size:12px;color:var(--text-dim)">聯絡方式: ${escH(u.contact)||'未提供'}</div>
-        </div>
-        <div class="chat-messages" id="chatHistory">${msgHtml}</div>
-        <div class="chat-input-area">
-          <input type="text" id="chatInputMsg" placeholder="輸入訊息 (對話僅存在本機)..." onkeypress="if(event.key==='Enter') window.sendChatMessage()">
-          <button onclick="window.sendChatMessage()">送出</button>
-        </div>
+      <div class="chat-panel-actions">
+        <button class="btn-secondary" style="padding:5px 10px;font-size:11px" data-uid="${escH(otherUid)}" onclick="window.showUserByUid(this.dataset.uid)">查看卡牌</button>
       </div>
+    </div>
+    <div class="chat-messages" id="chatMessages">${msgsHTML}</div>
+    <div class="chat-input-area">
+      <textarea id="chatInput" placeholder="輸入訊息…" rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window.doSendMessage();}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+      <button class="chat-send-btn" onclick="window.doSendMessage()">送出</button>
     </div>`;
 }
 
-// ==================== WINDOW EXPORTS ====================
-// FIX #11: 切換卡片後標記未儲存
-window.toggleHave = (id, e) => {
-  e.stopPropagation();
-  S.have.has(id) ? S.have.delete(id) : S.have.add(id);
-  refreshCard(id); updateStats(); setUnsaved(true);
-};
-window.toggleWant = (id, e) => {
-  e.stopPropagation();
-  S.want.has(id) ? S.want.delete(id) : S.want.add(id);
-  refreshCard(id); updateStats(); setUnsaved(true);
-};
-window.setFilter   = (k,v) => { S.filter[k]=v; if(k==='sortMode') localStorage.setItem('gi_sort',v); render(); };
-window.toggleStory = () => { S.filter.story=!S.filter.story; render(); };
-window.toggleGroup = (r) => { S.collapsed[r]=!S.collapsed[r]; render(); };
+function buildMessagesHTML(){
+  const msgs=S.threadMessages;
+  if(!msgs.length)return`<div style="text-align:center;color:var(--text-dim);padding:30px;font-size:13px">還沒有任何訊息，先打個招呼吧！</div>`;
+  let html='';let lastDate='';
+  msgs.forEach(m=>{
+    const isMine=m.senderUid===S.user.uid;
+    const dd=dateDivider(m.at);
+    if(dd!==lastDate){html+=`<div class="chat-date-divider">${dd}</div>`;lastDate=dd;}
+    const initials=escH((m.senderName||'?')[0]);
+    html+=`<div class="chat-msg-wrap ${isMine?'mine':''}">
+      <div class="chat-msg-avatar">${initials}</div>
+      <div>
+        <div class="chat-msg">${escH(m.text)}</div>
+        <div class="chat-msg-time" style="${isMine?'text-align:right':''}">${fmtFull(m.at)}</div>
+      </div>
+    </div>`;
+  });
+  return html;
+}
 
-// FIX #2: switchView 補上 nav-chat 顯示/隱藏邏輯
-window.switchView = (v) => {
-  S.view = v;
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  const activeBtn = document.getElementById(`nav-${v}`);
-  if (activeBtn) { activeBtn.style.display=''; activeBtn.classList.add('active'); }
-  if (v !== 'chat') {
-    const chatBtn = document.getElementById('nav-chat');
-    if (chatBtn) chatBtn.style.display = 'none';
+function buildTradeSidebarHTML(){
+  const t=S.threads.find(t=>t.id===S.activeThread);if(!t)return'';
+  const otherUid=t.participants.find(u=>u!==S.user.uid);
+  const other=S.boardUsers.find(u=>u.uid===otherUid);
+  if(!other)return`<div style="font-size:12px;color:var(--text-dim)">對方資料載入中…</div>`;
+  const oH=new Set(other.have||[]),oW=new Set(other.want||[]);
+  const iGive=[...oW].filter(id=>S.have.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+  const theyGive=[...S.want].filter(id=>oH.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+  return`<div style="font-size:12px;color:var(--gold);font-weight:bold;margin-bottom:8px">📊 交換摘要</div>
+    <div class="trade-box"><h4>📤 我方提供（${iGive.length}張）</h4><div style="line-height:1.8">${iGive.length?iGive.map(id=>`<span class="tag-chip tag-have">${cardLabel(id)}</span>`).join(''):'<span style="color:var(--text-dim)">無</span>'}</div></div>
+    <div class="trade-box"><h4>📥 對方提供（${theyGive.length}張）</h4><div style="line-height:1.8">${theyGive.length?theyGive.map(id=>`<span class="tag-chip tag-want">${cardLabel(id)}</span>`).join(''):'<span style="color:var(--text-dim)">無</span>'}</div></div>`;
+}
+
+function renderChatPanel(){
+  const panel=document.getElementById('chatMainPanel');
+  if(!panel||S.view!=='inbox')return;
+  if(!S.activeThread){panel.innerHTML=`<div class="chat-no-select"><div style="font-size:40px">💬</div><div>選擇一個對話開始聊天</div></div>`;return;}
+  const msgsEl=document.getElementById('chatMessages');
+  if(msgsEl){
+    const atBottom=msgsEl.scrollHeight-msgsEl.scrollTop-msgsEl.clientHeight<60;
+    msgsEl.innerHTML=buildMessagesHTML();
+    if(atBottom)scrollChatToBottom();
+  }else{
+    panel.innerHTML=buildChatPanelHTML();
+    scrollChatToBottom();
   }
+}
+
+function scrollChatToBottom(){
+  setTimeout(()=>{const el=document.getElementById('chatMessages');if(el)el.scrollTop=el.scrollHeight;},50);
+}
+
+// ==================== VIEW: ADMIN ====================
+async function renderAdmin(){
+  if(!S.user||!ADMIN_UIDS.has(S.user.uid)){
+    return`<div class="empty-state"><div class="icon">🚫</div><h3>無管理員權限</h3><p style="font-size:12px;margin-top:8px">請確認你的 UID 已加入 ADMIN_UIDS</p></div>`;
+  }
+  // 讀取所有玩家
+  const boardRef=collection(db,'artifacts',appId,'public','data','board');
+  const boardSnap=await getDocs(boardRef);
+  const users=boardSnap.docs.map(d=>d.data());
+  // 讀取所有 thread
+  const threadsRef=collection(db,'artifacts',appId,'public','data','threads');
+  const threadsSnap=await getDocs(threadsRef);
+  const threads=threadsSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+  const totalHave=users.reduce((s,u)=>s+(u.have?.length||0),0);
+  const totalWant=users.reduce((s,u)=>s+(u.want?.length||0),0);
+
+  const statsHTML=`<div class="stat-grid">
+    <div class="stat-box"><div class="num">${users.length}</div><div class="lbl">註冊玩家</div></div>
+    <div class="stat-box"><div class="num">${threads.length}</div><div class="lbl">對話紀錄</div></div>
+    <div class="stat-box"><div class="num">${totalHave}</div><div class="lbl">總有牌數</div></div>
+    <div class="stat-box"><div class="num">${totalWant}</div><div class="lbl">總求牌數</div></div>
+  </div>`;
+
+  const usersTableHTML=`<div class="admin-card admin-full">
+    <div class="admin-card-header"><h3>👥 玩家列表</h3><span style="font-size:11px;color:var(--text-dim)">${users.length} 位</span></div>
+    <div style="overflow-x:auto">
+    <table class="admin-table">
+      <thead><tr><th>暱稱</th><th>地點</th><th>聯絡</th><th>有牌</th><th>求牌</th><th>寄送/面交</th><th>更新時間</th><th>UID</th></tr></thead>
+      <tbody>${users.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).map(u=>`<tr>
+        <td><strong>${escH(u.nickname||'—')}</strong></td>
+        <td>${escH(u.location||'—')}</td>
+        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis">${escH(u.contact||'—')}</td>
+        <td><span class="badge badge-green">${u.have?.length||0}</span></td>
+        <td><span class="badge badge-red">${u.want?.length||0}</span></td>
+        <td>${u.canShip?'📦':''}${u.canMeet?'👋':''}&nbsp;</td>
+        <td style="color:var(--text-dim)">${u.updatedAt?new Date(u.updatedAt).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'—'}</td>
+        <td style="font-size:10px;color:var(--text-dim);font-family:monospace">${escH(u.uid||'').slice(0,12)}…</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+  </div>`;
+
+  const threadsTableHTML=`<div class="admin-card admin-full">
+    <div class="admin-card-header"><h3>💬 對話紀錄</h3><span style="font-size:11px;color:var(--text-dim)">${threads.length} 則</span></div>
+    <div style="overflow-x:auto">
+    <table class="admin-table">
+      <thead><tr><th>對話雙方</th><th>最後訊息</th><th>最後時間</th></tr></thead>
+      <tbody>${threads.sort((a,b)=>{const at=a.lastAt?.toMillis?a.lastAt.toMillis():0,bt=b.lastAt?.toMillis?b.lastAt.toMillis():0;return bt-at;}).map(t=>{
+        const names=Object.values(t.names||{}).map(escH).join(' ↔ ');
+        return`<tr>
+          <td>${names||escH(t.id)}</td>
+          <td style="color:var(--text-dim);max-width:200px;overflow:hidden;text-overflow:ellipsis">${escH(t.lastMsg||'（無訊息）')}</td>
+          <td style="color:var(--text-dim)">${t.lastAt?fmtFull(t.lastAt):'—'}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>
+  </div>`;
+
+  const cardsStatHTML=`<div class="admin-card">
+    <div class="admin-card-header"><h3>🎴 卡片需求熱門榜（求牌）</h3></div>
+    <div style="padding:12px">
+      ${topCards(users,'want',10).map((c,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(42,42,74,0.4)">
+        <span style="font-size:11px;color:var(--text-dim);width:18px">${i+1}</span>
+        <span style="flex:1;font-size:12px">${cardLabel(c.id)}</span>
+        <span class="badge badge-red">${c.count} 人</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+
+  const haveStatHTML=`<div class="admin-card">
+    <div class="admin-card-header"><h3>🎴 卡片供應熱門榜（有牌）</h3></div>
+    <div style="padding:12px">
+      ${topCards(users,'have',10).map((c,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(42,42,74,0.4)">
+        <span style="font-size:11px;color:var(--text-dim);width:18px">${i+1}</span>
+        <span style="flex:1;font-size:12px">${cardLabel(c.id)}</span>
+        <span class="badge badge-green">${c.count} 人</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+
+  return`<div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h2 style="color:var(--gold)">🛠 管理員後台</h2>
+      <button class="btn-secondary" onclick="window.reloadAdmin()">🔄 重新整理</button>
+    </div>
+    ${statsHTML}
+    <div class="admin-layout">${cardsStatHTML}${haveStatHTML}${usersTableHTML}${threadsTableHTML}</div>
+  </div>`;
+}
+
+function topCards(users,field,n){
+  const counter={};
+  users.forEach(u=>(u[field]||[]).forEach(id=>{counter[id]=(counter[id]||0)+1;}));
+  return Object.entries(counter).sort((a,b)=>b[1]-a[1]).slice(0,n).map(([id,count])=>({id:Number(id),count}));
+}
+
+// ==================== RENDER ====================
+const VIEW_RENDERERS={cards:renderCards,board:renderBoard,match:renderMatch,inbox:renderInbox};
+async function render(){
+  const el=document.getElementById('mainContent');
+  if(S.view==='admin'){el.innerHTML='<div style="color:var(--text-dim);padding:20px">載入中…</div>';el.innerHTML=await renderAdmin();return;}
+  el.innerHTML=(VIEW_RENDERERS[S.view]||renderCards)();
+  if(S.view==='inbox')scrollChatToBottom();
+}
+
+function updateHeader(){
+  const av=document.getElementById('headerAvatar'),nm=document.getElementById('headerName');
+  if(S.user){av.textContent=S.nickname?S.nickname[0].toUpperCase():'P';nm.textContent=S.nickname||'玩家';}
+  else{av.textContent='?';nm.textContent='登入 / 註冊';}
+  // 管理員顯示後台按鈕
+  const adminBtn=document.getElementById('nav-admin');
+  if(adminBtn)adminBtn.style.display=S.user&&ADMIN_UIDS.has(S.user.uid)?'':'none';
+}
+
+// ==================== WINDOW EXPORTS ====================
+window.toggleHave=(id,e)=>{e.stopPropagation();S.have.has(id)?S.have.delete(id):S.have.add(id);refreshCard(id);updateStats();setUnsaved(true);};
+window.toggleWant=(id,e)=>{e.stopPropagation();S.want.has(id)?S.want.delete(id):S.want.add(id);refreshCard(id);updateStats();setUnsaved(true);};
+window.setFilter=(k,v)=>{S.filter[k]=v;if(k==='sortMode')localStorage.setItem('gi_sort',v);render();};
+window.toggleGroup=(r)=>{S.collapsed[r]=!S.collapsed[r];render();};
+
+window.switchView=(v)=>{
+  S.view=v;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`nav-${v}`)?.classList.add('active');
   render();
-  if (v==='chat') setTimeout(()=>{ const h=document.getElementById('chatHistory'); if(h) h.scrollTop=9999; }, 50);
 };
 
-window.manualSave = () => saveToCloud();
-window.toast = (msg) => {
-  document.querySelector('.toast')?.remove();
-  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
-  document.body.appendChild(t); setTimeout(()=>t.remove(), 3000);
-};
-window.closeModal     = () => document.getElementById('modalOverlay').style.display='none';
-window.onOverlayClick = (e) => { if(e.target.id==='modalOverlay') window.closeModal(); };
+window.manualSave=()=>saveToCloud();
+window.toast=(msg)=>{document.querySelector('.toast')?.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);};
+window.closeModal=()=>document.getElementById('modalOverlay').style.display='none';
+window.onOverlayClick=(e)=>{if(e.target.id==='modalOverlay')window.closeModal();};
+window.showUserByUid=(uid)=>{const u=S.boardUsers.find(u=>u.uid===uid);if(u)window.showUser(u);};
 
-// FIX #3: 透過 uid 查找玩家再開 modal，不再 inline 傳遞 JSON 物件
-window.showUserByUid = (uid) => {
-  const u = S.boardUsers.find(u => u.uid === uid);
-  if (u) window.showUser(u);
+// 開啟對話 thread
+window.openThread=async(tid)=>{
+  S.activeThread=tid;
+  if(messageUnsub){messageUnsub();messageUnsub=null;}
+  listenToMessages(tid);
+  await markThreadRead(tid);
+  render();
 };
 
-function refreshCard(id) {
-  const card=CARDS.find(c=>c.id===id); if(!card) return;
-  const el=document.querySelector(`.card-item[data-id="${id}"]`); if(!el) return;
-  const tmp=document.createElement('div'); tmp.innerHTML=cardHTML(card); el.replaceWith(tmp.firstElementChild);
+// 從配對頁面 / 看板發起對話
+window.startChatWith=async(otherUid)=>{
+  if(!S.user){window.toast('請先登入');return;}
+  window.toast('正在建立對話…');
+  const tid=await getOrCreateThread(otherUid);
+  window.closeModal();
+  S.activeThread=tid;
+  listenToMessages(tid);
+  window.switchView('inbox');
+};
+
+window.doSendMessage=async()=>{
+  const input=document.getElementById('chatInput');
+  const text=input?.value.trim();
+  if(!text)return;
+  input.value='';input.style.height='auto';
+  await sendMessage(text);
+};
+
+window.reloadAdmin=()=>render();
+
+function refreshCard(id){
+  const card=CARDS.find(c=>c.id===id);if(!card)return;
+  const el=document.querySelector(`.card-item[data-id="${id}"]`);if(!el)return;
+  const tmp=document.createElement('div');tmp.innerHTML=cardHTML(card);el.replaceWith(tmp.firstElementChild);
 }
-function updateStats() {
-  const bar=document.querySelector('.stats-bar'); if(!bar) return;
+function updateStats(){
+  const bar=document.querySelector('.stats-bar');if(!bar)return;
   const items=bar.querySelectorAll('.stat-item');
-  if(items[1]) items[1].innerHTML=`<div class="stat-dot" style="background:var(--green)"></div>我有 <strong style="color:var(--green-light);margin-left:3px">${S.have.size}</strong> 張`;
-  if(items[2]) items[2].innerHTML=`<div class="stat-dot" style="background:var(--red)"></div>我要 <strong style="color:#ff7070;margin-left:3px">${S.want.size}</strong> 張`;
+  if(items[1])items[1].innerHTML=`<div class="stat-dot" style="background:var(--green)"></div>我有 <strong style="color:var(--green-light);margin-left:3px">${S.have.size}</strong>`;
+  if(items[2])items[2].innerHTML=`<div class="stat-dot" style="background:var(--red)"></div>我要 <strong style="color:#ff7070;margin-left:3px">${S.want.size}</strong>`;
 }
 
-// FIX #14: 用 Map 管理 view renderer，render() 職責清晰
-const VIEW_RENDERERS = { cards:renderCards, board:renderBoard, match:renderMatch, chat:renderChat };
-function render() {
-  document.getElementById('mainContent').innerHTML = (VIEW_RENDERERS[S.view]||renderCards)();
-}
-function updateHeader() {
-  const av=document.getElementById('headerAvatar'), nm=document.getElementById('headerName');
-  if(S.user) { av.textContent=S.nickname?S.nickname[0].toUpperCase():'P'; nm.textContent=S.nickname||'玩家'; }
-  else { av.textContent='?'; nm.textContent='登入 / 註冊'; }
-}
+// ---- AUTH ----
+window.authMode='login';
+window.openAuthModal=()=>{if(S.user)return window.openProfileEditModal();renderAuthModal();document.getElementById('modalOverlay').style.display='flex';};
+window.toggleAuthMode=(mode)=>{window.authMode=mode;renderAuthModal();};
 
-// ---- AUTH MODAL ----
-window.authMode = 'login';
-window.openAuthModal = () => { if(S.user) return window.openProfileEditModal(); renderAuthModal(); document.getElementById('modalOverlay').style.display='flex'; };
-window.toggleAuthMode = (mode) => { window.authMode=mode; renderAuthModal(); };
-
-function renderAuthModal() {
+function renderAuthModal(){
   const isLogin=window.authMode==='login';
-  const cityOptions=TAIWAN_CITIES.map(c=>`<option value="${c}">${c}</option>`).join('');
+  const co=TAIWAN_CITIES.map(c=>`<option value="${c}">${c}</option>`).join('');
   document.getElementById('modalContent').innerHTML=`
     <div class="modal-header"><h2 style="color:var(--gold)">${isLogin?'登入系統':'註冊新玩家'}</h2><button class="modal-close" onclick="window.closeModal()">✕</button></div>
-    <div class="auth-tabs">
-      <div class="auth-tab ${isLogin?'active':''}" onclick="window.toggleAuthMode('login')">登入</div>
-      <div class="auth-tab ${!isLogin?'active':''}" onclick="window.toggleAuthMode('register')">註冊</div>
-    </div>
-    <div class="form-group"><label>遊戲暱稱</label><input type="text" id="authNick" placeholder="輸入你的暱稱 (這也是你的登入帳號)" maxlength="20"></div>
-    <div class="form-group"><label>密碼</label><input type="password" id="authPwd" placeholder="輸入密碼 (至少6位數)"></div>
-    ${!isLogin?`
-      <div class="form-group"><label>聯絡方式（選填）</label><input type="text" id="authContact" placeholder="例：Discord: xxx / Line: yyy"></div>
-      <div class="form-group"><label>出沒地點</label><select id="authLocation"><option value="未設定">請選擇地點</option>${cityOptions}</select></div>
-      <div style="display:flex;gap:10px;margin-bottom:16px;">
-        <div class="form-group" style="flex:1;margin-bottom:0;"><label>接受寄送📦</label><select id="authShip"><option value="yes">可寄送</option><option value="no">不寄送</option></select></div>
-        <div class="form-group" style="flex:1;margin-bottom:0;"><label>接受面交👋</label><select id="authMeet"><option value="yes">可面交</option><option value="no">不面交</option></select></div>
+    <div class="auth-tabs"><div class="auth-tab ${isLogin?'active':''}" onclick="window.toggleAuthMode('login')">登入</div><div class="auth-tab ${!isLogin?'active':''}" onclick="window.toggleAuthMode('register')">註冊</div></div>
+    <div class="form-group"><label>遊戲暱稱</label><input type="text" id="authNick" placeholder="輸入你的暱稱（即登入帳號）" maxlength="20"></div>
+    <div class="form-group"><label>密碼</label><input type="password" id="authPwd" placeholder="至少6位數"></div>
+    ${!isLogin?`<div class="form-group"><label>聯絡方式（選填）</label><input type="text" id="authContact" placeholder="Discord: xxx / Line: yyy"></div>
+      <div class="form-group"><label>出沒地點</label><select id="authLocation"><option value="未設定">請選擇地點</option>${co}</select></div>
+      <div style="display:flex;gap:10px;margin-bottom:16px">
+        <div class="form-group" style="flex:1;margin-bottom:0"><label>接受寄送📦</label><select id="authShip"><option value="yes">可寄送</option><option value="no">不寄送</option></select></div>
+        <div class="form-group" style="flex:1;margin-bottom:0"><label>接受面交👋</label><select id="authMeet"><option value="yes">可面交</option><option value="no">不面交</option></select></div>
       </div>`:''}
-    <div style="font-size:11px;color:var(--text-dim);margin-bottom:10px;text-align:center;">⚠️ 提示：若忘記密碼將無法找回帳號，請務必牢記。</div>
+    <div style="font-size:11px;color:var(--text-dim);margin-bottom:10px;text-align:center">⚠️ 忘記密碼將無法找回帳號，請牢記。</div>
     <button class="btn-primary" id="authBtn" onclick="${isLogin?'window.doLogin()':'window.doRegister()'}">${isLogin?'進入遊戲':'創建角色'}</button>`;
 }
 
-window.doRegister = async () => {
-  const n=document.getElementById('authNick').value.trim();
-  const p=document.getElementById('authPwd').value;
-  const c=document.getElementById('authContact')?.value.trim()||'';
-  const loc=document.getElementById('authLocation')?.value||'未設定';
-  const ship=document.getElementById('authShip')?.value==='yes';
-  const meet=document.getElementById('authMeet')?.value==='yes';
-  if (!n||p.length<6) return window.toast('暱稱不能為空，且密碼需至少6位數');
-  // FIX #4: 過濾暱稱特殊字元，確保 Firebase Auth email 格式有效
-  const safeNick=n.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g,'_');
-  if (!safeNick) return window.toast('暱稱含有太多特殊字元，請修改');
-  document.getElementById('authBtn').innerText='創建中...';
-  const fakeEmail=`${safeNick}@gi-trade.local`;
-  try {
-    await createUserWithEmailAndPassword(auth, fakeEmail, p);
-    S.nickname=n; S.contact=c; S.location=loc; S.canShip=ship; S.canMeet=meet;
-    await saveToCloud();
-    window.closeModal(); window.toast('註冊成功！歡迎來到貪婪之島。');
-  } catch(err) {
-    if(err.code==='auth/email-already-in-use') window.toast('此暱稱已被使用，請換一個或直接登入。');
-    else window.toast('註冊失敗：'+err.message);
+window.doRegister=async()=>{
+  const n=document.getElementById('authNick').value.trim(),p=document.getElementById('authPwd').value;
+  const c=document.getElementById('authContact')?.value.trim()||'',loc=document.getElementById('authLocation')?.value||'未設定';
+  const ship=document.getElementById('authShip')?.value==='yes',meet=document.getElementById('authMeet')?.value==='yes';
+  if(!n||p.length<6)return window.toast('暱稱不能為空，密碼至少6位數');
+  const safe=n.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g,'_');
+  if(!safe)return window.toast('暱稱含太多特殊字元');
+  document.getElementById('authBtn').innerText='創建中…';
+  try{
+    await createUserWithEmailAndPassword(auth,`${safe}@gi-trade.local`,p);
+    S.nickname=n;S.contact=c;S.location=loc;S.canShip=ship;S.canMeet=meet;
+    await saveToCloud();window.closeModal();window.toast('🎉 註冊成功！歡迎來到貪婪之島！');
+  }catch(err){
+    window.toast(err.code==='auth/email-already-in-use'?'此暱稱已被使用':'註冊失敗：'+err.message);
     document.getElementById('authBtn').innerText='創建角色';
   }
 };
-
-window.doLogin = async () => {
-  const n=document.getElementById('authNick').value.trim();
-  const p=document.getElementById('authPwd').value;
-  if (!n||!p) return window.toast('請輸入暱稱與密碼');
-  // FIX #4: 登入時同樣套用 safeNick 轉換，與註冊時一致
-  const safeNick=n.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g,'_');
-  const fakeEmail=`${safeNick}@gi-trade.local`;
-  document.getElementById('authBtn').innerText='登入中...';
-  try {
-    await signInWithEmailAndPassword(auth, fakeEmail, p);
-    window.closeModal(); window.toast('登入成功！');
-  } catch(err) {
-    window.toast('帳號或密碼錯誤。');
-    document.getElementById('authBtn').innerText='進入遊戲';
-  }
+window.doLogin=async()=>{
+  const n=document.getElementById('authNick').value.trim(),p=document.getElementById('authPwd').value;
+  if(!n||!p)return window.toast('請輸入暱稱與密碼');
+  const safe=n.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g,'_');
+  document.getElementById('authBtn').innerText='登入中…';
+  try{await signInWithEmailAndPassword(auth,`${safe}@gi-trade.local`,p);window.closeModal();window.toast('登入成功！');}
+  catch(err){window.toast('帳號或密碼錯誤');document.getElementById('authBtn').innerText='進入遊戲';}
 };
 
-// ---- PROFILE MODAL ----
-window.openProfileEditModal = () => {
-  const cityOptions=TAIWAN_CITIES.map(c=>`<option value="${c}" ${S.location===c?'selected':''}>${c}</option>`).join('');
+window.openProfileEditModal=()=>{
+  const co=TAIWAN_CITIES.map(c=>`<option value="${c}" ${S.location===c?'selected':''}>${c}</option>`).join('');
   document.getElementById('modalContent').innerHTML=`
     <div class="modal-header"><h2 style="color:var(--gold)">👤 我的資料</h2><button class="modal-close" onclick="window.closeModal()">✕</button></div>
     <div class="form-group"><label>遊戲暱稱</label><input type="text" value="${escH(S.nickname)}" disabled style="opacity:0.6;cursor:not-allowed"></div>
     <div class="form-group"><label>聯絡方式</label><input type="text" id="editContact" value="${escH(S.contact)}"></div>
-    <div class="form-group"><label>出沒地點</label><select id="editLocation"><option value="未設定">請選擇地點</option>${cityOptions}</select></div>
-    <div style="display:flex;gap:10px;margin-bottom:16px;">
-      <div class="form-group" style="flex:1;margin-bottom:0;"><label>接受寄送📦</label><select id="editShip"><option value="yes" ${S.canShip?'selected':''}>可寄送</option><option value="no" ${!S.canShip?'selected':''}>不寄送</option></select></div>
-      <div class="form-group" style="flex:1;margin-bottom:0;"><label>接受面交👋</label><select id="editMeet"><option value="yes" ${S.canMeet?'selected':''}>可面交</option><option value="no" ${!S.canMeet?'selected':''}>不面交</option></select></div>
+    <div class="form-group"><label>出沒地點</label><select id="editLocation"><option value="未設定">請選擇</option>${co}</select></div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <div class="form-group" style="flex:1;margin-bottom:0"><label>接受寄送📦</label><select id="editShip"><option value="yes" ${S.canShip?'selected':''}>可</option><option value="no" ${!S.canShip?'selected':''}>不可</option></select></div>
+      <div class="form-group" style="flex:1;margin-bottom:0"><label>接受面交👋</label><select id="editMeet"><option value="yes" ${S.canMeet?'selected':''}>可</option><option value="no" ${!S.canMeet?'selected':''}>不可</option></select></div>
     </div>
     <button class="btn-primary" onclick="window.saveProfileEdit()">儲存變更</button>
     <div style="text-align:center;margin-top:20px;padding-top:15px;border-top:1px solid var(--border)">
@@ -778,70 +1084,54 @@ window.openProfileEditModal = () => {
     </div>`;
   document.getElementById('modalOverlay').style.display='flex';
 };
-// FIX #1: 保留舊名稱作為別名，防止任何地方仍呼叫 openProfileModal 時報錯
-window.openProfileModal = window.openProfileEditModal;
-
-window.saveProfileEdit = () => {
+window.openProfileModal=window.openProfileEditModal;
+window.saveProfileEdit=()=>{
   S.contact=document.getElementById('editContact').value.trim();
   S.location=document.getElementById('editLocation').value;
   S.canShip=document.getElementById('editShip').value==='yes';
   S.canMeet=document.getElementById('editMeet').value==='yes';
-  saveToCloud(); window.closeModal();
+  saveToCloud();window.closeModal();
 };
+window.doLogout=()=>{clearAllSubs();signOut(auth);window.closeModal();window.toast('已登出。');};
 
-// FIX #5: 登出時一併重置 boardUnsubscribe，下次登入可重新監聽
-window.doLogout = () => {
-  if (boardUnsubscribe) { boardUnsubscribe(); boardUnsubscribe=null; }
-  signOut(auth); window.closeModal(); window.toast('已登出。');
-};
-
-window.showUser = (u) => {
-  const uH=new Set(u.have||[]), uW=new Set(u.want||[]);
-  const theyHaveIWant=[...S.want].filter(id=>uH.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
-  const iHaveTheyWant=[...uW].filter(id=>S.have.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
-  const haveList=(u.have||[]).sort((a,b)=>getSortValue(a)-getSortValue(b)).map(id=>`<span class="tag-chip ${S.want.has(id)?'tag-have':'tag-normal'}">${cardLabel(id)}${S.want.has(id)?' ✓':''}</span>`).join('');
-  const wantList=(u.want||[]).sort((a,b)=>getSortValue(a)-getSortValue(b)).map(id=>`<span class="tag-chip ${S.have.has(id)?'tag-want':'tag-normal'}">${cardLabel(id)}${S.have.has(id)?' ✓':''}</span>`).join('');
+window.showUser=(u)=>{
+  const uH=new Set(u.have||[]),uW=new Set(u.want||[]);
+  const th=[...S.want].filter(id=>uH.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+  const ih=[...uW].filter(id=>S.have.has(id)).sort((a,b)=>getSortValue(a)-getSortValue(b));
+  const hL=(u.have||[]).sort((a,b)=>getSortValue(a)-getSortValue(b)).map(id=>`<span class="tag-chip ${S.want.has(id)?'tag-have':'tag-normal'}">${cardLabel(id)}${S.want.has(id)?' ✓':''}</span>`).join('');
+  const wL=(u.want||[]).sort((a,b)=>getSortValue(a)-getSortValue(b)).map(id=>`<span class="tag-chip ${S.have.has(id)?'tag-want':'tag-normal'}">${cardLabel(id)}${S.have.has(id)?' ✓':''}</span>`).join('');
   document.getElementById('modalContent').innerHTML=`
-    <div class="modal-header"><h2 style="color:var(--gold);display:flex;align-items:center;">${escH(u.nickname)} 的清單 ${userTagsHTML(u)}</h2><button class="modal-close" onclick="window.closeModal()">✕</button></div>
+    <div class="modal-header"><h2 style="color:var(--gold)">${escH(u.nickname)} ${userTagsHTML(u)}</h2><button class="modal-close" onclick="window.closeModal()">✕</button></div>
     ${u.contact?`<div style="font-size:13px;color:var(--text-dim);margin-bottom:14px;padding:10px;background:var(--bg3);border-radius:8px">📬 ${escH(u.contact)}</div>`:''}
-    ${(theyHaveIWant.length||iHaveTheyWant.length)?`<div style="background:rgba(201,168,76,0.08);border:1px solid var(--gold);border-radius:8px;padding:12px;margin-bottom:14px">
+    ${(th.length||ih.length)?`<div style="background:rgba(201,168,76,0.08);border:1px solid var(--gold);border-radius:8px;padding:12px;margin-bottom:14px">
       <div style="font-size:13px;color:var(--gold);font-weight:bold;margin-bottom:8px">🔥 配對摘要</div>
-      ${theyHaveIWant.length?`<div style="font-size:12px;margin-bottom:4px;color:var(--green-light)">✓ 他有・你要：${theyHaveIWant.map(cardLabel).join('、')}</div>`:''}
-      ${iHaveTheyWant.length?`<div style="font-size:12px;color:#ff7070">♥ 你有・他要：${iHaveTheyWant.map(cardLabel).join('、')}</div>`:''}
+      ${th.length?`<div style="font-size:12px;margin-bottom:4px;color:var(--green-light)">✓ 他有・你要：${th.map(cardLabel).join('、')}</div>`:''}
+      ${ih.length?`<div style="font-size:12px;color:#ff7070">♥ 你有・他要：${ih.map(cardLabel).join('、')}</div>`:''}
     </div>`:''}
-    <div style="margin-bottom:14px"><div style="font-size:12px;color:var(--green-light);font-weight:600;margin-bottom:8px">✓ 可提供交換（${u.have?.length||0}張）</div><div style="line-height:2">${haveList||'<span style="color:var(--text-dim);font-size:12px">無</span>'}</div></div>
-    <div><div style="font-size:12px;color:#ff7070;font-weight:600;margin-bottom:8px">♥ 希望取得（${u.want?.length||0}張）</div><div style="line-height:2">${wantList||'<span style="color:var(--text-dim);font-size:12px">無</span>'}</div></div>
+    <div style="margin-bottom:14px"><div style="font-size:12px;color:var(--green-light);font-weight:600;margin-bottom:8px">✓ 可提供（${u.have?.length||0}張）</div><div style="line-height:2">${hL||'<span style="color:var(--text-dim)">無</span>'}</div></div>
+    <div><div style="font-size:12px;color:#ff7070;font-weight:600;margin-bottom:8px">♥ 希望取得（${u.want?.length||0}張）</div><div style="line-height:2">${wL||'<span style="color:var(--text-dim)">無</span>'}</div></div>
     <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:15px;display:flex;justify-content:flex-end">
-      <!-- FIX #3: data-uid 屬性 -->
-      <button class="btn-primary" style="width:auto;padding:10px 24px;" data-uid="${escH(u.uid)}" onclick="window.startChat(this.dataset.uid)">💬 發起交換私訊</button>
+      <button class="btn-primary" style="width:auto;padding:10px 24px" data-uid="${escH(u.uid)}" onclick="window.startChatWith(this.dataset.uid)">💬 發起交換私訊</button>
     </div>`;
   document.getElementById('modalOverlay').style.display='flex';
 };
 
-window.startChat = (uid) => {
-  S.activeChatUser = S.boardUsers.find(u => u.uid === uid);
-  if (!S.activeChatUser) return window.toast('找不到該玩家，請重新整理看板。');
-  if (!S.chats[uid]) S.chats[uid]=[];
-  window.closeModal();
-  window.switchView('chat');
-};
+updateHeader();render();
+</script>
 
-window.sendChatMessage = () => {
-  const input=document.getElementById('chatInputMsg');
-  const text=input?.value.trim();
-  if (!text||!S.activeChatUser) return;
-  const uid=S.activeChatUser.uid;
-  S.chats[uid].push({sender:'me', text});
-  input.value='';
-  localStorage.setItem('gi_chats', JSON.stringify(S.chats));
-  const hist=document.getElementById('chatHistory');
-  hist.innerHTML+=`<div class="chat-msg mine">${escH(text)}</div>`;
-  hist.scrollTop=9999;
-};
-
-// ==================== INIT ====================
-updateHeader();
-render();
+<!-- 動態插入管理員導覽按鈕（登入後判斷） -->
+<script>
+// 延遲插入 admin nav，避免 module 尚未執行
+window.addEventListener('load',()=>{
+  const nav=document.querySelector('.nav');
+  if(nav&&!document.getElementById('nav-admin')){
+    const btn=document.createElement('button');
+    btn.className='nav-btn';btn.id='nav-admin';btn.style.display='none';
+    btn.textContent='🛠 管理後台';
+    btn.onclick=()=>window.switchView('admin');
+    nav.appendChild(btn);
+  }
+});
 </script>
 </body>
 </html>
