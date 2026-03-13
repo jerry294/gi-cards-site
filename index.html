@@ -1453,6 +1453,7 @@ const CS = {
   // cup (一對一淘汰賽)
   cupPool:[],
   cupBracket:[],
+  cupFormat:'bye',  // 'bye'=114輪空制 | '64' | '32' | '16'
   cupRound:1, cupTotalRounds:1, cupTotalInRound:0, cupMatchesDone:0,
   cupChampion:null,
   cupActive:false,
@@ -1580,8 +1581,26 @@ function renderHistory(){
 }
 
 // ── 淘汰賽初始化 ──
-function initCup(catKey){
-  const pool=getCategoryCards(catKey).sort(()=>Math.random()-0.5);
+function initCup(catKey, format){
+  CS.cupFormat = format || CS.cupFormat || 'bye';
+  CS.catKey = catKey || 'all';
+  let pool = getCategoryCards(catKey).sort(()=>Math.random()-0.5);
+
+  // 根據賽制調整 pool
+  if(CS.cupFormat==='64'){
+    pool = pool.slice(0,64);
+  }else if(CS.cupFormat==='32'){
+    pool = pool.slice(0,32);
+  }else if(CS.cupFormat==='16'){
+    pool = pool.slice(0,16);
+  }else{
+    // 'bye'：補 null 至 2 的冪次（114 → 128，補 14 個輪空）
+    const target=Math.pow(2,Math.ceil(Math.log2(pool.length)));
+    const byeCount=target-pool.length;
+    for(let i=0;i<byeCount;i++) pool.push(null); // null = 輪空
+    pool=pool.sort(()=>Math.random()-0.5); // 重新洗牌（含輪空）
+  }
+
   CS.cupPool=[...pool];
   CS.cupBracket=[];
   CS.cupResults=[];
@@ -1589,28 +1608,60 @@ function initCup(catKey){
   CS.cupRound=1;
   CS.cupActive=true;
   CS.history=[];
-  // 計算總輪數
-  const n=pool.length;
-  CS.cupTotalRounds=Math.ceil(Math.log2(n));
-  CS.cupTotalInRound=Math.floor(n/2);
+  const realCards=pool.filter(c=>c!==null);
+  CS.cupTotalRounds=Math.ceil(Math.log2(realCards.length));
+  // cupTotalInRound = 本輪需要使用者選擇的場數（不含輪空）
+  const byesInRound=pool.filter(c=>c===null).length;
+  CS.cupTotalInRound=Math.floor(pool.length/2)-byesInRound;
   CS.cupMatchesDone=0;
-  CS.left=CS.cupPool.shift();
-  CS.right=CS.cupPool.shift();
+  // 跳過輪空，定位到第一場真實對決
+  _advancePastByes();
+}
+
+// ── 靜默跳過輪空，直到找到兩張真實卡片或結束本輪 ──
+function _advancePastByes(){
+  while(CS.cupPool.length>=2){
+    const a=CS.cupPool[0], b=CS.cupPool[1];
+    if(a===null||b===null){
+      CS.cupPool.shift(); CS.cupPool.shift();
+      const winner=a!==null?a:b;
+      if(winner) CS.cupBracket.push(winner);
+      // 輪空不計入 matchesDone
+    }else{
+      CS.left=CS.cupPool.shift();
+      CS.right=CS.cupPool.shift();
+      return; // 找到真實對決，等待使用者選擇
+    }
+  }
+  // Pool 耗盡或剩一張
+  if(CS.cupPool.length===1){
+    const last=CS.cupPool.shift();
+    if(last!==null) CS.cupBracket.push(last);
+  }
+  // 進入下一輪（或結束）
+  if(CS.cupBracket.length===1){
+    CS.cupChampion=CS.cupBracket[0];
+    CS.left=null; CS.right=null;
+  }else if(CS.cupBracket.length>1){
+    CS.cupPool=[...CS.cupBracket].sort(()=>Math.random()-0.5);
+    CS.cupBracket=[]; CS.cupRound++;
+    CS.cupMatchesDone=0;
+    CS.cupTotalInRound=Math.floor(CS.cupPool.length/2); // 後續輪無輪空
+    _advancePastByes();
+  }
 }
 
 function cupProgress(){
   const pct=CS.cupTotalInRound>0?Math.min(100,Math.round(CS.cupMatchesDone/CS.cupTotalInRound*100)):0;
-  const n=CS.cupPool.length+CS.cupBracket.length+2;
-  return`<div class="tournament-bracket">第 ${CS.cupRound} 輪・剩餘 ${n} 張・已完成 ${CS.cupMatchesDone}/${CS.cupTotalInRound} 場</div>
+  const remaining=CS.cupPool.filter(c=>c!==null).length+CS.cupBracket.filter(c=>c!==null).length+2;
+  const byeTag=CS.cupRound===1&&CS.cupFormat==='bye'?` · 含輪空`:'';
+  return`<div class="tournament-bracket">第 ${CS.cupRound} 輪${byeTag}・剩餘 ${remaining} 張・已完成 ${CS.cupMatchesDone}/${CS.cupTotalInRound} 場</div>
   <div class="compare-progress"><div class="compare-progress-bar" style="width:${pct}%"></div></div>`;
 }
 
 function nextCupPair(){
-  if(CS.cupPool.length>=2){
-    CS.left=CS.cupPool.shift();CS.right=CS.cupPool.shift();render();
-  }else if(CS.cupPool.length===1){
-    CS.cupBracket.push(CS.cupPool.shift());advanceCupRound();
-  }else{advanceCupRound();}
+  _advancePastByes();
+  render();
 }
 
 function advanceCupRound(){
@@ -1619,7 +1670,7 @@ function advanceCupRound(){
     CS.cupPool=[...CS.cupBracket].sort(()=>Math.random()-0.5);
     CS.cupBracket=[];CS.cupRound++;
     CS.cupMatchesDone=0;CS.cupTotalInRound=Math.floor(CS.cupPool.length/2);
-    CS.left=CS.cupPool.shift();CS.right=CS.cupPool.shift();render();
+    _advancePastByes();render();
   }
 }
 
@@ -1634,7 +1685,7 @@ function renderCupResult(){
     const loser=COMPARE_CARDS.find(c=>c.id===h.lid);
     if(loser&&!ranked.find(c=>c.id===loser.id)) ranked.push(loser);
   }
-  const myRankHTML=ranked.slice(0,10).map((card,i)=>{
+  const myRankHTML=ranked.map((card,i)=>{
     const medals=['🥇','🥈','🥉'];
     const badge=i===0?'🏆':i<3?medals[i]:`${i+1}`;
     return`<div class="result-rank-row ${i===0?'champ':''}">
@@ -1743,14 +1794,25 @@ function renderCompare(){
       arenaHTML=`<div class="cup-start-screen">
         <div class="cup-start-icon">${isCatMode?(COMPARE_CATEGORIES.find(c=>c.key===CS.mode)?.icon||'🏆'):'🏆'}</div>
         <h3 class="cup-start-title">${isCatMode?(COMPARE_CATEGORIES.find(c=>c.key===CS.mode)?.label||''):'一對一淘汰賽'}</h3>
-        <div class="cup-start-info">
-          <div class="cup-info-item"><span class="cup-info-label">參賽卡片</span><span class="cup-info-value">${n} 張</span></div>
-          <div class="cup-info-item"><span class="cup-info-label">共需比較</span><span class="cup-info-value">${totalMatches} 場</span></div>
-          <div class="cup-info-item"><span class="cup-info-label">預計輪數</span><span class="cup-info-value">${rounds} 輪</span></div>
-        </div>
-        <div style="font-size:12px;color:var(--text-dim);margin-bottom:20px">卡片數量不為2的次方時，自動採輪空制晉級</div>
+        ${!isCatMode?`<div style="margin-bottom:8px">
+          <div style="font-size:13px;color:var(--text-dim);margin-bottom:10px;text-align:center">選擇賽制</div>
+          <div class="cup-size-selector" style="justify-content:center;margin-bottom:16px">
+            <button class="cup-size-btn ${(CS.cupFormat||'bye')==='bye'?'active':''}" onclick="window.setCupFormat('bye')">🏆 114輪空制</button>
+            <button class="cup-size-btn ${CS.cupFormat==='64'?'active':''}" onclick="window.setCupFormat('64')">⚔️ 64強</button>
+            <button class="cup-size-btn ${CS.cupFormat==='32'?'active':''}" onclick="window.setCupFormat('32')">⚔️ 32強</button>
+            <button class="cup-size-btn ${CS.cupFormat==='16'?'active':''}" onclick="window.setCupFormat('16')">⚔️ 16強</button>
+          </div>
+          ${(()=>{const f=CS.cupFormat||'bye';if(f==='bye')return`<div class="cup-start-info"><div class="cup-info-item"><span class="cup-info-label">參賽卡片</span><span class="cup-info-value">114 張</span></div><div class="cup-info-item"><span class="cup-info-label">需比場數</span><span class="cup-info-value">50 場</span></div><div class="cup-info-item"><span class="cup-info-label">輪空晉級</span><span class="cup-info-value">14 張</span></div></div>`;const cnt=parseInt(f);const r=Math.log2(cnt);return`<div class="cup-start-info"><div class="cup-info-item"><span class="cup-info-label">參賽卡片</span><span class="cup-info-value">${cnt} 張（隨機）</span></div><div class="cup-info-item"><span class="cup-info-label">共需比較</span><span class="cup-info-value">${cnt-1} 場</span></div><div class="cup-info-item"><span class="cup-info-label">預計輪數</span><span class="cup-info-value">${r} 輪</span></div></div>`;})()}
+        </div>`:`<div>
+          <div class="cup-start-info">
+            <div class="cup-info-item"><span class="cup-info-label">參賽卡片</span><span class="cup-info-value">${n} 張</span></div>
+            <div class="cup-info-item"><span class="cup-info-label">共需比較</span><span class="cup-info-value">${totalMatches} 場</span></div>
+            <div class="cup-info-item"><span class="cup-info-label">預計輪數</span><span class="cup-info-value">${rounds} 輪</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);margin:12px 0 20px">卡片數量不為2的次方時，自動採輪空制晉級</div>
+        </div>`}
         ${!S.user?'<div class="compare-login-notice" style="margin-bottom:16px">⚠️ 請先<a onclick="window.openAuthModal()" style="color:var(--gold);cursor:pointer;text-decoration:underline">登入</a>才能讓選擇計入排行榜</div>':''}
-        <button class="btn-primary" style="width:auto;padding:12px 36px;font-size:15px" onclick="window.startCup('${targetCat}')">⚔️ 開始比賽</button>
+        <button class="btn-primary" style="width:auto;padding:12px 36px;font-size:15px" onclick="window.startCup('${targetCat}')">${isCatMode?'開始PK':'⚔️ 開始比賽'}</button>
       </div>`;
     }else if(CS.left&&CS.right){
       arenaHTML=`${cupProgress()}
@@ -1867,7 +1929,8 @@ window.setRankTab=(k)=>{
   render();
 };
 window.goCompare=()=>window.switchView('compare');
-window.startCup=(catKey)=>{initCup(catKey);render();};
+window.startCup=(catKey)=>{initCup(catKey, CS.cupFormat);render();};
+window.setCupFormat=(fmt)=>{CS.cupFormat=fmt;render();};
 window.resetCup=()=>{CS.cupActive=false;CS.cupChampion=null;CS.left=null;CS.right=null;CS.cupResults=[];render();};
 
 window.pickCard=async(chosenId,side)=>{
