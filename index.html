@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="favicon.png">
-<!-- EmailJS SDK（免費方案，用來把回報訊息寄到你的信箱） -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <title>G.I. 貪婪之島 卡片交換系統</title>
 <style>
@@ -165,7 +164,6 @@ body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei'
 /* ===== 建議回報頁面 ===== */
 .feedback-container { max-width:600px; }
 .feedback-welcome { background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.3); border-radius:12px; padding:18px 20px; margin-bottom:20px; font-size:14px; line-height:1.8; color:var(--text); }
-.feedback-welcome strong { color:var(--gold); }
 .feedback-form-box { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px 22px; }
 .feedback-form-box label { display:block; margin-bottom:8px; color:var(--gold); font-size:13px; font-weight:bold; }
 .feedback-textarea { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px 14px; color:var(--text); font-size:14px; outline:none; resize:vertical; min-height:130px; font-family:inherit; line-height:1.6; transition:border-color 0.2s; }
@@ -291,6 +289,130 @@ body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei'
   /* 隱藏側邊欄 */
   .chat-sidebar-panel { display:none !important; }
 }
+
+/* ==================== COMPARE PAGE ==================== */
+.compare-page{max-width:1100px;margin:0 auto}
+/* 模式選擇列 - 縮小 */
+.compare-mode-select{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.compare-mode-btn{flex:1;min-width:100px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 8px;text-align:center;cursor:pointer;transition:all 0.2s;color:var(--text-dim)}
+.compare-mode-btn:hover{border-color:var(--gold);color:var(--text)}
+.compare-mode-btn.active{border-color:var(--gold);background:rgba(201,168,76,0.1);color:var(--gold)}
+.compare-mode-btn .mode-icon{font-size:18px;display:block;margin-bottom:2px}
+.compare-mode-btn .mode-title{font-size:12px;font-weight:bold;display:block}
+.compare-mode-btn .mode-desc{font-size:10px;color:var(--text-dim);display:block;margin-top:2px}
+/* 卡片格放大為主視覺 */
+.compare-card-slot{background:var(--bg2);border:2px solid var(--border);border-radius:14px;padding:16px 14px 20px;text-align:center;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+.compare-card-slot:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 12px 40px rgba(201,168,76,0.25)}
+.compare-card-slot.selected{border-color:var(--green);background:rgba(39,174,96,0.08);animation:winPulse 0.4s ease}
+.compare-card-slot.loser{opacity:0.35;transform:scale(0.95);border-color:var(--border)}
+@keyframes winPulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+.compare-card-img{width:220px;height:220px;object-fit:cover;border-radius:12px;margin:0 auto 14px;display:block;background:var(--bg3);box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.compare-card-img-placeholder{width:220px;height:220px;border-radius:12px;margin:0 auto 14px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:60px}
+.compare-card-name{font-size:17px;font-weight:bold;color:var(--text);margin-bottom:5px}
+.compare-card-rarity{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin-bottom:10px;font-weight:600}
+.compare-card-desc{font-size:12px;color:var(--text-dim);line-height:1.65;text-align:left;max-height:90px;overflow:hidden}
+.compare-vs{display:flex;align-items:center;justify-content:center}
+.compare-vs-badge{background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;font-weight:900;font-size:20px;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(201,168,76,0.4)}
+.compare-layout{display:grid;grid-template-columns:1fr 280px;gap:20px}
+.compare-sidebar{display:flex;flex-direction:column;gap:14px}
+.compare-sidebar-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px}
+.compare-sidebar-box h4{font-size:13px;color:var(--gold);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:8px}
+.ranking-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(42,42,74,0.5);font-size:12px}
+.ranking-num{width:20px;text-align:center;font-weight:bold;color:var(--text-dim)}
+.ranking-num.top3{color:var(--gold);font-size:14px}
+.ranking-name{flex:1;color:var(--text)}
+.ranking-elo{color:var(--gold);font-weight:600;font-size:11px}
+.ranking-matches{color:var(--text-dim);font-size:10px}
+.history-item{font-size:11px;padding:4px 0;border-bottom:1px solid rgba(42,42,74,0.3);color:var(--text-dim)}
+.history-item .winner-name{color:var(--green-light);font-weight:600}
+.compare-progress{background:var(--bg3);border-radius:6px;height:8px;overflow:hidden;margin-bottom:8px}
+.compare-progress-bar{background:linear-gradient(90deg,var(--gold),var(--orange));height:100%;border-radius:6px;transition:width 0.3s}
+.tournament-bracket{font-size:11px;color:var(--text-dim);margin-bottom:6px}
+.compare-champion{text-align:center;padding:30px 20px}
+.compare-champion .trophy{font-size:64px;display:block;margin-bottom:12px}
+.compare-champion .champ-name{font-size:22px;font-weight:bold;color:var(--gold);margin-bottom:8px}
+.compare-champion .champ-img{width:160px;height:160px;object-fit:cover;border-radius:12px;margin:0 auto 16px;display:block;border:3px solid var(--gold)}
+.cup-size-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.cup-size-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 16px;color:var(--text-dim);cursor:pointer;font-size:13px;transition:all 0.2s}
+.cup-size-btn:hover{border-color:var(--gold);color:var(--text)}
+.cup-size-btn.active{background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold);font-weight:bold}
+.rate-limit-msg{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);border-radius:8px;padding:10px;font-size:12px;color:#ff9090;text-align:center;margin-bottom:10px}
+/* compare 登入提示 */
+.compare-login-notice{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--gold);margin-bottom:10px}
+.compare-mode-desc-bar{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);margin-bottom:14px}
+/* 淘汰賽開始畫面 */
+.cup-start-screen{text-align:center;padding:30px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:14px}
+.cup-start-icon{font-size:52px;margin-bottom:10px}
+.cup-start-title{font-size:20px;font-weight:bold;color:var(--gold);margin-bottom:16px}
+.cup-start-info{display:flex;gap:16px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.cup-info-item{background:var(--bg3);border-radius:8px;padding:10px 16px;text-align:center}
+.cup-info-label{display:block;font-size:10px;color:var(--text-dim);margin-bottom:4px}
+.cup-info-value{display:block;font-size:18px;font-weight:bold;color:var(--gold)}
+/* 結果頁 */
+.cup-result-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cup-result-col{}
+.cup-result-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.cup-result-box h4{font-size:13px;color:var(--gold);margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:8px}
+.result-rank-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(42,42,74,0.4)}
+.result-rank-row.champ{background:rgba(201,168,76,0.07);border-radius:8px;padding:10px 8px;margin-bottom:6px;border:1px solid rgba(201,168,76,0.3)}
+.result-rank-badge{font-size:16px;min-width:28px;text-align:center}
+.result-rank-img{width:44px;height:44px;object-fit:cover;border-radius:6px;background:var(--bg3);flex-shrink:0}
+.result-rank-name{font-size:12px;color:var(--text);flex:1}
+.result-rank-score{font-size:12px;color:var(--gold);font-weight:600}
+/* 排行榜頁大表格 */
+.ranking-page{max-width:900px;margin:0 auto}
+.ranking-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.ranking-tab{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 14px;color:var(--text-dim);cursor:pointer;font-size:12px;transition:all 0.2s;white-space:nowrap}
+.ranking-tab:hover{border-color:var(--gold);color:var(--text)}
+.ranking-tab.active{background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold);font-weight:bold}
+.ranking-table{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ranking-table-row{display:grid;grid-template-columns:44px 60px 1fr 80px 70px;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);transition:background 0.15s}
+.ranking-table-row:hover{background:rgba(201,168,76,0.04)}
+.ranking-table-row:last-child{border-bottom:none}
+.ranking-table-row.header{background:var(--bg3);font-size:11px;color:var(--text-dim);font-weight:600;border-bottom:2px solid var(--border)}
+.rank-medal{font-size:18px;text-align:center}
+.rank-img{width:48px;height:48px;object-fit:cover;border-radius:7px;background:var(--bg3);display:block}
+.rank-card-name{font-size:13px;font-weight:600;color:var(--text)}
+.rank-card-sub{font-size:10px;color:var(--text-dim);margin-top:2px}
+.rank-score{font-size:14px;font-weight:bold;color:var(--gold);text-align:right}
+.rank-cnt{font-size:11px;color:var(--text-dim);text-align:right}
+@media(max-width:768px){
+  .cup-result-layout{grid-template-columns:1fr}
+  .ranking-table-row{grid-template-columns:36px 44px 1fr 60px}
+  .rank-cnt{display:none}
+  .compare-mode-btn .mode-title{font-size:11px}
+}
+
+/* 比較結果頁 */
+.compare-result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:10px}
+.compare-result-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.compare-result-card img{width:80px;height:80px;object-fit:cover;border-radius:7px;margin-bottom:6px;display:block;margin:0 auto 6px}
+.compare-result-rank{font-size:18px;font-weight:900;color:var(--gold)}
+.compare-result-name{font-size:11px;color:var(--text);margin-top:4px}
+/* 排行榜頁 */
+.ranking-page{max-width:1000px;margin:0 auto}
+.ranking-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.ranking-tab{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 14px;color:var(--text-dim);cursor:pointer;font-size:12px;transition:all 0.2s}
+.ranking-tab:hover{border-color:var(--gold);color:var(--text)}
+.ranking-tab.active{background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold);font-weight:bold}
+.ranking-table{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ranking-table-row{display:grid;grid-template-columns:44px 60px 1fr 80px 70px;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);transition:background 0.15s}
+.ranking-table-row:hover{background:rgba(201,168,76,0.05)}
+.ranking-table-row.header{background:var(--bg3);font-size:11px;color:var(--text-dim);font-weight:600;border-bottom:2px solid var(--border)}
+.ranking-table-row:last-child{border-bottom:none}
+.rank-medal{font-size:18px;text-align:center}
+.rank-img{width:48px;height:48px;object-fit:cover;border-radius:7px;background:var(--bg3)}
+.rank-card-name{font-size:13px;font-weight:600;color:var(--text)}
+.rank-card-sub{font-size:10px;color:var(--text-dim);margin-top:2px}
+.rank-score{font-size:14px;font-weight:bold;color:var(--gold);text-align:right}
+.rank-cnt{font-size:11px;color:var(--text-dim);text-align:right}
+@media(max-width:768px){
+  .compare-layout{grid-template-columns:1fr}
+  .compare-card-img,.compare-card-img-placeholder{width:160px;height:160px}
+  .compare-card-desc{display:none}
+  .ranking-table-row{grid-template-columns:36px 48px 1fr 60px}
+  .rank-cnt{display:none}
+}
 </style>
 </head>
 <body>
@@ -301,10 +423,12 @@ body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei'
     <button class="nav-btn active" id="nav-cards"  onclick="window.switchView('cards')">🃏 卡片設定</button>
     <button class="nav-btn"        id="nav-board"  onclick="window.switchView('board')">📋 交換看板</button>
     <button class="nav-btn"        id="nav-match"  onclick="window.switchView('match')">🔥 配對搜尋</button>
+    <button class="nav-btn"        id="nav-compare" onclick="window.switchView('compare')">⚔️ 卡片比較</button>
+    <button class="nav-btn"        id="nav-ranking" onclick="window.switchView('ranking')">🏅 卡片排行榜</button>
     <button class="nav-btn"        id="nav-inbox"  onclick="window.switchView('inbox')">💬 訊息匣
       <span class="nav-unread" id="navUnreadDot"></span>
     </button>
-    <button class="nav-btn"        id="nav-feedback" onclick="window.switchView('feedback')">💡 建議</button>
+    <button class="nav-btn" id="nav-feedback" onclick="window.switchView('feedback')">💡 建議</button>
   </nav>
   <button class="disclaimer-btn" onclick="window.openDisclaimer()" title="網站聲明與免責條款">⚠️</button>
   <div class="user-chip" onclick="window.openAuthModal()">
@@ -347,21 +471,11 @@ if (typeof __initial_auth_token!=='undefined' && __initial_auth_token)
 const TAIWAN_CITIES = ['基隆市','台北市','新北市','桃園市','新竹縣','新竹市','苗栗縣','台中市','彰化縣','南投縣','雲林縣','嘉義縣','嘉義市','台南市','高雄市','屏東縣','宜蘭縣','花蓮縣','台東縣','澎湖縣','金門縣','連江縣','海外/其他'];
 const ADMIN_UIDS = new Set(['REPLACE_WITH_YOUR_UID']);
 
-// ====================================================
-// EmailJS 設定（寄信到你的信箱）
-// 步驟：
-//   1. 到 https://www.emailjs.com 免費註冊
-//   2. Add New Service（Gmail / Outlook 皆可）→ 取得 Service ID
-//   3. Email Templates → Create Template，變數使用：
-//      {{from_name}} {{from_uid}} {{message}} {{submitted_at}}
-//   4. Account → Public Key
-// ====================================================
-const EMAILJS_PUBLIC_KEY   = 'rGyblJEmtqJ-GlID_';
-const EMAILJS_SERVICE_ID   = 'service_sqcrx5r';
-const EMAILJS_TEMPLATE_ID  = 'template_faxk6u5';
-if(EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'){
-  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-}
+// ==================== EmailJS 設定 ====================
+const EMAILJS_PUBLIC_KEY  = 'rGyblJEmtqJ-GlID_';
+const EMAILJS_SERVICE_ID  = 'service_sqcrx5r';
+const EMAILJS_TEMPLATE_ID = 'template_faxk6u5';
+if(typeof emailjs !== 'undefined') emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
 // ==================== CARD DATA ====================
 const CARDS = [
@@ -992,9 +1106,9 @@ window.submitFeedback=async()=>{
   if(statusEl){statusEl.textContent='送出中…';statusEl.className='feedback-status';}
   const payload={
     text,
-    uid: S.user?.uid||'(未登入)',
-    nickname: S.nickname||'(未登入)',
-    submittedAt: Date.now()
+    uid:S.user?.uid||'(未登入)',
+    nickname:S.nickname||'(未登入)',
+    submittedAt:Date.now()
   };
   // 1. 儲存到 Firestore
   try{
@@ -1004,21 +1118,17 @@ window.submitFeedback=async()=>{
     if(statusEl){statusEl.textContent='送出失敗，請稍後再試。';statusEl.className='feedback-status error';}
     return;
   }
-  // 2. 透過 EmailJS 寄信（若未設定則略過）
-  if(EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'){
-    try{
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        from_name: S.nickname||'(未登入)',
-        from_uid:  S.user?.uid||'(未登入)',
-        message:   text,
-        submitted_at: new Date(payload.submittedAt).toLocaleString('zh-TW')
-      });
-    }catch(e){
-      // 寄信失敗不影響主流程（Firestore 已儲存）
-      console.warn('EmailJS 寄信失敗（Firestore 已儲存）',e);
-    }
+  // 2. 透過 EmailJS 寄信
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
+      from_name:S.nickname||'(未登入)',
+      from_uid:S.user?.uid||'(未登入)',
+      message:text,
+      submitted_at:new Date(payload.submittedAt).toLocaleString('zh-TW')
+    });
+  }catch(e){
+    console.warn('EmailJS 寄信失敗（Firestore 已儲存）',e);
   }
-  // 清空輸入
   const ta=document.getElementById('feedbackText');
   if(ta)ta.value='';
   document.getElementById('feedbackCharCount').textContent='0 / 1000';
@@ -1036,9 +1146,7 @@ async function renderAdmin(){
   const threadsRef=collection(db,'artifacts',appId,'public','data','threads');
   const threadsSnap=await getDocs(threadsRef);
   const threads=threadsSnap.docs.map(d=>({id:d.id,...d.data()}));
-  // 取得回報訊息
-  const feedbackRef=collection(db,'artifacts',appId,'public','data','feedback');
-  const feedbackSnap=await getDocs(feedbackRef);
+  const feedbackSnap=await getDocs(collection(db,'artifacts',appId,'public','data','feedback'));
   const feedbacks=feedbackSnap.docs.map(d=>d.data()).sort((a,b)=>(b.submittedAt||0)-(a.submittedAt||0));
   const totalHave=users.reduce((s,u)=>s+(u.have?.length||0),0);
   const totalWant=users.reduce((s,u)=>s+(u.want?.length||0),0);
@@ -1132,7 +1240,7 @@ function topCards(users,field,n){
 }
 
 // ==================== RENDER ====================
-const VIEW_RENDERERS={cards:renderCards,board:renderBoard,match:renderMatch,inbox:renderInbox,feedback:renderFeedback};
+const VIEW_RENDERERS={cards:renderCards,board:renderBoard,match:renderMatch,inbox:renderInbox,compare:renderCompare,ranking:renderRankingPage,feedback:renderFeedback};
 async function render(){
   const el=document.getElementById('mainContent');
   if(S.view==='admin'){el.innerHTML='<div style="color:var(--text-dim);padding:20px">載入中…</div>';el.innerHTML=await renderAdmin();return;}
@@ -1240,24 +1348,13 @@ window.clearBoardSearch=()=>{
 };
 
 window.switchView=(v)=>{
+  if(v==='compare'){loadCompareRanking('all');}
+  if(v==='ranking'){loadCompareRanking(CS.rankTab||'all');}
   S.view=v;
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(`nav-${v}`)?.classList.add('active');
-  // === Hash Routing：同步更新網址 hash，讓上一頁鍵 & 書籤正常運作 ===
-  if(location.hash !== '#'+v) history.pushState(null,'','#'+v);
   render();
 };
-// 偵測使用者按上一頁 / 下一頁
-window.addEventListener('popstate',()=>{
-  const v=location.hash.replace('#','');
-  const valid=['cards','board','match','inbox','feedback','admin'];
-  if(valid.includes(v)) {
-    S.view=v;
-    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-    document.getElementById(`nav-${v}`)?.classList.add('active');
-    render();
-  }
-});
 
 window.manualSave=()=>saveToCloud();
 window.toast=(msg)=>{document.querySelector('.toast')?.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);};
@@ -1296,6 +1393,511 @@ window.doSendMessage=async()=>{
   if(!text)return;
   input.value='';input.style.height='auto';
   await sendMessage(text);
+};
+
+
+// ==================== CARD COMPARE DATA ====================
+const COMPARE_CARDS = [{"id": "0", "name": "支配者的祝福", "rarity": "SS-1", "desc": "作為猜謎比賽冠軍的獎勵，會被賜予一座城堡。並附贈一個人口一萬人的城下町。這個城鎮的人們會遵從你制定的法律與指令生活。"}, {"id": "1", "name": "一坪的密林", "rarity": "SS-3", "desc": "通往被稱為「山神之庭」的巨大森林的入口。棲息著許多只有這座森林才有的特有種。所有的動物都很親近人。"}, {"id": "2", "name": "一坪的海岸線", "rarity": "SS-3", "desc": "通往被稱為「海神棲息處」的海底洞穴的入口。這個洞穴每次進入都會改變形態，讓入侵者迷路。"}, {"id": "-3", "name": "排除", "rarity": "-", "desc": "將所有以不當方式潛入G.I.的人，飛送到埃珍大陸的某個地方。（屬性：遠、特）"}, {"id": "3", "name": "湧水之壺", "rarity": "A-17", "desc": "總是持續湧出乾淨的水的壺。1天會湧出1440公升的水。"}, {"id": "4", "name": "美肌溫泉", "rarity": "A-15", "desc": "能消除所有關於肌膚煩惱的溫泉。1天泡澡30分鐘就能變成像嬰兒般滑嫩的肌膚。"}, {"id": "5", "name": "神隱洞穴", "rarity": "S-8", "desc": "走進這個洞穴再出來時，會移動到某個荒無人煙的地方。但僅限國內。無論被飛送到哪裡，不知為何都不用花錢就能回到洞穴原處。"}, {"id": "6", "name": "產酒之泉", "rarity": "A-15", "desc": "汲取這個泉水放置一星期後就會變成酒。酒的種類是隨機的，但味道是極品。"}, {"id": "7", "name": "懷孕之石", "rarity": "S-10", "desc": "只要將這塊重達3公斤的石頭連續一個月隨身攜帶片刻不離，達成的一星期後無論男女必定懷孕。有男石與女石兩種，只要攜帶想生下的性別的石頭即可。"}, {"id": "8", "name": "不思議之池", "rarity": "S-10", "desc": "在這個池子裡放進1條魚，隔天就會增加1條。無論是棲息在何種水域的魚都能在此生存並混合共游的池子。"}, {"id": "9", "name": "豐收之樹", "rarity": "S-10", "desc": "會結出各式各樣果實的樹。無論怎麼收成，隔天樹上又會結滿果實。果實的種類與數量是隨機的。"}, {"id": "10", "name": "黃金旅遊指南", "rarity": "A-20", "desc": "旅遊資訊雜誌。大量刊載了能遇見持有者喜歡的異性的地點與時間。"}, {"id": "11", "name": "黃金天秤", "rarity": "B-30", "desc": "當被迫面臨「要選擇哪一個？」的二選一抉擇時，會為你選擇對你的將來比較有效的那一方的天秤。"}, {"id": "12", "name": "黃金辭典", "rarity": "S-10", "desc": "會教導對持有者有利詞彙的辭典。打開辭典，找到閃耀著黃金光芒的詞彙並記住它的意思，隔天必定能派上用場。"}, {"id": "13", "name": "幸福存摺", "rarity": "A-20", "desc": "只要將日常中微小的幸福不使用並存入這本存摺裡，就能將那些運氣換算成金額領取出來。"}, {"id": "14", "name": "斷緣之剪", "rarity": "B-22", "desc": "用這把剪刀剪下不想見到的人的照片，就能夠再也不會見到那個人。因為對照片裡拍到的所有人都有效果（本人除外），所以需要特別注意。"}, {"id": "15", "name": "反覆無常的魔人", "rarity": "S-10", "desc": "能幫人實現3個願望的魔人。但必須提出1000個不同的願望，再由魔人從中隨便挑選。（不可用「給我100億」、「給我101億」等改變金額的方式來湊數）。"}, {"id": "16", "name": "妖精王的忠告", "rarity": "S-6", "desc": "會溫柔地告誡你不足之處、應該改進的地方等，並給予準確的建議。偶爾就算沒叫他也會自己跑出來，這點有些煩人。"}, {"id": "17", "name": "大天使的氣息", "rarity": "SS-3", "desc": "瀕死的重傷、不治之症，不管什麼都能吹一口氣就治好的天使。不過她只會現身一次而已。"}, {"id": "18", "name": "小惡魔的眼色", "rarity": "A-18", "desc": "接收到這個眨眼（眼色）的人，能體會到不像是這世上能有的絕頂快感。雖然會出現無數次對你眨眼，但要注意會上癮。"}, {"id": "19", "name": "遊魂枕", "rarity": "A-13", "desc": "睡在這個枕頭上就能夠靈魂出竅。但如果沒有在24小時內回到體內，就會變成真正的幽靈。"}, {"id": "20", "name": "心度計", "rarity": "B-30", "desc": "能夠測量你目前精神狀態的時鐘。只要將時間調到12點，就能恢復到平靜的精神狀態。能配合TPO（時間、地點、場合）來控制自己的心境。"}, {"id": "21", "name": "骷髏眼鏡 (透視眼鏡)", "rarity": "B-27", "desc": "能透視物體的眼鏡。可以用刻度調整強弱。唯獨無法透視魔法都市的咒語卡卡袋。"}, {"id": "22", "name": "脫拉A夢", "rarity": "A-22", "desc": "瀕臨絕種的猛獸。有把東西塞進肚子口袋裡的習性，裡面裝有多個超珍貴道具的情況也不少見。"}, {"id": "23", "name": "即興書", "rarity": "B-30", "desc": "每次都能享受不同故事的書。中斷閱讀時，如果不夾上附贈的書籤，故事就會變成完全不一樣的情節，這點需要特別注意。"}, {"id": "24", "name": "假如電視", "rarity": "A-20", "desc": "在附贈的遙控器上輸入「如果～的話」的句子，就會將結果製作成1～30小時的紀錄片形式的節目播出。也可以錄影。"}, {"id": "25", "name": "風險骰子", "rarity": "B-30", "desc": "20面骰子。1面是大凶，19面是大吉。擲出大吉就會發生非常好的事。但如果擲出大凶，就會發生把之前擲出的大吉全部抵銷掉的不幸。"}, {"id": "26", "name": "七個工作小矮人", "rarity": "A-20", "desc": "只有在主人睡覺期間，會代替主人工作的小矮人。不過不會答應超出主人能力範圍的要求。"}, {"id": "27", "name": "免費通行回數券", "rarity": "B-25", "desc": "無論什麼地方，只要交出這張券就能進去。內含1000張。"}, {"id": "28", "name": "見異思遷遙控器", "rarity": "B-27", "desc": "能夠以10個階段的強弱，來操作他人對他人的10種感情。（無法操作他人對自己的感情）"}, {"id": "29", "name": "強制預約券", "rarity": "A-20", "desc": "無論什麼商品，只要在這張券上寫下商品名稱就一定能弄到手。但如果不是市面上販售的東西就沒有效果。當然還是必須支付商品費用。內含1000張。"}, {"id": "30", "name": "願望軟墊", "rarity": "B-21", "desc": "只要讓某人坐在這個軟墊上，那個人就會聽從你的一次請求。無法提出超出坐下之人能力範圍的請求。"}, {"id": "31", "name": "給死者的往返明信片", "rarity": "S-13", "desc": "寫上已故之人的名字並在去信明信片上寫好信的話，隔天回信明信片上就會寫有回信。包含1000張。"}, {"id": "32", "name": "黃鶯糖", "rarity": "B-30", "desc": "舔了這個糖果後，在下次吃喝任何東西之前，都能夠自由發出任何聲音。1袋裝有50粒，共10袋一組。"}, {"id": "33", "name": "荷爾蒙餅乾", "rarity": "S-13", "desc": "吃了這個餅乾後，會在24小時的限制內改變性別。1盒裝有20片，共10盒一組。"}, {"id": "34", "name": "萬能問卷", "rarity": "B-30", "desc": "在這張紙上寫下關於你的各種問題並交給別人，被交給的人就會誠實回答所有的問題。可以無限次使用。"}, {"id": "35", "name": "變色龍貓", "rarity": "S-6", "desc": "瀕臨絕種的珍獸。如果馴服牠，就能變成各種動物。不過因為無法改變體積，所以會變成小象或是巨大的倉鼠……。"}, {"id": "36", "name": "循環回收房", "rarity": "S-10", "desc": "把壞掉的東西放進這個房間裡，24小時後就會被修好，變得跟全新的一樣。但是絕對不能在時間到之前打開門。"}, {"id": "37", "name": "超一流運動員之蛋", "rarity": "B-30", "desc": "只要每天放在手中孵化3小時，1年後～10年後就會化為現實孵化的蛋。孵蛋時許願的心情越強烈，孵化的速度就越快。"}, {"id": "38", "name": "超一流藝術家之蛋", "rarity": "B-30", "desc": "只要每天放在手中孵化3小時，1年後～10年後就會化為現實孵化的蛋。孵蛋時許願的心情越強烈，孵化的速度就越快。"}, {"id": "39", "name": "大政治家之蛋", "rarity": "B-30", "desc": "只要每天放在手中孵化3小時，1年後～10年後就會化為現實孵化的蛋。孵蛋時許願的心情越強烈，孵化的速度就越快。"}, {"id": "40", "name": "超一流音樂家之蛋", "rarity": "B-30", "desc": "只要每天放在手中孵化3小時，1年後～10年後就會化為現實孵化的蛋。孵蛋時許願的心情越強烈，孵化的速度就越快。"}, {"id": "41", "name": "超一流飛行員之蛋", "rarity": "B-30", "desc": "只要每天放在手中孵化3小時，1年後～10年後就會化為現實孵化的蛋。孵蛋時許願的心情越強烈，孵化的速度就越快。"}, {"id": "42", "name": "超一流作家之蛋", "rarity": "B-30", "desc": "只要每天放在手中孵化3小時，1年後～10年後就會化為現實孵化的蛋。孵蛋時許願的心情越強烈，孵化的速度就越快。"}, {"id": "43", "name": "大賭徒之蛋", "rarity": "B-30", "desc": "只要每天放在手中孵化3小時，1年後～10年後就會化為現實孵化的蛋。孵蛋時許願的心情越強烈，孵化的速度就越快。"}, {"id": "44", "name": "大演員之蛋", "rarity": "B-30", "desc": "只要每天放在手中孵化3小時，1年後～10年後就會化為現實孵化的蛋。孵蛋時許願的心情越強烈，孵化的速度就越快。"}, {"id": "45", "name": "大社長之蛋", "rarity": "B-30", "desc": "只要每天放在手中孵化3小時，1年後～10年後就會化為現實孵化的蛋。孵蛋時許願的心情越強烈，孵化的速度就越快。"}, {"id": "46", "name": "金粉少女", "rarity": "A-13", "desc": "會從全身噴出金粉的少女。每天入浴1次約可採集到500公克的黃金。非常內向，一直都不出門。"}, {"id": "47", "name": "睡眠少女", "rarity": "A-11", "desc": "能代替你睡眠的少女。有了她，你就可以不睡覺，24小時持續行動。"}, {"id": "48", "name": "芬芳少女", "rarity": "A-15", "desc": "會散發出對你來說最舒適香氣的少女。只要待在身邊就能消除壓力、恢復精神。"}, {"id": "49", "name": "掌上人魚", "rarity": "A-23", "desc": "如其名，只有能放在手掌上大小的人魚。如果在住起來舒適的地方心情就會變好，有時會用非常美妙的聲音唱歌。"}, {"id": "50", "name": "掌上恐龍", "rarity": "A-11", "desc": "如其名，只有能放在手掌上大小的恐龍。進化速度非常快，會配合環境每個世代改變樣貌。"}, {"id": "51", "name": "掌上龍", "rarity": "S-10", "desc": "如其名，只有能放在手掌上大小的龍。很聽飼主的話。如果傾注愛情培育的話，還會變得能說話。"}, {"id": "52", "name": "珍珠蝗蟲", "rarity": "B-30", "desc": "腹部帶有珍珠的蝗蟲。每十幾年會大量發生一次。"}, {"id": "53", "name": "白色帝王鍬形蟲", "rarity": "A-30", "desc": "傳說中的昆蟲。會散發特殊的費洛蒙誘惑其他昆蟲，讓牠們工作並建立起一大群落。唯一會離開群落外出的時候，只有在傍晚散步時。"}, {"id": "54", "name": "千年鳳蝶", "rarity": "A-25", "desc": "傳說中的昆蟲。據說能夠捕捉到這隻蝴蝶的人，其後代將會繁榮好幾世代，因此得名。"}, {"id": "55", "name": "復仇商店", "rarity": "A-20", "desc": "只要向店長告白平時的怨恨，就會根據其程度對你怨恨的對象進行報復。如果追加金額，還可以進行更重的報復。"}, {"id": "56", "name": "回憶攝影館", "rarity": "B-25", "desc": "只要說出年月日時，就能把當時自己的模樣洗成照片的照相館。也可以連續拍攝。"}, {"id": "57", "name": "隱居地產", "rarity": "A-11", "desc": "會在喜歡的地方為你打造專屬秘密房間的不動產。入住條件是不能讓任何人進入那個房間，也不能談論關於房間的事。"}, {"id": "58", "name": "出租秘密影視店", "rarity": "A-13", "desc": "可以觀看他人秘密的影片出租店。入會條件是借來的影片不能給任何人看，也不能把內容告訴任何人。"}, {"id": "59", "name": "即席外語學校", "rarity": "A-20", "desc": "在這裡學習的時間會加算到專用計時器上。只有在按下這個計時器期間，外語才會變得精通。"}, {"id": "60", "name": "失物快遞", "rarity": "B-30", "desc": "只要撥打專線電話並說明遺失的物品，隔天就會幫你送達。不過如果不是遺失超過1個月以上的物品，就不會受理。"}, {"id": "61", "name": "投幣檢查", "rarity": "A-20", "desc": "只要500J就能檢查全身上下。不過解答只有「無異常」或「有異常」這兩種。出現「有異常」時就去醫院吧。"}, {"id": "62", "name": "會所大王", "rarity": "B-20", "desc": "在這家店裡的時候，店內所有人都會聽從你的命令。不過，在這家店裡的1小時相當於店外的1天。"}, {"id": "63", "name": "虛擬餐廳", "rarity": "B-30", "desc": "只要點餐什麼料理都能端出來。雖然能獲得飽足感，但實際上只是有吃過東西的感覺，肚子裡什麼都沒裝進去。最後會給你營養劑。"}, {"id": "64", "name": "魔女的媚藥", "rarity": "B-30", "desc": "親吻這個藥之後，讓意中人喝下去，那個人就會成為你的俘虜。1粒的藥效是1星期。1瓶裝有500粒。"}, {"id": "65", "name": "魔女的返老還童藥", "rarity": "S-10", "desc": "吃1粒就能年輕1歲的藥。只有肉體會變年輕，知識和記憶會原封不動地保留。如果吃下超過年齡數量的藥就會死掉，需要特別注意。1瓶裝有100粒。"}, {"id": "66", "name": "魔女的瘦身藥", "rarity": "B-28", "desc": "吃1粒就能減輕1公斤體重的藥。1瓶裝有200粒。如果吃下超過體重數量的藥就會死掉，需要特別注意。"}, {"id": "67", "name": "長老的增高藥", "rarity": "B-30", "desc": "吃1粒就能長高1公分的藥。1瓶裝有100粒。建議過了20歲之後再服用。"}, {"id": "68", "name": "長老的精力增強劑", "rarity": "A-20", "desc": "讓肉體的一部分變得非常有活力的藥。無論是次數還是持久力都無可挑剔。1瓶裝有500粒。"}, {"id": "69", "name": "長老的生毛藥", "rarity": "B-30", "desc": "塗抹的地方會變得毛髮濃密的藥。塗抹時必須戴上手套，否則手掌和指尖也會長出毛髮。1瓶200ml（如果是塗在頭上約為10人份）。"}, {"id": "70", "name": "瘋狂博士的肌肉增強劑", "rarity": "A-16", "desc": "喝下去就能獲得如你想像般肌肉的藥。雖然必須每天喝1公升並連續喝1星期，但味道難喝得要命。1公升瓶裝10瓶為一箱，共7箱一組。"}, {"id": "71", "name": "瘋狂博士的費洛蒙劑", "rarity": "A-20", "desc": "噴在身上會變得非常受異性歡迎。但是因為無法控制藥效，會產生大量跟蹤狂等許多問題。需要特別注意。"}, {"id": "72", "name": "瘋狂博士的整型機器", "rarity": "A-15", "desc": "輸入想要變成的臉的照片，就能照著整型。雖然可以無限次進行手術，但有5%的機率手術會失敗，1%的機率機器本身會壞掉。"}, {"id": "73", "name": "黑暗的翡翠", "rarity": "A-15", "desc": "受到惡魔加護的寶石。當持有者快要面臨危機時，會將那個災厄轉移給他人。"}, {"id": "74", "name": "賢者的海藍寶石", "rarity": "A-11", "desc": "擁有它的人，將會獲得好幾位能交往一生的知性豐富的朋友吧。"}, {"id": "75", "name": "奇運亞歷山大變色石", "rarity": "A-20", "desc": "擁有它的人，能夠體驗到其他人絕對無法體會的貴重經驗。雖然無法選擇是幸運還是不幸……。"}, {"id": "76", "name": "流浪紅寶石", "rarity": "B-30", "desc": "這顆紅寶石的持有者，在獲得巨大財富的同時，將不被允許定居。大概無法在同一個地方停留超過一星期吧。"}, {"id": "77", "name": "呼喚美麗的祖母綠", "rarity": "S-10", "desc": "持有者周圍會像是被吸引般聚集了美的侍奉者。你自己也會閃耀光芒，變得充滿魅力到判若兩人吧。"}, {"id": "78", "name": "孤獨的藍寶石", "rarity": "B-30", "desc": "這顆藍寶石的持有者在獲得巨大財富的同時，將孤獨一生。無論朋友、戀人，甚至家人，都會很快地離開持有者身邊吧。"}, {"id": "79", "name": "彩虹鑽石", "rarity": "A-20", "desc": "閃耀著7種色彩的鑽石。只要交出這顆鑽石來求婚，100%會成功。"}, {"id": "80", "name": "浮游石", "rarity": "S-7", "desc": "如其名，是懸浮在空中的石頭。大約1克拉大小的石頭就能讓1個人浮起來。如果沒有照射陽光就無法獲得浮力。"}, {"id": "81", "name": "藍色行星", "rarity": "SS-5", "desc": "閃耀著獨一無二藍色光芒的寶石。在成分構成上不屬於任何寶石，因此包含著「來自宇宙的禮物」之意而取了這個名字。"}, {"id": "82", "name": "天懲之杖", "rarity": "A-15", "desc": "一邊唸出想要給予懲罰之人的名字，一邊將此杖舉向天空，你或對方，至今為止做過較多壞事的一方，將會降下強烈的災厄。"}, {"id": "83", "name": "真實之劍", "rarity": "B-22", "desc": "能將虛假之物一刀兩斷的劍。也被用於審判中，讓犯罪者不寒而慄。若是斬切真實之物，刀刃會粉碎，但只要收進劍鞘中，一天就能再生。"}, {"id": "84", "name": "聖騎士的首飾", "rarity": "D-60", "desc": "戴上這個的玩家不僅能夠反彈咒語，還能夠解除所觸碰之卡片的咒語。"}, {"id": "85", "name": "替身之鎧", "rarity": "S-8", "desc": "能將解除卡片化的武器所造成的攻擊全部無效化的鎧甲。不過對於攻擊的耐用次數為隨機的1～100次，會突然壞掉，請注意。"}, {"id": "86", "name": "挫折之弓", "rarity": "A-11", "desc": "裝備後，就能詠唱與剩餘的箭矢數量相同次數的「離脫」。箭矢有10支。每詠唱一次「離脫」就會減少1支。（註：日文原文寫弓減去，實為箭矢）"}, {"id": "87", "name": "信念之盾", "rarity": "S-15", "desc": "只要在裝備這個的玩家半徑20公尺以內，「左遷」、「初心」、「漂流」、「衝突」的咒語就會無效。"}, {"id": "88", "name": "不死的大金槌", "rarity": "A-15", "desc": "被這把金槌打到的人，會隨機受到某種攻擊咒語的效果。這無法用防禦咒語來防禦。不過，對「堅牢」、「聖騎士的首飾」的使用者無效。"}, {"id": "89", "name": "稅務長的護手", "rarity": "A-20", "desc": "裝備後就能使用「徵收」咒語的護手。不過每詠唱1次，就會隨機破壞1張裝備玩家指定口袋內的卡片。（如果指定口袋裡連1張卡片都沒有，就無法使用「徵收」）"}, {"id": "90", "name": "記憶的頭盔", "rarity": "A-20", "desc": "戴著這個的時候所見所聞的事情絕對不會忘記。非常沉重且巨大是美中不足之處。"}, {"id": "91", "name": "塑膠大王", "rarity": "A-20", "desc": "根據組合方式可以製作出任何交通工具的塑膠模型套件。當然也能以1比1的比例駕駛。不過燃料需另外購買。"}, {"id": "92", "name": "替身車票", "rarity": "S-7", "desc": "剪下這張車票並交給想替代的人，就能在24小時內擔任那個人的替身。內含1000張。"}, {"id": "93", "name": "人生圖鑑", "rarity": "B-28", "desc": "收錄了從出生到現在與自己有關的所有人的圖鑑。寫滿了與登錄人物的插曲和對話紀錄等回憶。最終達到數十萬頁的情況也不少見。"}, {"id": "94", "name": "盜賊之劍", "rarity": "S-10", "desc": "用這把劍攻擊成功的話，能隨機給予被攻擊的對象「強奪」、「扒手」、「竊盜」其中一種效果。不過，對「堅牢」、「聖騎士的首飾」的使用者無效。"}, {"id": "95", "name": "秘密斗篷", "rarity": "A-20", "desc": "穿在身上就能永久獲得「暗幕」的效果。"}, {"id": "96", "name": "千里眼之蛇", "rarity": "A-12", "desc": "只要餵牠吃1張等級C以上的卡片，作為代替，會吐出「念視」卡片的蛇。"}, {"id": "97", "name": "3D相機", "rarity": "A-20", "desc": "能將拍攝下來的物體以立體狀態顯影的相機。尺寸也可以調整，質感也能原封不動地重現。"}, {"id": "98", "name": "銀犬", "rarity": "S-8", "desc": "瀕臨絕種的珍獸。擁有銀色的毛髮，而且糞便是由銀構成的。每天將5公克的黃金混入狗食中餵牠，就會排出1公斤的銀糞。"}, {"id": "99", "name": "傭人熊貓", "rarity": "S-6", "desc": "瀕臨絕種的珍獸。非常愛乾淨且興趣是做料理。根據個體不同，有些也懂得裁縫或園藝。比什麼都更擅長照顧人類的小孩。"}, {"id": "163", "name": "生病的村民", "rarity": "F-150", "desc": "染上島上風土病的村民們。"}, {"id": "263", "name": "健康的村民", "rarity": "C-50", "desc": "從島上風土病中康復，變得健康的村民們。"}, {"id": "1006", "name": "掏摸 ", "rarity": "F-170", "desc": "隨機奪取一名其他玩家自由口袋裡的1張卡片。"}, {"id": "1010", "name": "擬態", "rarity": "A-20", "desc": "將持有的1張卡片變身為另一張持有的卡片。（卡片化限度張數將計算在變化後的卡片種類中。如果限度張數已達MAX，則不會變化，且「擬態」將被破壞）"}, {"id": "1011", "name": "複製", "rarity": "D-70", "desc": "從對象玩家1名的指定口袋中隨機選擇1張，並變身為該卡片。（如果對象玩家的指定口袋裡沒有任何1張卡片，或者變化後卡片種類的卡片化限度張數已達MAX，則不會變化，且「複製」將被破壞）"}, {"id": "1018", "name": "徵收", "rarity": "B-25", "desc": "從使用咒語的玩家半徑20公尺以內的所有玩家身上，各隨機奪取1張卡片。"}, {"id": "1020", "name": "贗品", "rarity": "C-40", "desc": "將「贗品」變身為No.001到099之中的任何1張卡片。變身後的卡片可以放入指定口袋，但無法成為全破收集卡片的對象，也無法實體化為道具，更不會被計算在卡片化限度張數內。"}, {"id": "1021", "name": "強奪", "rarity": "B-30", "desc": "隨意奪取一名其他玩家持有的任何1張卡片。"}, {"id": "1032", "name": "寶籤", "rarity": "G-350", "desc": "隨機變身成某張道具卡的1張卡片。"}, {"id": "1035", "name": "堅牢", "rarity": "S-10", "desc": "放入指定頁面口袋裡的卡片，只要還在口袋裡，就永遠不會成為被咒語奪取或破壞的對象。（能指定的頁面僅限1到11頁中的其中一頁，無法選擇自由口袋的頁面）"}, {"id": "1036", "name": "神眼", "rarity": "S-10", "desc": "使用的玩家對於No.001到099的所有卡片，隨時都能獲得「解析」與「名簿」的效果（效果會持續到使用的玩家離開遊戲外為止）。"}, {"id": "1038", "name": "名簿", "rarity": "G-350", "desc": "指定1種對象道具，可以得知現在擁有該道具卡片的人數與卡片的合計張數。"}, {"id": "1039", "name": "同行", "rarity": "F-130", "desc": "包含使用咒語的玩家在內，將半徑20公尺以內的所有玩家，飛送到指定的城市（僅限去過的城市）或指定的玩家（僅限在遊戲內遇過的玩家）所在的地方。"}];
+
+// ── 分類定義 ──
+const COMPARE_CATEGORIES = [
+  {key:'all',   label:'🌐 全部114張', icon:'🌐', desc:'所有卡片大亂鬥', ids:null},
+  {key:'fp',    label:'🪄 自由口袋',  icon:'🪄', desc:'咒語與特殊卡', ids:['-3','163','263','1006','1010','1011','1018','1020','1021','1032','1035','1036','1038','1039']},
+  {key:'bio',   label:'🐶 生物',      icon:'🐶', desc:'各種神奇生物', ids:['15','16','17','18','22','26','35','46','47','48','49','50','51','52','53','54','98','99']},
+  {key:'s',     label:'✨ S級卡片',   icon:'✨', desc:'稀有S級以上卡片', ids:['7','8','9','12','15','36','51','65','77','94','1035','1036','31','33','87','16','35','99','80','92','5','85','98','0','1','2','17','81']},
+  {key:'equip', label:'🗡️ 裝備',      icon:'🗡️', desc:'武器防具道具', ids:['82','83','84','85','86','87','88','89','90','94','95']},
+  {key:'gem',   label:'💎 寶石',      icon:'💎', desc:'各種神祕寶石', ids:['73','74','75','76','77','78','79','80','81']},
+  {key:'drug',  label:'🧪 秘藥',      icon:'🧪', desc:'魔女與博士的祕方', ids:['64','65','66','67','68','69','70','71','72']},
+  {key:'egg',   label:'🥚 夢想蛋蛋',  icon:'🥚', desc:'成為夢想的蛋', ids:['37','38','39','40','41','42','43','44','45']},
+];
+
+function getCategoryCards(catKey){
+  const cat=COMPARE_CATEGORIES.find(c=>c.key===catKey);
+  if(!cat||!cat.ids) return [...COMPARE_CARDS];
+  return cat.ids.map(id=>COMPARE_CARDS.find(c=>c.id===id)).filter(Boolean);
+}
+
+// ── ELO ──
+function calcElo(wElo,lElo,k=32){
+  const exp=1/(1+Math.pow(10,(lElo-wElo)/400));
+  return[Math.round(wElo+k*(1-exp)),Math.round(lElo+k*(0-exp))];
+}
+
+// ── 圖片路徑 ──
+function cImgPath(card){
+  const pad=card.id==='-3'?'-3':String(parseInt(card.id)).padStart(3,'0');
+  return `cards/${pad}${card.name}.jpg`;
+}
+function idDisp(id){return id==='-3'?'-3':String(parseInt(id)).padStart(3,'0');}
+
+// ── 稀有度顏色 ──
+function rarityColor(r){
+  if(!r) return '#94a3b8';
+  if(r.startsWith('SS')) return '#ffd700';
+  if(r.startsWith('S'))  return '#c084fc';
+  if(r.startsWith('A'))  return '#60a5fa';
+  if(r.startsWith('B'))  return '#4ade80';
+  if(r.startsWith('C'))  return '#fb923c';
+  if(r.startsWith('D'))  return '#f87171';
+  return '#94a3b8';
+}
+
+// ── Compare 全域狀態 ──
+const CS = {
+  mode:'random',
+  catKey:'all',
+  left:null, right:null,
+  history:[],
+  rankings:{},      // {catKey: [...]}
+  rankLoaded:new Set(),
+  // cup (一對一淘汰賽)
+  cupPool:[],
+  cupBracket:[],
+  cupRound:1, cupTotalRounds:1, cupTotalInRound:0, cupMatchesDone:0,
+  cupChampion:null,
+  cupActive:false,
+  cupResults:[],    // [{place,card}] 本場淘汰順序（反向＝名次）
+  rateLimited:false,
+  // ranking page
+  rankTab:'all',
+};
+
+// ── Firestore 讀取排名 ──
+async function loadCompareRanking(catKey){
+  if(!window.db) return;
+  catKey=catKey||'all';
+  if(CS.rankLoaded.has(catKey)) return;
+  try{
+    const col = catKey==='all'?'cardElo':`cardElo_${catKey}`;
+    const snap=await window.db.collection(col).orderBy('elo','desc').limit(30).get();
+    let rows=snap.docs.map(d=>({id:d.id,...d.data()}));
+    let qualified=rows.filter(r=>(r.totalMatches||0)>=10);
+    if(qualified.length<3) qualified=rows;
+    CS.rankings[catKey]=qualified.slice(0,20);
+    CS.rankLoaded.add(catKey);
+    updateCompareSidebar();
+    if(S.view==='ranking') render();
+  }catch(e){console.log('ranking err',catKey,e);}
+}
+
+// ── Firestore 寫入投票 ──
+async function submitVote(winnerId,loserId,catKey){
+  if(!S.user) return false;
+  catKey=catKey||'all';
+  const now=Date.now(),hourKey=Math.floor(now/3600000);
+  const limitRef=window.db.collection('userVoteLimits').doc(S.user.uid);
+  try{
+    await window.db.runTransaction(async tx=>{
+      const doc=await tx.get(limitRef);
+      const d=doc.exists?doc.data():{hourKey:0,count:0};
+      const cnt=(d.hourKey===hourKey?d.count:0)+1;
+      if(cnt>120) throw new Error('rate_limited');
+      tx.set(limitRef,{hourKey,cnt},{merge:false});
+    });
+  }catch(e){
+    if(e.message==='rate_limited'){CS.rateLimited=true;return false;}
+  }
+  const writeCol=async(col)=>{
+    const[wd,ld]=await Promise.all([
+      window.db.collection(col).doc(String(winnerId)).get(),
+      window.db.collection(col).doc(String(loserId)).get()
+    ]);
+    const we=wd.exists?wd.data().elo:1000,le=ld.exists?ld.data().elo:1000;
+    const[nw,nl]=calcElo(we,le);
+    const wCard=COMPARE_CARDS.find(c=>c.id===String(winnerId));
+    const lCard=COMPARE_CARDS.find(c=>c.id===String(loserId));
+    const batch=window.db.batch();
+    batch.set(window.db.collection(col).doc(String(winnerId)),{
+      elo:nw,wins:(wd.exists?(wd.data().wins||0):0)+1,
+      totalMatches:(wd.exists?(wd.data().totalMatches||0):0)+1,
+      name:wCard?wCard.name:''
+    },{merge:true});
+    batch.set(window.db.collection(col).doc(String(loserId)),{
+      elo:nl,losses:(ld.exists?(ld.data().losses||0):0)+1,
+      totalMatches:(ld.exists?(ld.data().totalMatches||0):0)+1,
+      name:lCard?lCard.name:''
+    },{merge:true});
+    await batch.commit();
+    CS.rankLoaded.delete(col==='cardElo'?'all':col.replace('cardElo_',''));
+  };
+  try{
+    const writes=[writeCol('cardElo')];
+    if(catKey!=='all') writes.push(writeCol(`cardElo_${catKey}`));
+    await Promise.all(writes);
+    loadCompareRanking(catKey);
+    if(catKey!=='all') loadCompareRanking('all');
+    return true;
+  }catch(e){console.log('vote err',e);return false;}
+}
+
+// ── 工具 ──
+function pickTwo(pool){
+  if(pool.length<2) return[pool[0],pool[0]];
+  const a=Math.floor(Math.random()*pool.length);
+  let b;do{b=Math.floor(Math.random()*pool.length);}while(b===a);
+  return[pool[a],pool[b]];
+}
+
+// ── 卡片格 HTML ──
+function cardSlotHTML(card,side){
+  const rc=rarityColor(card.rarity);
+  return `<div class="compare-card-slot" id="slot-${side}" data-cid="${card.id}" data-side="${side}" onclick="window.pickCard(this.dataset.cid,this.dataset.side)">
+    <img class="compare-card-img" src="${cImgPath(card)}" alt="${card.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="compare-card-img-placeholder" style="display:none">🃏</div>
+    <div class="compare-card-name">#${idDisp(card.id)} ${card.name}</div>
+    <span class="compare-card-rarity" style="background:${rc}22;color:${rc};border:1px solid ${rc}44">${card.rarity}</span>
+    <div class="compare-card-desc">${card.desc}</div>
+  </div>`;
+}
+
+// ── 排行榜列表 ──
+function rankingListHTML(catKey,limit){
+  const data=CS.rankings[catKey]||[];
+  limit=limit||10;
+  if(!CS.rankLoaded.has(catKey)) return`<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:10px">載入中…</div>`;
+  if(!data.length) return`<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:10px">尚無足夠數據</div>`;
+  const medals=['🥇','🥈','🥉'];
+  return data.slice(0,limit).map((r,i)=>{
+    const card=COMPARE_CARDS.find(c=>c.id===r.id);
+    const name=card?card.name:(r.name||r.id);
+    const wins=r.wins||0,total=r.totalMatches||0;
+    const rate=total>0?Math.round(wins/total*100):0;
+    return`<div class="ranking-row">
+      <span class="ranking-num ${i<3?'top3':''}">${i<3?medals[i]:i+1}</span>
+      <span class="ranking-name">#${idDisp(r.id)} ${name}</span>
+      <span class="ranking-elo">${rate}%</span>
+      <span class="ranking-matches">(${total}場)</span>
+    </div>`;
+  }).join('');
+}
+
+// ── 歷史紀錄 ──
+function renderHistory(){
+  if(!CS.history.length) return`<div style="color:var(--text-dim);font-size:11px">尚無紀錄</div>`;
+  return CS.history.slice(-12).reverse().map(h=>
+    `<div class="history-item">✓ <span class="winner-name">#${idDisp(h.wid)} ${h.wname}</span> 擊敗 <span class="loser-name">#${idDisp(h.lid)} ${h.lname}</span></div>`
+  ).join('');
+}
+
+// ── 淘汰賽初始化 ──
+function initCup(catKey){
+  const pool=getCategoryCards(catKey).sort(()=>Math.random()-0.5);
+  CS.cupPool=[...pool];
+  CS.cupBracket=[];
+  CS.cupResults=[];
+  CS.cupChampion=null;
+  CS.cupRound=1;
+  CS.cupActive=true;
+  CS.history=[];
+  // 計算總輪數
+  const n=pool.length;
+  CS.cupTotalRounds=Math.ceil(Math.log2(n));
+  CS.cupTotalInRound=Math.floor(n/2);
+  CS.cupMatchesDone=0;
+  CS.left=CS.cupPool.shift();
+  CS.right=CS.cupPool.shift();
+}
+
+function cupProgress(){
+  const pct=CS.cupTotalInRound>0?Math.min(100,Math.round(CS.cupMatchesDone/CS.cupTotalInRound*100)):0;
+  const n=CS.cupPool.length+CS.cupBracket.length+2;
+  return`<div class="tournament-bracket">第 ${CS.cupRound} 輪・剩餘 ${n} 張・已完成 ${CS.cupMatchesDone}/${CS.cupTotalInRound} 場</div>
+  <div class="compare-progress"><div class="compare-progress-bar" style="width:${pct}%"></div></div>`;
+}
+
+function nextCupPair(){
+  if(CS.cupPool.length>=2){
+    CS.left=CS.cupPool.shift();CS.right=CS.cupPool.shift();render();
+  }else if(CS.cupPool.length===1){
+    CS.cupBracket.push(CS.cupPool.shift());advanceCupRound();
+  }else{advanceCupRound();}
+}
+
+function advanceCupRound(){
+  if(CS.cupBracket.length===1){CS.cupChampion=CS.cupBracket[0];render();}
+  else{
+    CS.cupPool=[...CS.cupBracket].sort(()=>Math.random()-0.5);
+    CS.cupBracket=[];CS.cupRound++;
+    CS.cupMatchesDone=0;CS.cupTotalInRound=Math.floor(CS.cupPool.length/2);
+    CS.left=CS.cupPool.shift();CS.right=CS.cupPool.shift();render();
+  }
+}
+
+// ── 淘汰賽結果頁 ──
+function renderCupResult(){
+  const cat=COMPARE_CATEGORIES.find(c=>c.key===CS.catKey);
+  const champ=CS.cupChampion;
+  // 建立排名（冠軍第1，history 倒推）
+  const ranked=[champ];
+  for(let i=CS.history.length-1;i>=0;i--){
+    const h=CS.history[i];
+    const loser=COMPARE_CARDS.find(c=>c.id===h.lid);
+    if(loser&&!ranked.find(c=>c.id===loser.id)) ranked.push(loser);
+  }
+  const myRankHTML=ranked.slice(0,10).map((card,i)=>{
+    const medals=['🥇','🥈','🥉'];
+    const badge=i===0?'🏆':i<3?medals[i]:`${i+1}`;
+    return`<div class="result-rank-row ${i===0?'champ':''}">
+      <span class="result-rank-badge">${badge}</span>
+      <img src="${cImgPath(card)}" class="result-rank-img" onerror="this.style.display='none'" alt="">
+      <span class="result-rank-name">#${idDisp(card.id)} ${card.name}</span>
+    </div>`;
+  }).join('');
+
+  const globalData=CS.rankings[CS.catKey]||[];
+  const globalHTML=globalData.length?globalData.slice(0,10).map((r,i)=>{
+    const card=COMPARE_CARDS.find(c=>c.id===r.id);
+    const name=card?card.name:(r.name||r.id);
+    const medals=['🥇','🥈','🥉'];
+    return`<div class="result-rank-row ${i===0?'champ':''}">
+      <span class="result-rank-badge">${i<3?medals[i]:i+1}</span>
+      ${card?`<img src="${cImgPath(card)}" class="result-rank-img" onerror="this.style.display='none'" alt="">`:'<div class="result-rank-img" style="background:var(--bg3)"></div>'}
+      <span class="result-rank-name">#${idDisp(r.id)} ${name}</span>
+      <span class="result-rank-score">${(()=>{const w=r.wins||0,t=r.totalMatches||0;return t>0?Math.round(w/t*100)+"%":"-%";})()}</span>
+    </div>`;
+  }).join(''):`<div style="color:var(--text-dim);font-size:12px;padding:10px">尚無足夠數據</div>`;
+
+  return`<div class="compare-page">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <button class="btn-secondary" style="width:auto;padding:6px 14px" onclick="window.resetCup()">← 返回</button>
+      <h3 style="color:var(--gold)">${cat?cat.label:''} 比較結果</h3>
+    </div>
+    <div class="cup-result-layout">
+      <div class="cup-result-col">
+        <div class="cup-result-box">
+          <h4>🏆 你的個人排名</h4>
+          <div style="text-align:center;margin-bottom:16px">
+            <img src="${cImgPath(champ)}" style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:3px solid var(--gold);margin-bottom:8px" onerror="this.style.display='none'" alt="">
+            <div style="font-size:18px;font-weight:bold;color:var(--gold)">🥇 ${champ.name}</div>
+            <div style="font-size:12px;color:var(--text-dim);margin-top:4px">${champ.desc}</div>
+          </div>
+          ${myRankHTML}
+        </div>
+      </div>
+      <div class="cup-result-col">
+        <div class="cup-result-box">
+          <h4>🌐 全用戶人氣排名</h4>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:10px">根據所有玩家的選擇統計</div>
+          ${globalHTML}
+          <button class="btn-secondary" style="width:100%;margin-top:12px" onclick="window.switchView('ranking')">查看完整排行榜 →</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── 主 renderCompare ──
+function renderCompare(){
+  // 如果是結果頁
+  if(CS.cupChampion) return renderCupResult();
+
+  const loginGuard=!S.user?`<div class="compare-login-notice">⚠️ 請先<a onclick="window.openAuthModal()" style="color:var(--gold);cursor:pointer;text-decoration:underline">登入</a>才能投票，您的選擇才會計入排行榜</div>`:'';
+  const rateLimitMsg=CS.rateLimited?`<div class="rate-limit-msg">⏱ 您今日的投票次數已達上限，請稍後再來！</div>`:'';
+
+  // ── 模式選擇列 ──
+  const modeHTML=`<div class="compare-mode-select">
+    <div class="compare-mode-btn ${CS.mode==='random'?'active':''}" onclick="window.setCompareMode('random')">
+      <span class="mode-icon">🎲</span>
+      <span class="mode-title">Greed 無限PK</span>
+    </div>
+    <div class="compare-mode-btn ${CS.mode==='cup'?'active':''}" onclick="window.setCompareMode('cup')">
+      <span class="mode-icon">🏆</span>
+      <span class="mode-title">一對一淘汰賽</span>
+    </div>
+    ${COMPARE_CATEGORIES.slice(1).map(cat=>`
+    <div class="compare-mode-btn ${CS.mode===cat.key?'active':''}" onclick="window.setCompareMode('${cat.key}')">
+      <span class="mode-icon">${cat.icon}</span>
+      <span class="mode-title">${cat.label.replace(/^[^\s]+\s/,"")}</span>
+    </div>`).join('')}
+  </div>`;
+
+  // ── 隨機模式 / 分類模式說明 ──
+  let modeDesc='';
+  if(CS.mode==='random'){
+    modeDesc=`<div class="compare-mode-desc-bar">
+      <div>從114張中隨機抽出2張進行比較，選出你比較喜歡的卡片吧！</div>
+      <div style="margin-top:4px;font-size:11px;color:var(--text-dim)">此模式會無限循環，你的每次選擇都會替你選擇的卡片加分！在排行榜頁面可以看到哪張卡片最受歡迎！！（當然也能看到最不受歡迎的...🥲）</div>
+    </div>`;
+  }else if(CS.mode==='cup'){
+    modeDesc=`<div class="compare-mode-desc-bar">一對一淘汰賽，選出你個人的最愛</div>`;
+  }else{
+    const cat=COMPARE_CATEGORIES.find(c=>c.key===CS.mode);
+    if(cat){
+      const cards=getCategoryCards(CS.mode);
+      modeDesc=`<div class="compare-mode-desc-bar">${cat.label} · 共 ${cards.length} 張 — ${cat.desc}</div>`;
+    }
+  }
+
+  // ── 競技場 HTML ──
+  let arenaHTML='';
+  const isCatMode=!['random','cup'].includes(CS.mode);
+
+  if(CS.mode==='cup'||isCatMode){
+    // 淘汰賽
+    if(!CS.cupActive){
+      const targetCat=isCatMode?CS.mode:'all';
+      const cards=getCategoryCards(targetCat);
+      const n=cards.length;
+      const rounds=Math.ceil(Math.log2(n));
+      const totalMatches=n-1;
+      arenaHTML=`<div class="cup-start-screen">
+        <div class="cup-start-icon">${isCatMode?(COMPARE_CATEGORIES.find(c=>c.key===CS.mode)?.icon||'🏆'):'🏆'}</div>
+        <h3 class="cup-start-title">${isCatMode?(COMPARE_CATEGORIES.find(c=>c.key===CS.mode)?.label||''):'一對一淘汰賽'}</h3>
+        <div class="cup-start-info">
+          <div class="cup-info-item"><span class="cup-info-label">參賽卡片</span><span class="cup-info-value">${n} 張</span></div>
+          <div class="cup-info-item"><span class="cup-info-label">共需比較</span><span class="cup-info-value">${totalMatches} 場</span></div>
+          <div class="cup-info-item"><span class="cup-info-label">預計輪數</span><span class="cup-info-value">${rounds} 輪</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:20px">卡片數量不為2的次方時，自動採輪空制晉級</div>
+        ${!S.user?'<div class="compare-login-notice" style="margin-bottom:16px">⚠️ 請先<a onclick="window.openAuthModal()" style="color:var(--gold);cursor:pointer;text-decoration:underline">登入</a>才能讓選擇計入排行榜</div>':''}
+        <button class="btn-primary" style="width:auto;padding:12px 36px;font-size:15px" onclick="window.startCup('${targetCat}')">⚔️ 開始比賽</button>
+      </div>`;
+    }else if(CS.left&&CS.right){
+      arenaHTML=`${cupProgress()}
+        <div style="display:grid;grid-template-columns:1fr 52px 1fr;gap:16px;align-items:start;margin-top:12px">
+          ${cardSlotHTML(CS.left,'left')}
+          <div class="compare-vs"><div class="compare-vs-badge">VS</div></div>
+          ${cardSlotHTML(CS.right,'right')}
+        </div>`;
+    }
+  }else{
+    // 隨機模式
+    if(!CS.left||!CS.right){[CS.left,CS.right]=pickTwo(COMPARE_CARDS);}
+    arenaHTML=`<div style="display:grid;grid-template-columns:1fr 52px 1fr;gap:16px;align-items:start">
+      ${cardSlotHTML(CS.left,'left')}
+      <div class="compare-vs"><div class="compare-vs-badge">VS</div></div>
+      ${cardSlotHTML(CS.right,'right')}
+    </div>`;
+  }
+
+  return`<div class="compare-page">
+    ${modeHTML}
+    ${modeDesc}
+    ${loginGuard}${rateLimitMsg}
+    <div class="compare-layout">
+      <div class="compare-main">${arenaHTML}</div>
+      <div class="compare-sidebar">
+        <div class="compare-sidebar-box"><h4>📜 本場選擇紀錄</h4>${renderHistory()}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── 排行榜頁面 ──
+function renderRankingPage(){
+  const activeTab=CS.rankTab||'all';
+  if(!CS.rankLoaded.has(activeTab)) loadCompareRanking(activeTab);
+
+  const tabsHTML=COMPARE_CATEGORIES.map(cat=>`
+    <div class="ranking-tab ${activeTab===cat.key?'active':''}" onclick="window.setRankTab('${cat.key}')">${cat.icon} ${cat.label.replace(/^[^\s]+\s/,'')}</div>
+  `).join('');
+
+  const data=CS.rankings[activeTab]||[];
+  const medals=['🥇','🥈','🥉'];
+
+  const tableHTML=data.length===0
+    ?`<div style="padding:40px;text-align:center;color:var(--text-dim)">尚無數據，快去比較讓排名更精準吧！</div>`
+    :data.map((r,i)=>{
+      const card=COMPARE_CARDS.find(c=>c.id===r.id);
+      const name=card?card.name:(r.name||r.id);
+      const rc=card?rarityColor(card.rarity):'#888';
+      return`<div class="ranking-table-row">
+        <div class="rank-medal">${i<3?medals[i]:'<span style="color:var(--text-dim);font-size:13px;font-weight:bold">'+(i+1)+'</span>'}</div>
+        <img class="rank-img" src="${card?cImgPath(card):''}" onerror="this.style.background='var(--bg3)';this.style.display='block'" alt="">
+        <div><div class="rank-card-name">${name}</div><div class="rank-card-sub">#${idDisp(r.id)} · <span style="color:${rc}">${card?card.rarity:''}</span></div></div>
+        <div class="rank-score">${(()=>{const w=r.wins||0,t=r.totalMatches||0;return t>0?Math.round(w/t*100)+'%':'-%';})()}</div>
+        <div class="rank-cnt">${r.totalMatches||0} 場</div>
+      </div>`;
+    }).join('');
+
+  // 末尾顯示得分最低
+  const bottom=data.length>=5?data.slice(-3).reverse():[]; 
+  const bottomHTML=bottom.length?`<div style="margin-top:20px">
+    <h4 style="font-size:13px;color:var(--text-dim);margin-bottom:10px">😢 最不受歡迎...</h4>
+    <div class="ranking-table">${bottom.map((r,i)=>{
+      const card=COMPARE_CARDS.find(c=>c.id===r.id);
+      const name=card?card.name:(r.name||r.id);
+      return`<div class="ranking-table-row">
+        <div class="rank-medal" style="color:var(--text-dim)">末${i+1}</div>
+        <img class="rank-img" src="${card?cImgPath(card):''}" onerror="this.style.background='var(--bg3)'" alt="">
+        <div><div class="rank-card-name" style="color:var(--text-dim)">${name}</div><div class="rank-card-sub">#${idDisp(r.id)}</div></div>
+        <div class="rank-score" style="color:var(--text-dim)">${(()=>{const w=r.wins||0,t=r.totalMatches||0;return t>0?Math.round(w/t*100)+'%':'-%';})()}</div>
+        <div class="rank-cnt">${r.totalMatches||0} 場</div>
+      </div>`;
+    }).join('')}</div></div>`:'';
+
+  return`<div class="ranking-page">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><h2 style="color:var(--gold)">🏅 卡片人氣排行榜</h2><p style="font-size:12px;color:var(--text-dim);margin-top:4px">根據所有玩家的比較選擇統計，10 場以上才納入排名</p></div>
+      <button class="btn-secondary" style="width:auto;padding:6px 14px" onclick="window.goCompare()">⚔️ 去比較</button>
+    </div>
+    <div class="ranking-tabs">${tabsHTML}</div>
+    <div class="ranking-table-header">
+      <div class="ranking-table-row header">
+        <div></div><div></div>
+        <div>卡片</div>
+        <div style="text-align:right">勝率</div>
+        <div style="text-align:right">場次</div>
+      </div>
+    </div>
+    <div class="ranking-table">${tableHTML}</div>
+    ${bottomHTML}
+  </div>`;
+}
+
+function updateCompareSidebar(){
+  if(S.view!=='compare') return;
+  const boxes=document.querySelectorAll('.compare-sidebar-box');
+  if(boxes[0]) boxes[0].innerHTML=`<h4>🏅 人氣排行榜 TOP 10</h4><div style="font-size:10px;color:var(--text-dim);margin-bottom:8px">10 場以上比較才納入排名</div>${rankingListHTML('all',10)}`;
+}
+
+// ── Actions ──
+window.setCompareMode=(m)=>{
+  CS.mode=m;
+  CS.cupActive=false;CS.cupChampion=null;CS.left=null;CS.right=null;
+  if(!['random','cup'].includes(m)){
+    // 分類淘汰賽模式
+    CS.cupActive=false;CS.cupChampion=null;
+  }
+  render();
+};
+window.setRankTab=(k)=>{
+  CS.rankTab=k;
+  if(!CS.rankLoaded.has(k)) loadCompareRanking(k);
+  render();
+};
+window.goCompare=()=>window.switchView('compare');
+window.startCup=(catKey)=>{initCup(catKey);render();};
+window.resetCup=()=>{CS.cupActive=false;CS.cupChampion=null;CS.left=null;CS.right=null;CS.cupResults=[];render();};
+
+window.pickCard=async(chosenId,side)=>{
+  if(!S.user){window.openAuthModal();return;}
+  if(CS.rateLimited) return;
+  const winner=chosenId===CS.left?.id?CS.left:CS.right;
+  const loser=chosenId===CS.left?.id?CS.right:CS.left;
+  if(!winner||!loser) return;
+
+  document.querySelectorAll('.compare-card-slot').forEach(el=>el.style.pointerEvents='none');
+  const ws=document.getElementById('slot-'+side);
+  const ls=document.getElementById('slot-'+(side==='left'?'right':'left'));
+  if(ws)ws.classList.add('selected');
+  if(ls)ls.classList.add('loser');
+
+  CS.history.push({wid:winner.id,wname:winner.name,lid:loser.id,lname:loser.name});
+  const histBox=document.querySelectorAll('.compare-sidebar-box')[1];
+  if(histBox)histBox.innerHTML=`<h4>📜 本場選擇紀錄</h4>${renderHistory()}`;
+
+  // 決定 catKey
+  const catKey=(!['random','cup'].includes(CS.mode))?CS.mode:'all';
+  submitVote(winner.id,loser.id,catKey);
+
+  setTimeout(()=>{
+    if(CS.mode==='random'){
+      [CS.left,CS.right]=pickTwo(COMPARE_CARDS);render();
+    }else{
+      CS.cupMatchesDone++;CS.cupBracket.push(winner);nextCupPair();
+    }
+  },500);
 };
 
 window.reloadAdmin=()=>render();
