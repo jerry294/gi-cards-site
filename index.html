@@ -252,7 +252,8 @@ body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei'
   :root{--card-w:108px;--card-img-h:108px}
   .header{height:50px;gap:8px;padding:0 12px}
   .logo{font-size:14px}
-  .nav-btn{padding:5px 8px;font-size:11px}
+  .nav{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;flex-wrap:nowrap}
+  .nav-btn{padding:5px 8px;font-size:11px;white-space:nowrap;flex-shrink:0}
   .filter-bar input[type="text"]{width:140px}
   .main{padding:10px 12px}
 
@@ -300,6 +301,8 @@ body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei'
 .compare-mode-btn .mode-icon{font-size:18px;display:block;margin-bottom:2px}
 .compare-mode-btn .mode-title{font-size:12px;font-weight:bold;display:block}
 .compare-mode-btn .mode-desc{font-size:10px;color:var(--text-dim);display:block;margin-top:2px}
+/* VS 對戰主網格 */
+.compare-vs-grid{display:grid;grid-template-columns:1fr 52px 1fr;gap:16px;align-items:start;margin-top:12px}
 /* 卡片格放大為主視覺 */
 .compare-card-slot{background:var(--bg2);border:2px solid var(--border);border-radius:14px;padding:16px 14px 20px;text-align:center;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
 .compare-card-slot:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 12px 40px rgba(201,168,76,0.25)}
@@ -412,6 +415,16 @@ body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei'
   .compare-card-desc{display:none}
   .ranking-table-row{grid-template-columns:36px 48px 1fr 60px}
   .rank-cnt{display:none}
+}
+/* 手機小螢幕（< 480px）：VS 改為上下排列 */
+@media(max-width:480px){
+  .compare-vs-grid{grid-template-columns:1fr;gap:8px}
+  .compare-vs{display:flex;justify-content:center;align-items:center;padding:4px 0}
+  .compare-card-img,.compare-card-img-placeholder{width:100%;max-width:240px;height:200px}
+  .cup-size-selector{gap:6px}
+  .cup-size-btn{padding:7px 12px;font-size:12px}
+  .compare-mode-btn{min-width:80px;padding:6px 4px}
+  .compare-mode-btn .mode-desc{display:none}
 }
 </style>
 </head>
@@ -1425,8 +1438,7 @@ function calcElo(wElo,lElo,k=32){
 
 // ── 圖片路徑 ──
 function cImgPath(card){
-  const pad=card.id==='-3'?'-3':String(parseInt(card.id)).padStart(3,'0');
-  return `cards/${pad}${card.name}.jpg`;
+  return `cards/${card.img}`;
 }
 function idDisp(id){return id==='-3'?'-3':String(parseInt(id)).padStart(3,'0');}
 
@@ -1816,7 +1828,7 @@ function renderCompare(){
       </div>`;
     }else if(CS.left&&CS.right){
       arenaHTML=`${cupProgress()}
-        <div style="display:grid;grid-template-columns:1fr 52px 1fr;gap:16px;align-items:start;margin-top:12px">
+        <div class="compare-vs-grid">
           ${cardSlotHTML(CS.left,'left')}
           <div class="compare-vs"><div class="compare-vs-badge">VS</div></div>
           ${cardSlotHTML(CS.right,'right')}
@@ -1825,7 +1837,7 @@ function renderCompare(){
   }else{
     // 隨機模式
     if(!CS.left||!CS.right){[CS.left,CS.right]=pickTwo(COMPARE_CARDS);}
-    arenaHTML=`<div style="display:grid;grid-template-columns:1fr 52px 1fr;gap:16px;align-items:start">
+    arenaHTML=`<div class="compare-vs-grid">
       ${cardSlotHTML(CS.left,'left')}
       <div class="compare-vs"><div class="compare-vs-badge">VS</div></div>
       ${cardSlotHTML(CS.right,'right')}
