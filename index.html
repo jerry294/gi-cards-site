@@ -463,7 +463,7 @@ body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei'
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, orderBy, onSnapshot, where, updateDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, orderBy, onSnapshot, where, updateDoc, serverTimestamp, getDocs, runTransaction, writeBatch, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const myFirebaseConfig = {
   apiKey:"AIzaSyCwjnrwemRPzKBlDnNYxFJ-vHj4ApWRriw",
@@ -1361,7 +1361,7 @@ window.clearBoardSearch=()=>{
 };
 
 window.switchView=(v)=>{
-  if(v==='compare'){loadCompareRanking('all');}
+  if(v==='compare'){loadCompareRanking('all');COMPARE_CATEGORIES.slice(1).forEach(c=>loadCompareRanking(c.key));}
   if(v==='ranking'){loadCompareRanking(CS.rankTab||'all');}
   S.view=v;
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1463,6 +1463,7 @@ const CS = {
   history:[],
   rankings:{},      // {catKey: [...]}
   rankLoaded:new Set(),
+  totalComps:{},
   // cup (一對一淘汰賽)
   cupPool:[],
   cupBracket:[],
@@ -1478,19 +1479,20 @@ const CS = {
 
 // ── Firestore 讀取排名 ──
 async function loadCompareRanking(catKey){
-  if(!window.db) return;
   catKey=catKey||'all';
   if(CS.rankLoaded.has(catKey)) return;
   try{
-    const col = catKey==='all'?'cardElo':`cardElo_${catKey}`;
-    const snap=await window.db.collection(col).orderBy('elo','desc').limit(30).get();
+    const col=catKey==='all'?'cardElo':`cardElo_${catKey}`;
+    const q=query(collection(db,col),orderBy('elo','desc'),limit(30));
+    const snap=await getDocs(q);
     let rows=snap.docs.map(d=>({id:d.id,...d.data()}));
-    let qualified=rows.filter(r=>(r.totalMatches||0)>=10);
+    let qualified=rows.filter(r=>(r.totalMatches||0)>=3);
     if(qualified.length<3) qualified=rows;
     CS.rankings[catKey]=qualified.slice(0,20);
+    CS.totalComps[catKey]=Math.round(rows.reduce((s,r)=>s+(r.totalMatches||0),0)/2);
     CS.rankLoaded.add(catKey);
     updateCompareSidebar();
-    if(S.view==='ranking') render();
+    if(S.view==='ranking'||S.view==='compare') render();
   }catch(e){console.log('ranking err',catKey,e);}
 }
 
@@ -1499,40 +1501,42 @@ async function submitVote(winnerId,loserId,catKey){
   if(!S.user) return false;
   catKey=catKey||'all';
   const now=Date.now(),hourKey=Math.floor(now/3600000);
-  const limitRef=window.db.collection('userVoteLimits').doc(S.user.uid);
+  const limitRef=doc(db,'userVoteLimits',S.user.uid);
   try{
-    await window.db.runTransaction(async tx=>{
-      const doc=await tx.get(limitRef);
-      const d=doc.exists?doc.data():{hourKey:0,count:0};
-      const cnt=(d.hourKey===hourKey?d.count:0)+1;
+    await runTransaction(db,async tx=>{
+      const d=await tx.get(limitRef);
+      const data=d.exists()?d.data():{hourKey:0,cnt:0};
+      const cnt=(data.hourKey===hourKey?data.cnt:0)+1;
       if(cnt>120) throw new Error('rate_limited');
-      tx.set(limitRef,{hourKey,cnt},{merge:false});
+      tx.set(limitRef,{hourKey,cnt});
     });
   }catch(e){
     if(e.message==='rate_limited'){CS.rateLimited=true;return false;}
   }
   const writeCol=async(col)=>{
     const[wd,ld]=await Promise.all([
-      window.db.collection(col).doc(String(winnerId)).get(),
-      window.db.collection(col).doc(String(loserId)).get()
+      getDoc(doc(db,col,String(winnerId))),
+      getDoc(doc(db,col,String(loserId)))
     ]);
-    const we=wd.exists?wd.data().elo:1000,le=ld.exists?ld.data().elo:1000;
+    const we=wd.exists()?wd.data().elo:1000,le=ld.exists()?ld.data().elo:1000;
     const[nw,nl]=calcElo(we,le);
     const wCard=COMPARE_CARDS.find(c=>c.id===String(winnerId));
     const lCard=COMPARE_CARDS.find(c=>c.id===String(loserId));
-    const batch=window.db.batch();
-    batch.set(window.db.collection(col).doc(String(winnerId)),{
-      elo:nw,wins:(wd.exists?(wd.data().wins||0):0)+1,
-      totalMatches:(wd.exists?(wd.data().totalMatches||0):0)+1,
+    const batch=writeBatch(db);
+    batch.set(doc(db,col,String(winnerId)),{
+      elo:nw,wins:(wd.exists()?(wd.data().wins||0):0)+1,
+      totalMatches:(wd.exists()?(wd.data().totalMatches||0):0)+1,
       name:wCard?wCard.name:''
     },{merge:true});
-    batch.set(window.db.collection(col).doc(String(loserId)),{
-      elo:nl,losses:(ld.exists?(ld.data().losses||0):0)+1,
-      totalMatches:(ld.exists?(ld.data().totalMatches||0):0)+1,
+    batch.set(doc(db,col,String(loserId)),{
+      elo:nl,losses:(ld.exists()?(ld.data().losses||0):0)+1,
+      totalMatches:(ld.exists()?(ld.data().totalMatches||0):0)+1,
       name:lCard?lCard.name:''
     },{merge:true});
     await batch.commit();
-    CS.rankLoaded.delete(col==='cardElo'?'all':col.replace('cardElo_',''));
+    const ck=col==='cardElo'?'all':col.replace('cardElo_','');
+    CS.rankLoaded.delete(ck);
+    delete CS.totalComps[ck];
   };
   try{
     const writes=[writeCol('cardElo')];
@@ -1768,11 +1772,14 @@ function renderCompare(){
       <span class="mode-icon">🏆</span>
       <span class="mode-title">一對一淘汰賽</span>
     </div>
-    ${COMPARE_CATEGORIES.slice(1).map(cat=>`
-    <div class="compare-mode-btn ${CS.mode===cat.key?'active':''}" onclick="window.setCompareMode('${cat.key}')">
-      <span class="mode-icon">${cat.icon}</span>
-      <span class="mode-title">${cat.label.replace(/^[^\s]+\s/,"")}</span>
-    </div>`).join('')}
+    ${COMPARE_CATEGORIES.slice(1).map(cat=>{
+      const n=CS.totalComps[cat.key];
+      return`<div class="compare-mode-btn ${CS.mode===cat.key?'active':''}" onclick="window.setCompareMode('${cat.key}')">
+        <span class="mode-icon">${cat.icon}</span>
+        <span class="mode-title">${cat.label.replace(/^[^\s]+\s/,"")}</span>
+        ${n!==undefined&&n>0?`<span class="mode-desc">${n.toLocaleString()} 場</span>`:''}
+      </div>`;
+    }).join('')}
   </div>`;
 
   // ── 隨機模式 / 分類模式說明 ──
@@ -1903,7 +1910,11 @@ function renderRankingPage(){
 
   return`<div class="ranking-page">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div><h2 style="color:var(--gold)">🏅 卡片人氣排行榜</h2><p style="font-size:12px;color:var(--text-dim);margin-top:4px">根據所有玩家的比較選擇統計，10 場以上才納入排名</p></div>
+      <div>
+        <h2 style="color:var(--gold)">🏅 卡片人氣排行榜</h2>
+        <p style="font-size:12px;color:var(--text-dim);margin-top:4px">根據所有玩家的比較選擇統計，3 場以上才納入排名</p>
+        ${CS.totalComps[activeTab]!==undefined?`<p style="font-size:13px;color:var(--gold);margin-top:6px">📊 總對戰次數：<strong>${CS.totalComps[activeTab].toLocaleString()}</strong> 場</p>`:''}
+      </div>
       <button class="btn-secondary" style="width:auto;padding:6px 14px" onclick="window.goCompare()">⚔️ 去比較</button>
     </div>
     <div class="ranking-tabs">${tabsHTML}</div>
@@ -1923,7 +1934,8 @@ function renderRankingPage(){
 function updateCompareSidebar(){
   if(S.view!=='compare') return;
   const boxes=document.querySelectorAll('.compare-sidebar-box');
-  if(boxes[0]) boxes[0].innerHTML=`<h4>🏅 人氣排行榜 TOP 10</h4><div style="font-size:10px;color:var(--text-dim);margin-bottom:8px">10 場以上比較才納入排名</div>${rankingListHTML('all',10)}`;
+  const total=CS.totalComps['all'];
+  if(boxes[0]) boxes[0].innerHTML=`<h4>🏅 人氣排行榜 TOP 10</h4><div style="font-size:10px;color:var(--text-dim);margin-bottom:8px">${total!==undefined?'📊 '+total.toLocaleString()+' 場對戰':'3 場以上比較才納入排名'}</div>${rankingListHTML('all',10)}`;
 }
 
 // ── Actions ──
