@@ -1984,11 +1984,9 @@ function renderCompare(){
       <span class="mode-title">一對一淘汰賽</span>
     </div>
     ${COMPARE_CATEGORIES.slice(1).map(cat=>{
-      const n=CS.totalComps[cat.key];
       return`<div class="compare-mode-btn ${CS.mode===cat.key?'active':''}" onclick="window.setCompareMode('${cat.key}')">
         <span class="mode-icon">${cat.icon}</span>
         <span class="mode-title">${cat.label.replace(/^[^\s]+\s/,"")}</span>
-        ${n!==undefined&&n>0?`<span class="mode-desc">${n.toLocaleString()} 場</span>`:''}
       </div>`;
     }).join('')}
   </div>`;
@@ -2006,7 +2004,9 @@ function renderCompare(){
     const cat=COMPARE_CATEGORIES.find(c=>c.key===CS.mode);
     if(cat){
       const cards=getCategoryCards(CS.mode);
-      modeDesc=`<div class="compare-mode-desc-bar">${cat.label} · 共 ${cards.length} 張 — ${cat.desc}</div>`;
+      const n=CS.totalComps[cat.key];
+      const countTxt=n!==undefined&&n>0?` <span style="color:var(--gold);font-size:12px">（已進行 ${n.toLocaleString()} 場比較）</span>`:'';
+      modeDesc=`<div class="compare-mode-desc-bar">${cat.label} · 共 ${cards.length} 張 — ${cat.desc}${countTxt}</div>`;
     }
   }
 
