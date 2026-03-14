@@ -1415,6 +1415,7 @@ const COMPARE_CARDS = [{"id": "0", "name": "支配者的祝福", "rarity": "SS-1
 // ── 分類定義 ──
 const COMPARE_CATEGORIES = [
   {key:'all',   label:'🌐 全部114張', icon:'🌐', desc:'所有卡片大亂鬥', ids:null},
+  {key:'hot',   label:'🔥 熱門卡',    icon:'🔥', desc:'精選熱門卡片', ids:['0','1','2','17','18','25','46','47','48','53','75','81','83','84','-3','163','263','1039']},
   {key:'fp',    label:'🪄 自由口袋',  icon:'🪄', desc:'咒語與特殊卡', ids:['-3','163','263','1006','1010','1011','1018','1020','1021','1032','1035','1036','1038','1039']},
   {key:'bio',   label:'🐶 生物',      icon:'🐶', desc:'各種神奇生物', ids:['15','16','17','18','22','26','35','46','47','48','49','50','51','52','53','54','98','99']},
   {key:'s',     label:'✨ S級卡片',   icon:'✨', desc:'稀有S級以上卡片', ids:['7','8','9','12','15','36','51','65','77','94','1035','1036','31','33','87','16','35','99','80','92','5','85','98','0','1','2','17','81']},
@@ -1507,7 +1508,7 @@ async function submitVote(winnerId,loserId,catKey){
       const d=await tx.get(limitRef);
       const data=d.exists()?d.data():{hourKey:0,cnt:0};
       const cnt=(data.hourKey===hourKey?data.cnt:0)+1;
-      if(cnt>120) throw new Error('rate_limited');
+      if(cnt>3600) throw new Error('rate_limited');
       tx.set(limitRef,{hourKey,cnt});
     });
   }catch(e){
