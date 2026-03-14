@@ -689,7 +689,12 @@ function listenToBoard(){
   const ref=collection(db,'artifacts',appId,'public','data','board');
   boardUnsub=onSnapshot(ref,snap=>{
     S.boardUsers=[];
-    snap.forEach(d=>{if(d.id!==S.user?.uid)S.boardUsers.push(d.data());});
+    snap.forEach(d=>{
+      if(d.id===S.user?.uid) return; // 排除自己
+      const u=d.data();
+      if((u.have?.length||0)===0&&(u.want?.length||0)===0) return; // 排除未登錄卡片者
+      S.boardUsers.push(u);
+    });
     if(S.view==='board'||S.view==='match')render();
   },err=>console.error('看板同步失敗',err));
 }
