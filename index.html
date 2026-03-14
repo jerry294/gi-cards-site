@@ -868,6 +868,7 @@ function renderCards(){
     <button class="filter-btn ${S.filter.status==='want'?'want-active':''}" onclick="window.setFilter('status','want')">♥ 我要的</button>
     <select class="filter-select" onchange="window.setFilter('rarity',this.value)"><option value="all">全部分類</option>${['SS','S','A','B','C','D','FP'].map(g=>`<option value="${g}" ${S.filter.rarity===g?'selected':''}>${GROUP_LABELS_RARITY[g]||g}</option>`).join('')}</select>
     <button class="btn-secondary" style="margin-left:auto;background:var(--gold);color:#000;font-weight:bold" onclick="window.manualSave()">☁️ 儲存</button>
+    <button class="btn-secondary" style="background:#1a5c82;color:#e0f0ff;font-weight:bold" onclick="window.exportTradeImage()">📸 輸出交換圖</button>
   </div>
   <div class="stats-bar">
     <div class="stat-item"><div class="stat-dot" style="background:#555"></div>共 ${CARDS.length} 張</div>
@@ -1042,7 +1043,7 @@ function linkify(text){
   return text.split(/(https?:\/\/\S+)/g).map((s,i)=>{
     if(i%2===1){
       const esc=escH(s);
-      return`<a href="${esc}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;word-break:break-all">${esc}</a>`;
+      return`<a href="${esc}" target="_blank" rel="noopener noreferrer" style="color:#4a9eff;text-decoration:underline;word-break:break-all">${esc}</a>`;
     }
     return escH(s);
   }).join('');
@@ -1382,6 +1383,137 @@ window.switchView=(v)=>{
 };
 
 window.manualSave=()=>saveToCloud();
+
+// ==================== 交換圖匯出 ====================
+window.exportTradeImage = async function(){
+  if(!S.user){window.toast('請先登入');return;}
+  const toNum=id=>Number(id);
+  const haveCards=[...S.have].map(toNum).map(id=>CARDS.find(c=>c.id===id)).filter(Boolean)
+    .sort((a,b)=>getSortValue(a.id)-getSortValue(b.id));
+  const wantCards=[...S.want].map(toNum).map(id=>CARDS.find(c=>c.id===id)).filter(Boolean)
+    .sort((a,b)=>getSortValue(a.id)-getSortValue(b.id));
+  if(!haveCards.length&&!wantCards.length){
+    window.toast('尚未設定任何卡片，請先選擇「我有」或「我要」的卡片！');return;
+  }
+  window.toast('產生中，請稍候…');
+
+  // ---- layout constants ----
+  const COLS=7, CARD_W=86, CARD_H=110, NAME_H=26;
+  const CELL_W=CARD_W+8, CELL_H=CARD_H+NAME_H+8;
+  const PAD_X=24, TITLE_H=72, SECTION_H=44, GAP=12;
+  const CW=COLS*CELL_W+PAD_X*2;
+
+  const calcSectionH=cards=>SECTION_H+Math.ceil(cards.length/COLS)*CELL_H+GAP;
+  let totalH=TITLE_H;
+  if(haveCards.length)totalH+=calcSectionH(haveCards);
+  if(wantCards.length)totalH+=calcSectionH(wantCards);
+  totalH+=40; // watermark
+
+  const canvas=document.createElement('canvas');
+  canvas.width=CW; canvas.height=totalH;
+  const ctx=canvas.getContext('2d');
+
+  // background
+  ctx.fillStyle='#0a0a18';
+  ctx.fillRect(0,0,CW,totalH);
+
+  // title
+  ctx.textAlign='center';
+  ctx.fillStyle='#c9a84c';
+  ctx.font='bold 20px "PingFang TC","Microsoft JhengHei",sans-serif';
+  ctx.fillText('⚔️ 貪婪之島 卡片交換清單',CW/2,32);
+  if(S.nickname){
+    ctx.fillStyle='#888';
+    ctx.font='13px "PingFang TC","Microsoft JhengHei",sans-serif';
+    ctx.fillText(S.nickname,CW/2,54);
+  }
+
+  // load images
+  const imgCache={};
+  const loadImg=src=>new Promise(res=>{
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>res(img);
+    img.onerror=()=>res(null);
+    img.src=src;
+  });
+  await Promise.all([...haveCards,...wantCards].map(async c=>{
+    imgCache[c.id]=await loadImg(`cards/${c.img}`);
+  }));
+
+  // draw one section
+  const drawSection=(cards,label,color,startY)=>{
+    // section header bg
+    ctx.fillStyle=color+'18';
+    ctx.fillRect(PAD_X,startY,CW-PAD_X*2,SECTION_H-6);
+    ctx.strokeStyle=color+'88';
+    ctx.lineWidth=1.5;
+    ctx.strokeRect(PAD_X,startY,CW-PAD_X*2,SECTION_H-6);
+    ctx.fillStyle=color;
+    ctx.font='bold 15px "PingFang TC","Microsoft JhengHei",sans-serif';
+    ctx.textAlign='left';
+    ctx.fillText(`${label}（${cards.length} 張）`,PAD_X+12,startY+(SECTION_H-6)/2+5);
+
+    const gridY=startY+SECTION_H;
+    cards.forEach((card,i)=>{
+      const col=i%COLS, row=Math.floor(i/COLS);
+      const x=PAD_X+col*CELL_W, y=gridY+row*CELL_H;
+
+      // card background
+      ctx.fillStyle='#141428';
+      ctx.fillRect(x,y,CARD_W,CARD_H+NAME_H);
+      ctx.strokeStyle=color+'44';
+      ctx.lineWidth=1;
+      ctx.strokeRect(x,y,CARD_W,CARD_H+NAME_H);
+
+      // card image
+      const img=imgCache[card.id];
+      if(img){
+        ctx.drawImage(img,x,y,CARD_W,CARD_H);
+      }else{
+        ctx.fillStyle='#222235';
+        ctx.fillRect(x,y,CARD_W,CARD_H);
+        ctx.fillStyle='#444';
+        ctx.font='11px sans-serif';
+        ctx.textAlign='center';
+        ctx.fillText('?',x+CARD_W/2,y+CARD_H/2+4);
+      }
+
+      // card name (truncate if needed)
+      ctx.fillStyle='#ccc';
+      ctx.font='10px "PingFang TC","Microsoft JhengHei",sans-serif';
+      ctx.textAlign='center';
+      const nm=card.name.length>8?card.name.slice(0,8)+'…':card.name;
+      ctx.fillText(nm,x+CARD_W/2,y+CARD_H+17);
+    });
+
+    return gridY+Math.ceil(cards.length/COLS)*CELL_H+GAP;
+  };
+
+  let curY=TITLE_H;
+  if(haveCards.length) curY=drawSection(haveCards,'✅ 我擁有的卡','#27ae60',curY);
+  if(wantCards.length) curY=drawSection(wantCards,'❤️ 我想要的卡','#e74c3c',curY);
+
+  // watermark
+  ctx.fillStyle='#2a2a3a';
+  ctx.fillRect(0,totalH-32,CW,32);
+  ctx.fillStyle='#444';
+  ctx.font='11px "PingFang TC","Microsoft JhengHei",sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('GreedIsland.tw 製作',CW/2,totalH-12);
+
+  // download
+  canvas.toBlob(blob=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    const dt=new Date().toISOString().slice(0,10);
+    a.download=`交換清單_${(S.nickname||'player').replace(/\s/g,'_')}_${dt}.png`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    window.toast('交換圖已下載！');
+  },'image/png');
+};
+
 window.toast=(msg)=>{document.querySelector('.toast')?.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);};
 window.closeModal=()=>document.getElementById('modalOverlay').style.display='none';
 window.onOverlayClick=(e)=>{if(e.target.id==='modalOverlay')window.closeModal();};
