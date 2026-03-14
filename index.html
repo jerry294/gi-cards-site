@@ -1679,10 +1679,18 @@ async function loadCompareRanking(catKey){
   catKey=catKey||'all';
   if(CS.rankLoaded.has(catKey)) return;
   try{
-    const col=catKey==='all'?'cardElo':`cardElo_${catKey}`;
-    const q=query(collection(db,col),orderBy('elo','desc'),limit(30));
+    // 永遠讀全域 cardElo，分類排行僅做客戶端篩選
+    const q=query(collection(db,'cardElo'),orderBy('elo','desc'),limit(150));
     const snap=await getDocs(q);
     let rows=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+    // 若是特定分類，篩選出屬於該分類的卡片
+    if(catKey!=='all'){
+      const cat=COMPARE_CATEGORIES.find(c=>c.key===catKey);
+      const catIds=new Set(cat?.ids||[]);
+      rows=rows.filter(r=>catIds.has(String(r.id)));
+    }
+
     let qualified=rows.filter(r=>(r.totalMatches||0)>=3);
     if(qualified.length<3) qualified=rows;
     // 依勝率排序（高→低），勝率相同則依場次排序（多→少）
@@ -1716,35 +1724,35 @@ async function submitVote(winnerId,loserId,catKey){
   }catch(e){
     if(e.message==='rate_limited'){CS.rateLimited=true;return false;}
   }
-  const writeCol=async(col)=>{
+  // 只寫全域 cardElo，不再分集合 → 所有分類排行共用同一份數據
+  const writeGlobal=async()=>{
     const[wd,ld]=await Promise.all([
-      getDoc(doc(db,col,String(winnerId))),
-      getDoc(doc(db,col,String(loserId)))
+      getDoc(doc(db,'cardElo',String(winnerId))),
+      getDoc(doc(db,'cardElo',String(loserId)))
     ]);
     const we=wd.exists()?wd.data().elo:1000,le=ld.exists()?ld.data().elo:1000;
     const[nw,nl]=calcElo(we,le);
     const wCard=COMPARE_CARDS.find(c=>c.id===String(winnerId));
     const lCard=COMPARE_CARDS.find(c=>c.id===String(loserId));
     const batch=writeBatch(db);
-    batch.set(doc(db,col,String(winnerId)),{
+    batch.set(doc(db,'cardElo',String(winnerId)),{
       elo:nw,wins:(wd.exists()?(wd.data().wins||0):0)+1,
       totalMatches:(wd.exists()?(wd.data().totalMatches||0):0)+1,
       name:wCard?wCard.name:''
     },{merge:true});
-    batch.set(doc(db,col,String(loserId)),{
+    batch.set(doc(db,'cardElo',String(loserId)),{
       elo:nl,losses:(ld.exists()?(ld.data().losses||0):0)+1,
       totalMatches:(ld.exists()?(ld.data().totalMatches||0):0)+1,
       name:lCard?lCard.name:''
     },{merge:true});
     await batch.commit();
-    const ck=col==='cardElo'?'all':col.replace('cardElo_','');
-    CS.rankLoaded.delete(ck);
-    delete CS.totalComps[ck];
+    // 全域數據更新 → 清空所有分類快取，下次查看時重新拉取
+    CS.rankLoaded.clear();
+    COMPARE_CATEGORIES.forEach(c=>{delete CS.totalComps[c.key];});
   };
   try{
-    const writes=[writeCol('cardElo')];
-    if(catKey!=='all') writes.push(writeCol(`cardElo_${catKey}`));
-    await Promise.all(writes);
+    await writeGlobal();
+    // 重新載入當前分類及全域排名
     loadCompareRanking(catKey);
     if(catKey!=='all') loadCompareRanking('all');
     return true;
