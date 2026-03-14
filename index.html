@@ -1993,13 +1993,15 @@ function renderCompare(){
 
   // ── 隨機模式 / 分類模式說明 ──
   let modeDesc='';
+  const allCount=CS.totalComps['all'];
+  const allCountTxt=allCount!==undefined&&allCount>0?` <span style="color:var(--gold);font-size:12px">（已進行 ${allCount.toLocaleString()} 場比較）</span>`:'';
   if(CS.mode==='random'){
     modeDesc=`<div class="compare-mode-desc-bar">
-      <div>從114張中隨機抽出2張進行比較，選出你比較喜歡的卡片吧！</div>
+      <div>從114張中隨機抽出2張進行比較，選出你比較喜歡的卡片吧！${allCountTxt}</div>
       <div style="margin-top:4px;font-size:11px;color:var(--text-dim)">此模式會無限循環，你的每次選擇都會替你選擇的卡片加分！在排行榜頁面可以看到哪張卡片最受歡迎！！（當然也能看到最不受歡迎的...🥲）</div>
     </div>`;
   }else if(CS.mode==='cup'){
-    modeDesc=`<div class="compare-mode-desc-bar">一對一淘汰賽，選出你個人的最愛</div>`;
+    modeDesc=`<div class="compare-mode-desc-bar">一對一淘汰賽，選出你個人的最愛${allCountTxt}</div>`;
   }else{
     const cat=COMPARE_CATEGORIES.find(c=>c.key===CS.mode);
     if(cat){
