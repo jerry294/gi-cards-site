@@ -1398,10 +1398,13 @@ window.exportTradeImage = async function(){
   window.toast('產生中，請稍候…');
 
   // ---- layout constants ----
-  const COLS=7, CARD_W=86, CARD_H=110, NAME_H=26;
+  const COLS=7, CARD_W=86, CARD_H=110;
+  // NAME area: line1=card no, line2=card name
+  const NAME_H=38;
   const CELL_W=CARD_W+8, CELL_H=CARD_H+NAME_H+8;
   const PAD_X=24, TITLE_H=72, SECTION_H=44, GAP=12;
   const CW=COLS*CELL_W+PAD_X*2;
+  const FONT='"PingFang TC","Microsoft JhengHei",sans-serif';
 
   const calcSectionH=cards=>SECTION_H+Math.ceil(cards.length/COLS)*CELL_H+GAP;
   let totalH=TITLE_H;
@@ -1420,11 +1423,11 @@ window.exportTradeImage = async function(){
   // title
   ctx.textAlign='center';
   ctx.fillStyle='#c9a84c';
-  ctx.font='bold 20px "PingFang TC","Microsoft JhengHei",sans-serif';
+  ctx.font=`bold 20px ${FONT}`;
   ctx.fillText('⚔️ 貪婪之島 卡片交換清單',CW/2,32);
   if(S.nickname){
     ctx.fillStyle='#888';
-    ctx.font='13px "PingFang TC","Microsoft JhengHei",sans-serif';
+    ctx.font=`13px ${FONT}`;
     ctx.fillText(S.nickname,CW/2,54);
   }
 
@@ -1441,16 +1444,18 @@ window.exportTradeImage = async function(){
     imgCache[c.id]=await loadImg(`cards/${c.img}`);
   }));
 
+  // card id formatter
+  const fmt=id=>(id<0||id>=1000)?`#${id}`:`#${String(id).padStart(3,'0')}`;
+
   // draw one section
   const drawSection=(cards,label,color,startY)=>{
-    // section header bg
     ctx.fillStyle=color+'18';
     ctx.fillRect(PAD_X,startY,CW-PAD_X*2,SECTION_H-6);
     ctx.strokeStyle=color+'88';
     ctx.lineWidth=1.5;
     ctx.strokeRect(PAD_X,startY,CW-PAD_X*2,SECTION_H-6);
     ctx.fillStyle=color;
-    ctx.font='bold 15px "PingFang TC","Microsoft JhengHei",sans-serif';
+    ctx.font=`bold 15px ${FONT}`;
     ctx.textAlign='left';
     ctx.fillText(`${label}（${cards.length} 張）`,PAD_X+12,startY+(SECTION_H-6)/2+5);
 
@@ -1473,18 +1478,23 @@ window.exportTradeImage = async function(){
       }else{
         ctx.fillStyle='#222235';
         ctx.fillRect(x,y,CARD_W,CARD_H);
-        ctx.fillStyle='#444';
-        ctx.font='11px sans-serif';
+        ctx.fillStyle='#555';
+        ctx.font=`11px ${FONT}`;
         ctx.textAlign='center';
         ctx.fillText('?',x+CARD_W/2,y+CARD_H/2+4);
       }
 
-      // card name (truncate if needed)
-      ctx.fillStyle='#ccc';
-      ctx.font='10px "PingFang TC","Microsoft JhengHei",sans-serif';
+      // line 1: card number (dim)
+      ctx.fillStyle='#777';
+      ctx.font=`9px ${FONT}`;
       ctx.textAlign='center';
-      const nm=card.name.length>8?card.name.slice(0,8)+'…':card.name;
-      ctx.fillText(nm,x+CARD_W/2,y+CARD_H+17);
+      ctx.fillText(fmt(card.id), x+CARD_W/2, y+CARD_H+13);
+
+      // line 2: card name (bright, truncated)
+      ctx.fillStyle='#ddd';
+      ctx.font=`10px ${FONT}`;
+      const nm=card.name.length>8?card.name.slice(0,7)+'…':card.name;
+      ctx.fillText(nm, x+CARD_W/2, y+CARD_H+27);
     });
 
     return gridY+Math.ceil(cards.length/COLS)*CELL_H+GAP;
@@ -1494,24 +1504,48 @@ window.exportTradeImage = async function(){
   if(haveCards.length) curY=drawSection(haveCards,'✅ 我擁有的卡','#27ae60',curY);
   if(wantCards.length) curY=drawSection(wantCards,'❤️ 我想要的卡','#e74c3c',curY);
 
-  // watermark
+  // watermark bar
   ctx.fillStyle='#2a2a3a';
   ctx.fillRect(0,totalH-32,CW,32);
   ctx.fillStyle='#444';
-  ctx.font='11px "PingFang TC","Microsoft JhengHei",sans-serif';
+  ctx.font=`11px ${FONT}`;
   ctx.textAlign='center';
   ctx.fillText('GreedIsland.tw 製作',CW/2,totalH-12);
 
-  // download
-  canvas.toBlob(blob=>{
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    const dt=new Date().toISOString().slice(0,10);
-    a.download=`交換清單_${(S.nickname||'player').replace(/\s/g,'_')}_${dt}.png`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-    window.toast('交換圖已下載！');
-  },'image/png');
+  // --- preview modal (先預覽，再下載) ---
+  const dataUrl=canvas.toDataURL('image/png');
+  const dt=new Date().toISOString().slice(0,10);
+  window._tradeImgExport={
+    dataUrl,
+    filename:`交換清單_${(S.nickname||'player').replace(/[^\w\u4e00-\u9fff]/g,'_')}_${dt}.png`
+  };
+  const mc=document.getElementById('modalContent');
+  mc.style.maxWidth='720px';
+  mc.innerHTML=`
+    <div class="modal-header">
+      <h2 style="color:var(--gold);font-size:16px">📸 交換圖預覽</h2>
+      <button class="modal-close" onclick="window.closeTradeModal()">✕</button>
+    </div>
+    <div style="text-align:center">
+      <img src="${dataUrl}" style="max-width:100%;border-radius:6px;display:block;margin:0 auto;border:1px solid var(--border)">
+      <button class="btn-primary" style="margin-top:14px;padding:10px 32px;font-size:14px;font-weight:bold"
+        onclick="window.doTradeImageDownload()">⬇️ 下載圖片</button>
+    </div>`;
+  document.getElementById('modalOverlay').style.display='flex';
+};
+
+window.closeTradeModal=()=>{
+  document.getElementById('modalContent').style.maxWidth='';
+  window.closeModal();
+};
+
+window.doTradeImageDownload=()=>{
+  const d=window._tradeImgExport;if(!d)return;
+  const a=document.createElement('a');
+  a.href=d.dataUrl;
+  a.download=d.filename;
+  a.click();
+  window.toast('交換圖已下載！');
 };
 
 window.toast=(msg)=>{document.querySelector('.toast')?.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);};
