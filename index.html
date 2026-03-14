@@ -381,8 +381,9 @@ body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei'
 .rank-cnt{font-size:11px;color:var(--text-dim);text-align:right}
 @media(max-width:768px){
   .cup-result-layout{grid-template-columns:1fr}
-  .ranking-table-row{grid-template-columns:36px 44px 1fr 60px}
-  .rank-cnt{display:none}
+  .ranking-table-row{grid-template-columns:32px 40px 1fr 52px 46px}
+  .rank-score{font-size:12px}
+  .rank-cnt{font-size:10px}
   .compare-mode-btn .mode-title{font-size:11px}
 }
 
@@ -413,8 +414,9 @@ body { background:var(--bg); color:var(--text); font-family:'Microsoft JhengHei'
   .compare-layout{grid-template-columns:1fr}
   .compare-card-img,.compare-card-img-placeholder{width:160px;height:160px}
   .compare-card-desc{display:none}
-  .ranking-table-row{grid-template-columns:36px 48px 1fr 60px}
-  .rank-cnt{display:none}
+  .ranking-table-row{grid-template-columns:32px 40px 1fr 52px 46px}
+  .rank-score{font-size:12px}
+  .rank-cnt{font-size:10px}
 }
 /* 手機小螢幕（< 480px）：VS 改為上下排列 */
 @media(max-width:480px){
@@ -1484,15 +1486,15 @@ window.exportTradeImage = async function(){
         ctx.fillText('?',x+CARD_W/2,y+CARD_H/2+4);
       }
 
-      // line 1: card number (dim)
-      ctx.fillStyle='#777';
-      ctx.font=`9px ${FONT}`;
+      // line 1: card number (white, prominent)
+      ctx.fillStyle='#fff';
+      ctx.font=`bold 11px ${FONT}`;
       ctx.textAlign='center';
-      ctx.fillText(fmt(card.id), x+CARD_W/2, y+CARD_H+13);
+      ctx.fillText(fmt(card.id), x+CARD_W/2, y+CARD_H+14);
 
-      // line 2: card name (bright, truncated)
-      ctx.fillStyle='#ddd';
-      ctx.font=`10px ${FONT}`;
+      // line 2: card name (gray, small)
+      ctx.fillStyle='#888';
+      ctx.font=`9px ${FONT}`;
       const nm=card.name.length>8?card.name.slice(0,7)+'…':card.name;
       ctx.fillText(nm, x+CARD_W/2, y+CARD_H+27);
     });
@@ -1539,8 +1541,24 @@ window.closeTradeModal=()=>{
   window.closeModal();
 };
 
-window.doTradeImageDownload=()=>{
+window.doTradeImageDownload=async()=>{
   const d=window._tradeImgExport;if(!d)return;
+  // 手機優先用 Web Share API → 可直接存入相簿
+  if(navigator.canShare){
+    try{
+      const res=await fetch(d.dataUrl);
+      const blob=await res.blob();
+      const file=new File([blob],d.filename,{type:'image/png'});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:'我的貪婪之島交換清單'});
+        window.toast('已開啟分享（可存入相簿）！');
+        return;
+      }
+    }catch(e){
+      if(e.name==='AbortError')return; // 用戶取消，不繼續下載
+    }
+  }
+  // Fallback：一般下載（桌機或不支援 Share API 的環境）
   const a=document.createElement('a');
   a.href=d.dataUrl;
   a.download=d.filename;
@@ -1667,6 +1685,12 @@ async function loadCompareRanking(catKey){
     let rows=snap.docs.map(d=>({id:d.id,...d.data()}));
     let qualified=rows.filter(r=>(r.totalMatches||0)>=3);
     if(qualified.length<3) qualified=rows;
+    // 依勝率排序（高→低），勝率相同則依場次排序（多→少）
+    qualified.sort((a,b)=>{
+      const ra=(a.wins||0)/(a.totalMatches||1),rb=(b.wins||0)/(b.totalMatches||1);
+      if(Math.abs(rb-ra)>0.0001) return rb-ra;
+      return (b.totalMatches||0)-(a.totalMatches||0);
+    });
     CS.rankings[catKey]=qualified.slice(0,20);
     CS.totalComps[catKey]=Math.round(rows.reduce((s,r)=>s+(r.totalMatches||0),0)/2);
     CS.rankLoaded.add(catKey);
@@ -2101,7 +2125,7 @@ function renderRankingPage(){
       <div class="ranking-table-row header">
         <div></div><div></div>
         <div>卡片</div>
-        <div style="text-align:right">勝率</div>
+        <div style="text-align:right">勝率 ▼</div>
         <div style="text-align:right">場次</div>
       </div>
     </div>
