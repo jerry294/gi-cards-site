@@ -2276,7 +2276,7 @@ function renderAuthModal(){
   document.getElementById('modalContent').innerHTML=`
     <div class="modal-header"><h2 style="color:var(--gold)">${isLogin?'登入系統':'註冊新玩家'}</h2><button class="modal-close" onclick="window.closeModal()">✕</button></div>
     <div class="auth-tabs"><div class="auth-tab ${isLogin?'active':''}" onclick="window.toggleAuthMode('login')">登入</div><div class="auth-tab ${!isLogin?'active':''}" onclick="window.toggleAuthMode('register')">註冊</div></div>
-    <div class="form-group"><label>遊戲暱稱</label><input type="text" id="authNick" placeholder="輸入你的暱稱（即登入帳號）" maxlength="20"></div>
+    <div class="form-group"><label>遊戲暱稱</label><input type="text" id="authNick" placeholder="輸入你的暱稱（即登入帳號）" maxlength="20" oninput="document.getElementById('nickErr').textContent='';this.style.borderColor=''"><div id="nickErr" style="color:#ff6b6b;font-size:12px;margin-top:4px;min-height:16px"></div></div>
     <div class="form-group"><label>密碼</label><input type="password" id="authPwd" placeholder="至少6位數"></div>
     ${!isLogin?`<div class="form-group"><label>聯絡方式（選填）</label><input type="text" id="authContact" placeholder="Discord: xxx / Line: yyy"></div>
       <div class="form-group"><label>出沒地點</label><select id="authLocation"><option value="未設定">請選擇地點</option>${co}</select></div>
@@ -2301,8 +2301,15 @@ window.doRegister=async()=>{
     S.nickname=n;S.contact=c;S.location=loc;S.canShip=ship;S.canMeet=meet;
     await saveToCloud();window.closeModal();window.toast('🎉 註冊成功！歡迎來到貪婪之島！');
   }catch(err){
-    window.toast(err.code==='auth/email-already-in-use'?'此暱稱已被使用':'註冊失敗：'+err.message);
     document.getElementById('authBtn').innerText='創建角色';
+    if(err.code==='auth/email-already-in-use'){
+      const inp=document.getElementById('authNick');
+      const errEl=document.getElementById('nickErr');
+      if(inp) inp.style.borderColor='#ff6b6b';
+      if(errEl) errEl.textContent='⚠️ 此暱稱已被其他玩家使用，請換一個試試！';
+    }else{
+      window.toast('註冊失敗：'+err.message);
+    }
   }
 };
 window.doLogin=async()=>{
